@@ -152,8 +152,10 @@ profile; Official updates show Surrey feed items or an honest empty/error state 
   `npm run test:smoke` locally.
 - Service/schema/config changes: registered NeighbourGrid collections in `src/schemas.ts`;
   added `GET /api/official-updates`.
-- Deployment URL: not verified in this session (needs `npx deepspace deploy` on owner machine).
-- Blockers or user action: review branch; local smoke; deploy; Figma URL.
+- Deployment URL: not verified (DeepSpace CLI not authenticated in agent environment).
+- Git: committed locally as `bd1b438` on `feat/home-alerts`. Push from agent failed
+  (sandbox blocked GitHub credentials); owner must push.
+- Blockers or user action: push branch; review; local smoke; deploy; Figma URL.
 - Next task / handoff: team review of `feat/home-alerts`; B/C may begin after pull of `main`
   and can depend on A’s exports once this branch merges.
 
