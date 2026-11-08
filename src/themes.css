@@ -1,23 +1,43 @@
 /*
  * Theme overrides — applied via <html data-theme="<id>">.
- *
- * Default values live in `styles.css` (@theme block, slate — a neutral
- * placeholder, not a design choice). Every app should define its OWN theme
- * before first deploy: copy the example block below, rename the selector,
- * and set colors that fit the product. Shape comes from `--radius`.
- *
- * To add a theme:
- *   1. Add a `[data-theme="my-id"] { ... }` block overriding the shadcn
- *      tokens below. If the theme is light, include `color-scheme: light;`
- *      so native form controls (calendar icons, scrollbars) match.
- *   2. Add an entry to `src/themes.ts` so it shows up in the typed catalog.
- *   3. Add the theme's --color-background to the first-paint <style> block
- *      in index.html so the pre-CSS frame matches (no white flash).
- *   4. Switch to it via `data-theme` on <html> in index.html.
+ * NeighbourGrid defaults live in styles.css @theme. Paper remains as a
+ * light alternate for scaffold tooling.
  */
 
-/* Paper — light example theme; shows the full token contract incl.
- * `color-scheme: light`. Replace or delete it once the app has its own. */
+[data-theme="neighbourgrid"] {
+  color-scheme: light;
+  --color-background: #f3f6f2;
+  --color-foreground: #10243a;
+  --color-card: #ffffff;
+  --color-card-foreground: #10243a;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #10243a;
+  --color-primary: #0a6560;
+  --color-primary-foreground: #ffffff;
+  --color-primary-ink: #084f4b;
+  --color-secondary: #e4efea;
+  --color-secondary-foreground: #10243a;
+  --color-muted: #e8eee9;
+  --color-muted-foreground: #4d5d6b;
+  --color-accent: #d9ebe6;
+  --color-accent-foreground: #10243a;
+  --color-destructive: #c85a45;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #d4ded8;
+  --color-input: #c3d0c9;
+  --color-ring: #0a6560;
+  --color-navy: #10243a;
+  --color-navy-foreground: #f3f6f2;
+  --color-advisory: #fff6e5;
+  --color-advisory-foreground: #6a4a12;
+  --color-beacon: #c85a45;
+  --color-beacon-foreground: #ffffff;
+  --shadow-card: 0 1px 2px 0 rgba(16, 36, 58, 0.05), 0 8px 24px -12px rgba(16, 36, 58, 0.12);
+  --shadow-card-hover: 0 2px 4px 0 rgba(16, 36, 58, 0.06), 0 16px 32px -14px rgba(16, 36, 58, 0.16);
+  --color-shell: #e8eee9;
+  --color-shell-panel: #ffffff;
+}
+
 [data-theme="paper"] {
   color-scheme: light;
   --color-background: #ffffff;

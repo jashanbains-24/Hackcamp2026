@@ -3,22 +3,12 @@
  *
  * It lives at the top level of src/pages/ (not under (app)/), so it renders
  * with no DeepSpace providers: no auth session fetch, no records WebSocket.
- * That makes it cheap to serve and safe for logged-out / crawler traffic.
- *
- * Need live data or auth here? Move this file to src/pages/(app)/index.tsx
- * and it becomes a dynamic page. Conversely, any page you want to keep static
- * (marketing, docs, legal) belongs at this top level.
- *
- * Top-level pages are also prerendered to static HTML at build
- * (prerender.ts, via vite.config.ts) so crawlers read real content.
- * Keep them renderable without a browser: no window/document during render,
- * prose in HTML text, reveal animations in CSS keyframes rather than JS-driven
- * initial states. `<Seo>` comes first and reads src/seo.ts.
  */
 
-import { ArrowRight, CheckCircle2, HeartHandshake, MessageCircle, Radio } from 'lucide-react'
+import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { BrandMark, Card } from '../components/neighbourgrid'
+import { BrandMark } from '../components/neighbourgrid'
+import { NeighbourhoodGridCanvas } from '../components/NeighbourhoodGridCanvas'
 import { Seo } from '../components/Seo'
 import { seo } from '../seo'
 
@@ -26,108 +16,119 @@ export default function Landing() {
   return (
     <>
       <Seo {...seo} path="/" />
-      <div data-testid="static-landing" className="min-h-screen overflow-hidden bg-background">
-        <header className="mx-auto flex h-20 max-w-[1180px] items-center justify-between px-5 sm:px-8">
-          <BrandMark />
-          <Link
-            to="/app"
-            className="inline-flex min-h-11 items-center rounded-full border border-border bg-card px-4 text-sm font-bold text-foreground shadow-sm transition hover:border-primary/40"
-          >
-            Open demo
-          </Link>
+      <div data-testid="static-landing" className="min-h-screen overflow-x-hidden bg-background">
+        <a
+          href="#landing-main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-card focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-foreground focus:shadow-lg"
+        >
+          Skip to content
+        </a>
+
+        <header className="absolute inset-x-0 top-0 z-20">
+          <div className="mx-auto flex h-16 max-w-[1180px] items-center justify-between px-5 sm:h-20 sm:px-8">
+            <Link to="/" aria-label="NeighbourGrid home" className="rounded-xl" viewTransition>
+              <BrandMark compact inverted />
+            </Link>
+            <Link
+              to="/app"
+              viewTransition
+              className="inline-flex min-h-11 items-center rounded-full border border-white/35 bg-white/10 px-4 text-sm font-semibold text-navy-foreground transition hover:bg-white/16 active:scale-[0.98]"
+            >
+              Open demo
+            </Link>
+          </div>
         </header>
 
-        <main>
-          <section className="relative mx-auto grid max-w-[1180px] gap-12 px-5 pb-20 pt-10 sm:px-8 md:pt-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pb-28">
-            <div className="relative z-10">
-              <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-2 text-xs font-bold text-primary">
-                <span className="size-2 rounded-full bg-primary" />
-                Built for neighbourhood connection
-              </p>
-              <h1 className="mt-6 max-w-3xl text-5xl font-bold leading-[0.98] tracking-[-0.055em] text-foreground sm:text-6xl lg:text-7xl">
-                Nearby help starts with a simple hello.
-              </h1>
-              <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
-                A calm local hub to share context, ask for practical support, and show up for
-                the people around you.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <main id="landing-main">
+          <section className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-navy px-5 pb-14 pt-28 text-navy-foreground sm:px-8 sm:pb-20 lg:justify-center lg:pb-24 lg:pt-28">
+            <div className="absolute inset-0 -z-10 ng-hero-surface ng-scroll-hero" aria-hidden>
+              <NeighbourhoodGridCanvas className="ng-scroll-motif absolute inset-0" />
+              <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+            </div>
+
+            <div className="relative z-10 mx-auto w-full max-w-[1180px]">
+              <div className="ng-stack-copy">
+                <p className="ng-brand-reveal ng-type-brand ng-vt-brand text-navy-foreground">
+                  NeighbourGrid
+                </p>
+                <h1 className="ng-rise ng-rise-delay-1 ng-type-headline max-w-[18ch] text-navy-foreground">
+                  Nearby help starts with a simple hello.
+                </h1>
+                <p className="ng-rise ng-rise-delay-2 ng-type-lead max-w-[36ch] tracking-[0.01em] text-white/85">
+                  Connect with your neighbourhood during outages—share context, ask for practical
+                  support, and show up for the people nearby.
+                </p>
+              </div>
+
+              <div className="ng-rise ng-rise-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Link
                   to="/app"
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground shadow-[0_10px_28px_rgba(19,139,131,0.24)] transition hover:bg-primary/90"
+                  viewTransition
+                  className="ng-cta-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-7 text-sm font-semibold text-primary-foreground shadow-[0_12px_28px_-12px_rgba(16,36,58,0.6)] transition hover:bg-primary-ink active:scale-[0.98]"
                 >
                   Explore Newton community
-                  <ArrowRight className="size-4" aria-hidden />
+                  <ArrowRight className="ng-cta-arrow size-4" aria-hidden />
                 </Link>
                 <Link
                   to="/demo"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-border bg-card px-6 text-sm font-bold text-foreground transition hover:border-primary/40"
+                  viewTransition
+                  className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/40 bg-transparent px-7 text-sm font-semibold text-navy-foreground transition hover:bg-white/10 active:scale-[0.98]"
                 >
                   Preview demo mode
                 </Link>
               </div>
-              <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="size-4 text-primary" aria-hidden />
-                No precise location or personal contact details required
+
+              <p className="ng-fade ng-type-meta mt-4 flex max-w-xl items-start gap-2.5 leading-6 text-white/75">
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-white/88" aria-hidden />
+                No precise location or personal contact details required. Not an emergency service.
               </p>
             </div>
+          </section>
 
-            <div className="relative mx-auto w-full max-w-[520px]">
-              <div className="absolute -inset-12 -z-10 rounded-full bg-primary/10 blur-3xl" />
-              <Card className="relative overflow-hidden p-4 sm:p-5">
-                <div className="flex items-center justify-between border-b border-border px-1 pb-4">
-                  <div>
-                    <p className="text-xs font-bold text-primary">GOOD EVENING</p>
-                    <p className="mt-1 text-xl font-bold">Newton, Surrey</p>
-                  </div>
-                  <span className="grid size-10 place-items-center rounded-full bg-secondary font-bold text-primary">M</span>
-                </div>
-                <div className="mt-4 rounded-2xl bg-[#10243A] p-5 text-white">
-                  <p className="text-xs font-bold uppercase tracking-wider text-white/65">Neighbours are nearby</p>
-                  <p className="mt-2 text-2xl font-bold tracking-tight">How can your community help?</p>
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <span className="rounded-xl bg-white px-3 py-3 text-center text-xs font-bold text-[#10243A]">Ask for help</span>
-                    <span className="rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-center text-xs font-bold">Offer support</span>
-                  </div>
-                </div>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-border p-4">
-                    <MessageCircle className="size-5 text-primary" aria-hidden />
-                    <p className="mt-3 font-bold">Local conversation</p>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Useful every day, not only during disruptions.</p>
-                  </div>
-                  <div className="rounded-2xl border border-border p-4">
-                    <HeartHandshake className="size-5 text-primary" aria-hidden />
-                    <p className="mt-3 font-bold">Practical support</p>
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">Opt-in help with clear safety boundaries.</p>
-                  </div>
-                </div>
-              </Card>
+          <section className="bg-background px-5 py-16 sm:px-8 sm:py-24">
+            <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start lg:gap-16">
+              <div className="ng-stack-copy ng-scroll-copy lg:sticky lg:top-16 lg:pt-1">
+                <h2 className="ng-type-display text-foreground">
+                  Built for the hours when power feels uncertain.
+                </h2>
+                <p className="ng-type-lead max-w-[42ch] text-muted-foreground">
+                  NeighbourGrid keeps official updates, local conversation, and opt-in help in one
+                  calm place—so neighbours can coordinate without confusing community support for
+                  emergency response.
+                </p>
+              </div>
+
+              <ul>
+                <li className="ng-loop-step ng-stack-tight ng-scroll-step">
+                  <p className="ng-type-title text-foreground">Talk locally</p>
+                  <p className="ng-type-body max-w-[36ch] text-muted-foreground">
+                    Useful neighbourhood conversations on ordinary days and during disruptions.
+                  </p>
+                </li>
+                <li className="ng-loop-step ng-stack-tight ng-scroll-step">
+                  <p className="ng-type-title text-foreground">Help directly</p>
+                  <p className="ng-type-body max-w-[36ch] text-muted-foreground">
+                    Request or offer everyday supplies with clear privacy boundaries.
+                  </p>
+                </li>
+                <li className="ng-loop-step ng-stack-tight ng-scroll-step">
+                  <p className="ng-type-title text-foreground">Coordinate carefully</p>
+                  <p className="ng-type-body max-w-[36ch] text-muted-foreground">
+                    Use a Community Help Beacon with limits—never emergency dispatch.
+                  </p>
+                </li>
+              </ul>
             </div>
           </section>
 
-          <section className="border-y border-border bg-card">
-            <div className="mx-auto grid max-w-[1180px] gap-8 px-5 py-12 sm:px-8 md:grid-cols-3">
-              {[
-                [MessageCircle, 'Talk locally', 'Join useful conversations with people in your community.'],
-                [HeartHandshake, 'Help directly', 'Request or offer everyday supplies and assistance.'],
-                [Radio, 'Coordinate carefully', 'Use a community beacon with clear limits—not emergency dispatch.'],
-              ].map(([Icon, title, copy]) => {
-                const FeatureIcon = Icon as typeof MessageCircle
-                return (
-                  <div key={title as string} className="flex gap-4">
-                    <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-secondary text-primary">
-                      <FeatureIcon className="size-5" aria-hidden />
-                    </span>
-                    <div>
-                      <h2 className="font-bold">{title as string}</h2>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{copy as string}</p>
-                    </div>
-                  </div>
-                )
-              })}
+          <footer className="border-t border-border">
+            <div className="mx-auto flex max-w-[1180px] flex-col gap-3 px-5 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+              <BrandMark />
+              <p className="ng-type-meta max-w-md leading-6 text-muted-foreground sm:text-right">
+                HackCamp 2026 prototype · Community coordination, not emergency dispatch.
+              </p>
             </div>
-          </section>
+          </footer>
         </main>
       </div>
     </>

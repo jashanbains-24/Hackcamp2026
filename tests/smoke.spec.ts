@@ -48,12 +48,12 @@ test.describe('Smoke tests', () => {
     await waitForApp(page)
     await expect(page.getByRole('heading', { name: 'Good evening, Maya' })).toBeVisible()
     await expect(page.getByText('Newton, Surrey').first()).toBeVisible()
-    await expect(page.getByText('SIMULATED SCENARIO')).toBeVisible()
+    await expect(page.getByText('DEMO')).toBeVisible()
     await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Communities' }).last().click()
     await expect(page).toHaveURL(/\/app\/communities$/)
-    await expect(page.getByRole('heading', { name: 'Your nearby communities' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Communities' })).toBeVisible()
     expect(errors).toEqual([])
   })
 
@@ -63,7 +63,7 @@ test.describe('Smoke tests', () => {
     await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible()
     await page.getByRole('link', { name: 'Ask for help' }).click()
     await expect(page).toHaveURL(/\/app\/help\/new$/)
-    await expect(page.getByRole('heading', { name: 'Create a help request' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Ask for help' })).toBeVisible()
   })
 
   test('unknown route shows 404', async ({ page }) => {

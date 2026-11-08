@@ -6,101 +6,69 @@
 @source "../node_modules/deepspace/dist/**/*.js";
 
 /*
- * Theming — pure shadcn/ui CSS variables with [data-theme] selectors.
- *
- * The @theme block below holds the default theme (slate). All other themes
- * live in `themes.css` as `[data-theme="<id>"]` override blocks. Switching
- * themes = changing the data-theme attribute on <html> in index.html. No
- * JS, no FOUC.
- *
- * Status colors (success, warning, info) are intentionally NOT themed —
- * they stay consistent across every preset.
+ * NeighbourGrid design tokens — calm civic-tech.
+ * Navy + soft mist ground + teal action. Amber advisory. Coral only for
+ * high-visibility assistance. Status colors stay constant across themes.
  */
 @theme {
-  /* NeighbourGrid: calm civic-tech palette */
-  --color-background: #f7f8f5;
+  --color-background: #f3f6f2;
   --color-foreground: #10243a;
   --color-card: #ffffff;
   --color-card-foreground: #10243a;
   --color-popover: #ffffff;
   --color-popover-foreground: #10243a;
-  --color-primary: #138b83;
+  --color-primary: #0a6560;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #e9f3ef;
+  --color-secondary: #e4efea;
   --color-secondary-foreground: #10243a;
-  --color-muted: #eef1ed;
-  --color-muted-foreground: #607082;
-  --color-accent: #e4f0ec;
+  --color-muted: #e8eee9;
+  --color-muted-foreground: #4d5d6b;
+  --color-accent: #d9ebe6;
   --color-accent-foreground: #10243a;
-  --color-destructive: #d66a52;
+  --color-destructive: #c85a45;
   --color-destructive-foreground: #ffffff;
-  --color-border: #dce4df;
-  --color-input: #cad6d0;
-  --color-ring: #138b83;
-  --radius: 0.875rem;
+  --color-border: #d4ded8;
+  --color-input: #c3d0c9;
+  --color-ring: #0a6560;
+  --color-primary-ink: #084f4b;
+  --radius: 1rem;
 
-  /*
-   * Map the rounded-* utilities onto --radius so a theme (or you) can change
-   * the app's shape language in one place. At the default 0.5rem these equal
-   * Tailwind's stock values, so there is no visual change until a theme
-   * overrides --radius.
-   */
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
 
-  /* Status colors — constant across all themes */
-  --color-success: #248569;
+  --color-success: #1f7a62;
   --color-success-foreground: #ffffff;
-  --color-warning: #f3b34c;
+  --color-warning: #e8a83a;
   --color-warning-foreground: #10243a;
-  --color-info: #2f7398;
+  --color-info: #2a6f94;
   --color-info-foreground: #ffffff;
 
-  /*
-   * Shadows — slate (default). Each theme in themes.css tunes these.
-   *
-   * Toned down 2026-05: previous values were 8px/12px offset with
-   * 32px/40px blur which read as a heavy halo under every Card on
-   * the page. New values are Linear/Stripe-style: barely-there at
-   * rest, slightly more present on hover.
-   *
-   * IMPORTANT: starter components (`Card`, `Dialog`, `CardGrid`,
-   * `Navigation`, `Toast`) intentionally use literal shadow values
-   * via `shadow-[…]` arbitrary-value classes, NOT the
-   * `shadow-card` / `shadow-card-hover` token classes Tailwind v4
-   * generates from this @theme block. Why: Tailwind's @theme directive
-   * compiles these tokens into the utility-class definitions at build
-   * time, and runtime [data-theme] overrides don't always cancel the
-   * baked baseline cleanly — apps switching themes were getting the
-   * slate value carried forward on the compiled `shadow-card` class.
-   * Sidestepping the token system in starter components is the
-   * deterministic fix. See docs/platform/theming-shadows.md.
-   */
-  --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.12);
-  --shadow-card-hover: 0 2px 8px 0 rgba(0, 0, 0, 0.16);
+  --color-navy: #10243a;
+  --color-navy-foreground: #f3f6f2;
+  --color-mist: #f3f6f2;
+  --color-advisory: #fff6e5;
+  --color-advisory-foreground: #6a4a12;
+  --color-beacon: #c85a45;
+  --color-beacon-foreground: #ffffff;
 
-  /* Shell tokens: the area behind a multi-panel layout, and the raised
-     surface a page renders into. Used by templates whose (app)/_layout is a
-     shell (e.g. copilot's sidebar | panel | chat); a single-column layout
-     simply doesn't reference them. In every theme keep the panel reading as
-     elevated: dark → panel lighter than shell; light → white panel on a
-     faintly darker shell. */
-  --color-shell: #eef1ed;
+  --shadow-card: 0 1px 2px 0 rgba(16, 36, 58, 0.05), 0 8px 24px -12px rgba(16, 36, 58, 0.12);
+  --shadow-card-hover: 0 2px 4px 0 rgba(16, 36, 58, 0.06), 0 16px 32px -14px rgba(16, 36, 58, 0.16);
+
+  --color-shell: #e8eee9;
   --color-shell-panel: #ffffff;
 
-  /* Animations */
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+  --animate-ng-rise: ng-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-ng-fade: ng-fade 600ms ease-out both;
+  --animate-ng-drift: ng-drift 18s ease-in-out infinite alternate;
 }
 
-/* Theme override blocks live in `themes.css` — imported above. */
-
-/*
- * Animation keyframes for shadcn components.
- * These replace the tailwindcss-animate plugin which is not compatible with Tailwind v4.
- */
 @keyframes animate-in {
   from { opacity: var(--tw-enter-opacity, 1); transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0)); }
 }
@@ -109,10 +77,76 @@
   to { opacity: var(--tw-exit-opacity, 1); transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0)); }
 }
 
+@keyframes ng-brand-reveal {
+  from {
+    opacity: 0.35;
+    filter: blur(8px);
+    clip-path: inset(0 0 92% 0);
+    letter-spacing: -0.06em;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    clip-path: inset(0 0 0 0);
+    letter-spacing: -0.035em;
+  }
+}
+
+@keyframes ng-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ng-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ng-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-2%, 1.5%, 0) scale(1.05); }
+}
+
+@keyframes ng-wash {
+  from { background-position: 0% 40%, 0 0; }
+  to { background-position: 28% 60%, 0 0; }
+}
+
+@keyframes ng-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes ng-attend {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-beacon) 0%, transparent);
+  }
+  40% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-beacon) 18%, transparent);
+  }
+}
+
+@keyframes ng-settle {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 @utility animate-in {
   animation-name: animate-in;
   animation-duration: 150ms;
-  /* `both` prevents a one-frame flash before entry / after exit. */
   animation-fill-mode: both;
   --tw-enter-opacity: initial;
   --tw-enter-scale: initial;
@@ -124,7 +158,6 @@
 @utility animate-out {
   animation-name: animate-out;
   animation-duration: 150ms;
-  /* `both` prevents a one-frame flash before entry / after exit. */
   animation-fill-mode: both;
   --tw-exit-opacity: initial;
   --tw-exit-scale: initial;
@@ -146,10 +179,92 @@
 @utility slide-out-to-left-2 { --tw-exit-translate-x: -0.5rem; }
 @utility slide-out-to-right-2 { --tw-exit-translate-x: 0.5rem; }
 
+@utility font-display {
+  font-family: var(--font-display);
+}
 
-/*
- * Custom base styles — must be in @layer base so utility classes can override.
- */
+/* Type roles — keep sizes on this ramp; update DESIGN.md when changing steps. */
+@utility ng-type-brand {
+  font-family: var(--font-display);
+  font-size: clamp(3.25rem, 11vw, 5.75rem);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+@utility ng-type-headline {
+  font-family: var(--font-sans);
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+@utility ng-type-display {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 3.8vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+@utility ng-type-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+@utility ng-type-title-sm {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+@utility ng-type-lead {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
+@utility ng-type-body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+@utility ng-type-meta {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+@utility ng-surface {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+@utility ng-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 @layer base {
   html {
     color-scheme: light;
@@ -157,20 +272,35 @@
 
   html, body, #root {
     min-height: 100vh;
+    min-height: 100dvh;
     background-color: var(--color-background);
     scroll-behavior: smooth;
   }
 
   body {
-    font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.5;
+    font-family: var(--font-sans);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 14px;
+    font-size: 1rem;
     color: var(--color-foreground);
+    overflow-x: hidden;
+    text-wrap: pretty;
+    caret-color: var(--color-primary);
   }
 
-  /* Scrollbar styling */
+  p, li {
+    text-wrap: pretty;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    text-wrap: balance;
+  }
+
+  a {
+    underline-offset: 0.18em;
+  }
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -189,43 +319,11 @@
     background-color: var(--color-muted-foreground);
   }
 
-  /* Selection styling */
   ::selection {
-    background-color: var(--color-primary);
-    color: var(--color-primary-foreground);
+    background-color: color-mix(in srgb, var(--color-primary) 28%, white);
+    color: var(--color-foreground);
   }
 
-  /*
-   * Focus indication is intentionally NOT applied app-wide via a
-   * `*:focus-visible` rule. Doing so paints a colored outline onto
-   * every focusable element on the page — including programmatically
-   * focusable containers like Radix DismissableLayer wrappers,
-   * dialog overlays, and any element with `tabindex={-1}` used for
-   * scroll containment. The result reads as "the entire panel /
-   * dialog is selected" the moment a child button is clicked.
-   *
-   * Per-component focus indicators (e.g. shadcn's
-   * `focus-visible:ring-1` on Button, `focus-visible:border-ring` on
-   * Input / Textarea / Select) are sufficient for keyboard
-   * accessibility and don't bleed onto containers.
-   *
-   * If you DO need a global indicator for very keyboard-heavy apps,
-   * scope it tightly — e.g. only to interactive elements:
-   *
-   *   a:focus-visible,
-   *   button:focus-visible,
-   *   [role="button"]:focus-visible,
-   *   input:focus-visible,
-   *   select:focus-visible,
-   *   textarea:focus-visible {
-   *     outline: 2px solid var(--color-primary);
-   *     outline-offset: 2px;
-   *   }
-   *
-   * — never `*`.
-   */
-
-  /* Prevent 300ms tap delay on mobile */
   a, button, [role="button"], input, select, textarea {
     touch-action: manipulation;
   }
@@ -235,17 +333,263 @@
   [role="button"]:focus-visible,
   input:focus-visible,
   select:focus-visible,
-  textarea:focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--color-ring) 35%, transparent);
+  textarea:focus-visible,
+  summary:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-ring) 55%, transparent);
     outline-offset: 3px;
   }
 }
 
+@layer components {
+  .ng-hero-surface {
+    background:
+      radial-gradient(
+        120% 80% at 12% 18%,
+        color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
+        transparent 55%
+      ),
+      linear-gradient(165deg, var(--color-navy) 0%, #153148 52%, #12363a 100%);
+    background-size: 140% 140%, 100% 100%;
+  }
+
+  .ng-hero-motif {
+    color: color-mix(in srgb, var(--color-navy-foreground) 11%, transparent);
+  }
+
+  .ng-cta-primary .ng-cta-arrow {
+    transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ng-cta-primary:hover .ng-cta-arrow,
+  .ng-cta-primary:focus-visible .ng-cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .ng-loop-step {
+    border-top: 1px solid var(--color-border);
+    padding-block: 1.5rem;
+  }
+
+  .ng-loop-step:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .ng-loop-step:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Stack roles: tight within a unit, generous between units. */
+  .ng-stack-tight > * + * {
+    margin-top: 0.5rem;
+  }
+
+  .ng-stack-copy > * + * {
+    margin-top: 1rem;
+  }
+
+  .ng-stack-section > * + * {
+    margin-top: 1.5rem;
+  }
+
+  .ng-skeleton {
+    background: linear-gradient(
+      110deg,
+      var(--color-muted) 25%,
+      color-mix(in srgb, var(--color-muted) 40%, white) 45%,
+      var(--color-muted) 65%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Motion classes stay at final visible state by default. */
+  .ng-brand-reveal,
+  .ng-rise,
+  .ng-fade,
+  .ng-settle,
+  .ng-attend {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    clip-path: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ng-hero-surface {
+    animation: ng-wash 14s ease-in-out infinite alternate;
+  }
+
+  .ng-brand-reveal {
+    animation: ng-brand-reveal 820ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .ng-rise {
+    animation: ng-rise 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .ng-rise-delay-1 { animation-delay: 140ms; }
+  .ng-rise-delay-2 { animation-delay: 260ms; }
+  .ng-rise-delay-3 { animation-delay: 380ms; }
+
+  .ng-fade {
+    animation: ng-fade 520ms ease-out 480ms both;
+  }
+
+  .ng-drift {
+    animation: ng-drift 16s ease-in-out infinite alternate;
+  }
+
+  .ng-settle {
+    animation: ng-settle 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .ng-settle-delay-1 { animation-delay: 80ms; }
+
+  .ng-attend {
+    animation: ng-attend 1.1s cubic-bezier(0.16, 1, 0.3, 1) 200ms 1 both;
+  }
+
+  .ng-skeleton {
+    animation: ng-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  html {
     scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  }
+
+  .ng-hero-surface,
+  .ng-brand-reveal,
+  .ng-rise,
+  .ng-fade,
+  .ng-drift,
+  .ng-settle,
+  .ng-attend,
+  .ng-skeleton,
+  .animate-pulse,
+  .animate-spin {
+    animation: none !important;
+  }
+
+  .ng-brand-reveal,
+  .ng-rise,
+  .ng-fade,
+  .ng-settle {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    letter-spacing: inherit;
+  }
+
+  .ng-cta-primary:hover .ng-cta-arrow,
+  .ng-cta-primary:focus-visible .ng-cta-arrow {
+    transform: none;
+  }
+}
+
+/* —— Overdrive: scroll-driven landing (progressive) —— */
+@keyframes ng-scroll-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0.25;
+    transform: scale(1.08) translate3d(0, -4%, 0);
+  }
+}
+
+@keyframes ng-scroll-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ng-scroll-motif {
+      animation: ng-scroll-fade-out linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 85%;
+    }
+
+    .ng-scroll-copy {
+      animation: ng-scroll-in linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 45%;
+    }
+
+    .ng-scroll-step {
+      animation: ng-scroll-in linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 40%;
+    }
+
+    .ng-scroll-step:nth-child(2) {
+      animation-range: entry 12% entry 48%;
+    }
+
+    .ng-scroll-step:nth-child(3) {
+      animation-range: entry 20% entry 55%;
+    }
+  }
+}
+
+/* —— Overdrive: View Transitions between routes —— */
+@supports (view-transition-name: none) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ng-vt-brand {
+      view-transition-name: ng-brand;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 240ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    ::view-transition-old(root) {
+      animation-name: ng-vt-fade-out;
+    }
+
+    ::view-transition-new(root) {
+      animation-name: ng-vt-fade-in;
+    }
+
+    ::view-transition-old(ng-brand),
+    ::view-transition-new(ng-brand) {
+      animation-duration: 280ms;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      height: 100%;
+      overflow: clip;
+    }
+  }
+}
+
+@keyframes ng-vt-fade-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes ng-vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ng-vt-brand {
+    view-transition-name: none !important;
   }
 }
