@@ -1,8 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { ExternalLink, Globe2, LockKeyhole, Send, Sparkles } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Button, Textarea, useToast } from '@/components/ui'
-import { Pane, StatusLabel } from '@/components/neighbourgrid'
+import { useToast } from '@/components/ui'
 import type { HomeAggregates } from '@/neighbourgrid/home-data'
 import type { NeighbourGridSession } from '@/neighbourgrid/session'
 import {
@@ -15,14 +14,7 @@ import {
 type DisplayTurn = GuideTurn & {
   id: string
   sources?: GuideSource[]
-  searchNote?: string | null
 }
-
-const starterQuestions = [
-  'What is happening in my community?',
-  'Are there current power outage updates?',
-  'What help is currently available nearby?',
-]
 
 function sourceLabel(source: GuideSource): string {
   if (source.title.trim()) return source.title
@@ -43,7 +35,6 @@ export function NeighbourhoodGuide({
   const { error: showError } = useToast()
   const [turns, setTurns] = useState<DisplayTurn[]>([])
   const [draft, setDraft] = useState('')
-  const [searchWeb, setSearchWeb] = useState(false)
   const [asking, setAsking] = useState(false)
 
   const appContext = useMemo<GuideAppContext>(
@@ -94,7 +85,7 @@ export function NeighbourhoodGuide({
         message,
         history,
         appContext,
-        searchWeb,
+        searchWeb: false,
       })
       setTurns((current) => [
         ...current,
@@ -103,7 +94,6 @@ export function NeighbourhoodGuide({
           role: 'assistant',
           content: result.answer,
           sources: result.sources,
-          searchNote: result.searchNote,
         },
       ])
     } catch (caught) {
@@ -115,146 +105,87 @@ export function NeighbourhoodGuide({
     }
   }
 
+  const canSend = draft.trim().length >= 2 && !asking
+
   return (
-    <section className="mt-6" aria-labelledby="neighbourhood-guide-heading">
-      <Pane strong className="ng-pane-in border-primary/15 p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Sparkles className="size-4 text-primary" aria-hidden />
-              <h2 id="neighbourhood-guide-heading" className="ng-type-title text-foreground">
-                Neighbourhood Guide
-              </h2>
-              <StatusLabel tone="official">Gemini</StatusLabel>
-            </div>
-            <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-              Ask about visible community activity, help requests, BC Hydro, or current web sources.
-            </p>
-          </div>
-        </div>
+    <section className="mt-8" aria-labelledby="neighbourhood-guide-heading">
+      <h2 id="neighbourhood-guide-heading" className="px-1 ng-type-title text-foreground">
+        Neighbourhood Guide
+      </h2>
 
-        {session.mode !== 'authenticated' ? (
-          <div className="mt-4 rounded-[16px] bg-foreground/5 p-4">
-            <div className="flex gap-3">
-              <LockKeyhole className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
-              <div>
-                <p className="text-sm font-semibold text-foreground">Sign in to ask the guide</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Authentication protects the server-only API key and keeps community context scoped
-                  to the signed-in user.
-                </p>
-                <Link
-                  to="/app/profile"
-                  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-ink hover:underline"
+      {session.mode !== 'authenticated' ? (
+        <p className="mt-3 px-1 text-sm text-muted-foreground">
+          <Link to="/app/profile" className="font-semibold text-foreground hover:underline">
+            Sign in to ask the guide
+          </Link>
+        </p>
+      ) : (
+        <>
+          {(turns.length > 0 || asking) && (
+            <div
+              className="mt-4 max-h-80 space-y-4 overflow-y-auto px-1"
+              aria-live="polite"
+              aria-label="Neighbourhood Guide conversation"
+            >
+              {turns.map((turn) => (
+                <article
+                  key={turn.id}
+                  className={turn.role === 'user' ? 'ml-12 flex justify-end' : 'mr-8'}
                 >
-                  Open Profile to sign in
-                </Link>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <>
-            {turns.length === 0 && (
-              <div className="mt-4 flex flex-wrap gap-2">
-                {starterQuestions.map((question) => (
-                  <button
-                    key={question}
-                    type="button"
-                    className="ng-press min-h-11 rounded-full bg-foreground/6 px-3 text-left text-sm font-medium text-foreground transition-colors hover:bg-foreground/10"
-                    onClick={() => setDraft(question)}
-                  >
-                    {question}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {turns.length > 0 && (
-              <div
-                className="mt-4 max-h-80 space-y-3 overflow-y-auto pr-1"
-                aria-live="polite"
-                aria-label="Neighbourhood Guide conversation"
-              >
-                {turns.map((turn) => (
-                  <article
-                    key={turn.id}
+                  <div
                     className={
                       turn.role === 'user'
-                        ? 'ml-8 rounded-[16px] bg-primary px-4 py-3 text-primary-foreground'
-                        : 'mr-4 rounded-[16px] bg-foreground/6 px-4 py-3 text-foreground'
+                        ? 'rounded-[20px] bg-primary px-4 py-2.5 text-primary-foreground'
+                        : 'text-foreground'
                     }
                   >
-                    <p className="whitespace-pre-wrap text-sm leading-6">{turn.content}</p>
-                    {turn.searchNote && (
-                      <p className="mt-2 text-xs leading-5 opacity-80">{turn.searchNote}</p>
+                    <p className="whitespace-pre-wrap text-[15px] leading-6">{turn.content}</p>
+                    {turn.role === 'assistant' && turn.sources && turn.sources.length > 0 && (
+                      <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                        {turn.sources.map((source) => (
+                          <li key={source.url}>
+                            <a
+                              href={source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs font-medium text-muted-foreground underline decoration-foreground/20 underline-offset-2 hover:text-foreground"
+                            >
+                              {sourceLabel(source)}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     )}
-                    {turn.sources && turn.sources.length > 0 && (
-                      <div className="mt-3 border-t border-current/10 pt-2">
-                        <p className="text-xs font-semibold opacity-70">Sources</p>
-                        <ul className="mt-1 space-y-1">
-                          {turn.sources.map((source) => (
-                            <li key={source.url}>
-                              <a
-                                href={source.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex min-h-8 items-center gap-1 text-xs font-semibold text-primary-ink hover:underline"
-                              >
-                                {sourceLabel(source)}
-                                <ExternalLink className="size-3" aria-hidden />
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </article>
-                ))}
-                {asking && (
-                  <div className="mr-4 rounded-[16px] bg-foreground/6 px-4 py-3 text-sm text-muted-foreground">
-                    Checking your community context…
                   </div>
-                )}
-              </div>
-            )}
+                </article>
+              ))}
+              {asking && <p className="text-sm text-muted-foreground">…</p>}
+            </div>
+          )}
 
-            <form className="mt-4" onSubmit={submitQuestion}>
-              <label htmlFor="neighbourhood-guide-question" className="sr-only">
-                Ask Neighbourhood Guide
-              </label>
-              <Textarea
-                id="neighbourhood-guide-question"
-                value={draft}
-                maxLength={1_000}
-                rows={3}
-                placeholder="What is happening nearby right now?"
-                onChange={(event) => setDraft(event.target.value)}
-              />
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={searchWeb}
-                    className="size-4 accent-primary"
-                    onChange={(event) => setSearchWeb(event.target.checked)}
-                  />
-                  <Globe2 className="size-4" aria-hidden />
-                  Search the live web
-                </label>
-                <Button type="submit" loading={asking} disabled={draft.trim().length < 2}>
-                  <Send aria-hidden />
-                  Ask
-                </Button>
-              </div>
-            </form>
-          </>
-        )}
-
-        <p className="mt-3 text-xs leading-5 text-muted-foreground">
-          AI can make mistakes. Check linked sources. Community content may be unverified; for
-          immediate danger, call 911.
-        </p>
-      </Pane>
+          <form className="relative mt-3" onSubmit={submitQuestion}>
+            <label htmlFor="neighbourhood-guide-question" className="sr-only">
+              Ask Neighbourhood Guide
+            </label>
+            <input
+              id="neighbourhood-guide-question"
+              value={draft}
+              maxLength={1_000}
+              placeholder="Ask anything"
+              className="h-14 w-full rounded-full border border-foreground/10 bg-foreground/8 pl-5 pr-16 text-base text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              onChange={(event) => setDraft(event.target.value)}
+            />
+            <button
+              type="submit"
+              aria-label="Send"
+              disabled={!canSend}
+              className="ng-press absolute top-1.5 right-1.5 grid size-11 place-items-center rounded-full bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
+            >
+              <ArrowUp className="size-5" aria-hidden />
+            </button>
+          </form>
+        </>
+      )}
     </section>
   )
 }

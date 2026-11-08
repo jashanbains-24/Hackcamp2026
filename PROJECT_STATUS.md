@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-08, 12:00 a.m. Vancouver time
-**Current stage:** Guide and n8n merged; production redeploy pending
-**Shared branch:** `main` at `7b79a56` (PR #11)
-**Active lane in this checkout:** Developer C on clean `main`
+**Last updated:** 2026-11-08, 12:21 a.m. Vancouver time
+**Current stage:** Home page polish on `polish/home-quiet`; production redeploy still waiting
+**Shared branch:** `main` at `c3ec84e` (PR #11 plus the n8n status commit)
+**Active lane in this checkout:** Developer C on `polish/home-quiet`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -47,7 +47,7 @@
 
 - **Developer A:** UI/presentation work merged; Figma share URL remains an owner action.
 - **Developer B:** Communities and home sync merged; no further feature work expected.
-- **Developer C:** Help/Beacon, Neighbourhood Guide, and n8n event are merged. Redeploy is next.
+- **Developer C:** Help/Beacon, Neighbourhood Guide, and n8n event are merged. Home quieting is on `polish/home-quiet`. Redeploy waits until the page polish is accepted.
 
 **Figma URL:** Pending owner create/share — follow [`docs/FIGMA_HANDOFF.md`](./docs/FIGMA_HANDOFF.md).
 Paste the share link here and in `README.md` when ready.
@@ -111,8 +111,9 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 
 ## Next safe handoff
 
-PR #11 is merged and this checkout is on clean `main`. Redeploy before treating the live site as
-having the Guide or n8n event. A local `WIP dark pastel palette` stash remains on purpose.
+Home polish is on `polish/home-quiet`. Open a PR when the page polish is ready, then redeploy.
+The live site still does not have the Guide or n8n event. A local `WIP dark pastel palette` stash
+remains on purpose.
 
 ## Session log template
 
@@ -127,6 +128,14 @@ having the Guide or n8n event. A local `WIP dark pastel palette` stash remains o
 ```
 
 ## Session history
+
+### 2026-11-08 00:15 — Developer C (`polish/home-quiet`)
+
+- Quieted the home page only. The mobile NeighbourGrid bar is hidden on `/app`; other pages keep it.
+- The greeting is the first line. Newton, Surrey is plain text under it. Changing home community stays on Profile.
+- Neighbourhood Guide is a title plus one chat field with an arrow send button. Starter prompts, the Gemini badge, the search toggle, and the AI disclaimer are gone.
+- Tests run: `npm run type-check` and `npm run lint` passed. Checked `/app?demo=1` at 390px and 1280px.
+- Next: quiet the Communities list, then open a PR. Redeploy after the polish is accepted.
 
 ### 2026-11-08 00:00 — Developer C (`main`)
 

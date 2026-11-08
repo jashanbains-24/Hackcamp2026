@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronRight, ExternalLink, MapPin } from 'lucide-react'
-import { Button, Modal } from '@/components/ui'
+import { ChevronRight, ExternalLink } from 'lucide-react'
+import { Button } from '@/components/ui'
 import {
   ErrorPanel,
   Footnote,
@@ -32,28 +31,20 @@ export default function AppHomePage() {
   const session = useNeighbourGridSession()
   const aggregates = useHomeAggregates(session)
   const official = useOfficialUpdates()
-  const [showHomePicker, setShowHomePicker] = useState(false)
-  const [savingHome, setSavingHome] = useState(false)
 
   const greeting = `${timeOfDayGreeting()}, ${session.displayName}`
   const ready = aggregates.status === 'ready' || aggregates.status === 'demo'
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-[720px] px-4 pb-5 pt-2 sm:px-6 sm:py-8">
       <header className="px-1">
         <div className="flex flex-wrap items-center gap-2.5">
           <h1 className="ng-type-display text-foreground">{greeting}</h1>
           {session.isDemo && <StatusLabel tone="demo">DEMO</StatusLabel>}
         </div>
-        <button
-          type="button"
-          className="ng-press ng-glass-pill mt-3 inline-flex min-h-10 items-center gap-1.5 pl-3 pr-2 text-sm font-semibold text-foreground"
-          onClick={() => setShowHomePicker(true)}
-        >
-          <MapPin className="size-4 text-primary" aria-hidden />
+        <p className="mt-1 text-sm font-medium text-muted-foreground">
           {session.homeCommunity.name}, {session.homeCommunity.municipality}
-          <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
-        </button>
+        </p>
       </header>
 
       <Pane strong className="ng-pane-in mt-6 p-4 sm:p-5" aria-labelledby="help-heading">
@@ -276,43 +267,6 @@ export default function AppHomePage() {
         Official updates are Surrey-wide from BC Hydro, not verified for{' '}
         {session.homeCommunity.name}. Help is opt-in · Emergency? Call 911.
       </Footnote>
-
-      <Modal open={showHomePicker} onClose={() => setShowHomePicker(false)} size="sm">
-        <Modal.Header>
-          <Modal.Title>Home community</Modal.Title>
-          <Modal.Description>Approximate neighbourhood only.</Modal.Description>
-        </Modal.Header>
-        <div className="ng-row-divide overflow-hidden rounded-[16px] border border-border">
-          {session.communitiesCatalog.map((community) => {
-            const selected = community.id === session.homeCommunityId
-            return (
-              <button
-                key={community.id}
-                type="button"
-                disabled={savingHome}
-                className="ng-row min-h-12 w-full justify-between text-left text-sm font-medium text-foreground transition hover:bg-foreground/5 disabled:opacity-60"
-                onClick={() => {
-                  setSavingHome(true)
-                  void session.setHomeCommunityId(community.id).finally(() => {
-                    setSavingHome(false)
-                    setShowHomePicker(false)
-                  })
-                }}
-              >
-                <span>
-                  {community.name}, {community.municipality}
-                </span>
-                {selected && <StatusLabel tone="official">Home</StatusLabel>}
-              </button>
-            )
-          })}
-        </div>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowHomePicker(false)}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   )
 }
