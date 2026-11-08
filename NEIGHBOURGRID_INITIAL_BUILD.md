@@ -5,6 +5,11 @@
 > **Team:** 3 developers, working with coding agents.  
 > **Deadline:** Devpost was reported as **November 8, 2026 at 12:15 p.m. PDT**. Vancouver switches to PST on November 1. **Do not assume the displayed timezone is correct**: open Devpost and confirm its live countdown. **Internal target: have everything submitted by 10:30 a.m. Vancouver local time on Nov 8** (or earlier if countdown requires it).  
 > **First instruction:** Complete **PHASE 0 ONLY**, validate it, commit/push it, then STOP and give the team the three workstream handoffs. Do not independently implement the whole app in the initial run.
+>
+> **Post-Phase 0 synchronization note (Nov 7, 2026):** Phase 0 is complete and the DeepSpace app
+> is registered. The team added a serial UI gate: Developer A/UI lead merges `feat/ui-overhaul`
+> before A/B/C create their parallel feature branches. `PROJECT_STATUS.md`, `TEAM_HANDOFF.md`, and
+> `AGENTS.md` are the live execution instructions where they differ from the original kickoff plan.
 
 ---
 

@@ -19,19 +19,22 @@ This repository currently contains **Phase 0 only**:
 Persistent records, authentication UX, community posting, help matching, realtime updates, the BC
 Hydro feed, Gemini, and n8n are intentionally not implemented yet.
 
+The DeepSpace app is registered. The next gate is Developer A’s shared Figma/design-system and UI
+overhaul; parallel A/B/C feature branches start only after that work is merged into `main`.
+
 ## Local setup
 
 Requirements: Node.js 22.15+ (or Node 24/26) and npm 11.6+.
 
 ```bash
-git clone <shared-repository-url>
+git clone https://github.com/jashanbains-24/Hackcamp2026.git
 cd Hackcamp2026
 npm install
 npm run dev
 ```
 
-Open `http://localhost:8780`. One documented command, `npm run dev`, starts the mock-only Phase 0
-app without shared service credentials.
+Open `http://localhost:8780`. `npm run dev` starts the mock-capable UI; `npm run dev:deepspace`
+starts the full registered DeepSpace runtime.
 
 No application secrets are required for Phase 0. Copy `.env.example` only when a later workstream
 adds an integration:
@@ -51,10 +54,25 @@ cp .env.example .env
 
 The technology decision and fallback threshold are recorded in `DECISIONS.md`.
 
-The app is not registered to a DeepSpace account because no credentials were available during
-Phase 0. Person A should run `npx deepspace auth login && npx deepspace app init` once for the
-shared project. Until then, Vite uses a local-only preview identity; the normal DeepSpace build
-plugin turns on automatically after registration.
+The DeepSpace app registration is complete. Teammates who need to run the full runtime, manage
+secrets, or deploy must sign in and be trusted DeepSpace collaborators. Collaborator access
+includes plaintext access to every app secret; do not grant it merely for UI work.
+
+When a feature developer needs DeepSpace access, the owner runs:
+
+```bash
+npx deepspace app collaborators add teammate@example.com
+```
+
+The teammate signs in with the invited email and accepts the emailed invitation, or runs:
+
+```bash
+npx deepspace auth login
+npx deepspace app collaborators invites
+npx deepspace app collaborators accept <app-id>
+```
+
+Success means the shared app appears in `npx deepspace app list` with role `collaborator`.
 
 ## Useful commands
 
@@ -66,6 +84,28 @@ npm run type-check # TypeScript validation
 npm run test:unit  # Unit/prerender checks
 npm run build      # Production build
 ```
+
+## Secure Gemini and n8n setup
+
+Do not put real values in `.env`, `.env.example`, client code, `VITE_*`, chat, or commits. Do not
+manually edit `.dev.vars`; DeepSpace regenerates it from the encrypted app store.
+
+The user already has the Gemini API key. Wait until Person C has implemented the server endpoint,
+then ask the user to run these commands locally from the repository:
+
+```bash
+read -s GEMINI_API_KEY
+printf 'GEMINI_API_KEY=%s\n' "$GEMINI_API_KEY" | npx deepspace secrets upload -
+unset GEMINI_API_KEY
+npx deepspace secrets list
+```
+
+Success means `GEMINI_API_KEY` appears by name in the masked list. Restart
+`npm run dev:deepspace`; after a production secret change, redeploy. Server code reads only
+`env.GEMINI_API_KEY`.
+
+When the n8n account and server workflow are ready, use the same pattern with
+`N8N_WEBHOOK_URL`. Keep the webhook server-side and send only anonymized, replay-safe demo events.
 
 ## Demo and safety notes
 
@@ -85,17 +125,34 @@ npm run build      # Production build
 - `src/shared/demo-data.ts` — centralized fictional demo data
 - `src/styles.css` — NeighbourGrid visual tokens and global accessibility behavior
 - `TEAM_HANDOFF.md` — file ownership and the three next workstreams
+- `PROJECT_STATUS.md` — current stage, blockers, test evidence, and next safe handoff
 
 ## Team workflow
 
-All three developers should first pull this baseline, run the checks above, and then branch:
+The team uses a serial UI gate before parallel feature work:
 
 ```bash
+# Owner first pushes the registered/documented Phase 0 baseline.
+
+# Developer A:
 git pull origin main
-git switch -c feat/home-alerts       # Person A
-# or feat/communities                # Person B
-# or feat/help-beacon                # Person C
+git switch -c feat/ui-overhaul
+# Implement and verify shared Figma/design-system/UI work, then push and merge.
+
+# After the UI overhaul is merged, all three developers:
+git switch main
+git pull origin main
+git switch -c feat/home-alerts       # A
+# or: git switch -c feat/communities # B
+# or: git switch -c feat/help-beacon # C
 ```
 
 Do not silently rename shared interfaces or edit another lane’s owned routes. Coordinate shared
-schema/auth changes through Person A.
+schema/auth changes through Person A. Every coding agent must read `AGENTS.md` and update
+`PROJECT_STATUS.md` before handing work to another agent.
+
+## Design file
+
+Developer A/UI lead owns the shared Figma file. Add its share URL here after creation:
+
+**Figma:** Pending Developer A UI-overhaul gate.

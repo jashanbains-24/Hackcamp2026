@@ -15,11 +15,9 @@ the team to wire after synchronization.
 
 **Local result:** The scaffold installed locally. The first dependency install stopped because the
 laptop had very little free disk space; removing only the partial generated `node_modules` and
-retrying completed successfully. DeepSpace app registration then returned `not_authenticated`;
-no account credentials were available. Phase 0 therefore runs through Vite with a local-only
-preview identity. `vite.config.ts` detects a real app ID and automatically restores the SDK build
-plugin after Person A runs `deepspace auth login` and `deepspace app init`. No ID was invented or
-written into `wrangler.toml`.
+retrying completed successfully. The owner subsequently completed DeepSpace authentication and
+app registration. `wrangler.toml` now contains the server-minted app ID, so the normal DeepSpace
+build/runtime path is active.
 
 ## Fallback threshold
 
@@ -35,6 +33,32 @@ Supabase, record the change here, and do not operate two databases in parallel.
 - Shared domain interfaces live in `src/shared/types.ts`.
 - Seed content lives only in `src/shared/demo-data.ts`.
 - Phase 0 does not ingest RSS, call AI, trigger automations, or persist user changes.
+
+## 2026-11-07 — Serial UI gate before feature branches
+
+**Decision:** Developer A/UI lead first overhauls the shared Figma/design system, app shell,
+landing, and homepage on `feat/ui-overhaul`. B and C do not start feature work from the old visual
+baseline. After A merges into `main`, all three pull and create their normal A/B/C branches.
+
+**Why:** This avoids three agents independently rebuilding shared UI and reduces conflicts in the
+shell, tokens, and reusable components. Developer A continues into the platform/home lane after
+the UI gate.
+
+## 2026-11-07 — Sponsor integrations
+
+- DeepSpace remains the single auth, records, realtime, secrets, and deployment platform. Do not
+  add Auth0 or a parallel database.
+- Gemini is reserved for an editable Request Clarity Assistant in Person C’s flow. A generic
+  chatbot is intentionally rejected as less relevant to the core product.
+- n8n is optional and follows, rather than precedes, a working two-user help lifecycle. Its event
+  must be server-side, anonymized, minimal, and safe to replay.
+- Other sponsor products are not added solely for prize eligibility.
+
+## 2026-11-07 — Secrets
+
+DeepSpace’s encrypted per-app secrets store is the only source of truth for Gemini and n8n
+credentials. `.dev.vars` is generated and must not be edited or committed. Client-side `VITE_*`
+secrets are forbidden.
 
 ## Safety and product language
 

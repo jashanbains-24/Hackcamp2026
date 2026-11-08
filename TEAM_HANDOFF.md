@@ -1,9 +1,39 @@
 # NeighbourGrid team handoff
 
-Phase 0 is the shared baseline. Pull it, run `npm install`, then confirm `npm run build` before
-starting a lane. Keep `src/shared/types.ts` stable until all three developers agree on a change.
+Read `AGENTS.md` and `PROJECT_STATUS.md` first. `PROJECT_STATUS.md` is the live operational record;
+this file defines stable ownership and acceptance criteria.
 
-## Shared foundation
+## Gate 1 — Developer A UI overhaul before parallel work
+
+Developer A is the UI lead. A pulls the registered Phase 0 baseline, creates
+`feat/ui-overhaul`, and owns the shared Figma file plus the initial visual overhaul.
+
+**A may edit during this gate:**
+
+- `src/styles.css`, theme tokens, and shared visual primitives
+- `src/components/neighbourgrid.tsx` and app shell/navigation
+- `src/pages/index.tsx`
+- `src/pages/(app)/app/index.tsx`
+- visual presentation of placeholder routes without implementing their backend behavior
+- UI smoke tests and documentation screenshots
+
+**UI-gate requirements:**
+
+- Design at 390px mobile first, then desktop.
+- Preserve working routes, centralized mock data, and shared domain interfaces.
+- Every visible action navigates, opens a labelled preview, or gives clear feedback.
+- Include loading, empty, error, focus, hover, disabled, and status treatments.
+- Maintain 44px tap targets, keyboard focus, contrast, reduced motion, source labels, and explicit
+  demo labels.
+- Figma should include reusable components, mobile/desktop home, community, help, beacon
+  confirmation, and key interaction states. Add its share URL to `README.md` and
+  `PROJECT_STATUS.md`.
+- Do not start community persistence or help matching during this gate.
+
+After verification, A pushes and merges the UI overhaul into `main`. B and C then pull that exact
+baseline before creating their feature branches.
+
+## Shared foundation after the UI gate
 
 - App chrome and navigation: `src/components/neighbourgrid.tsx`
 - Visual tokens/global behavior: `src/styles.css`
@@ -11,80 +41,88 @@ starting a lane. Keep `src/shared/types.ts` stable until all three developers ag
 - Fictional seeds: `src/shared/demo-data.ts`
 - DeepSpace provider boundary: `src/pages/(app)/_layout.tsx`
 - App route shell: `src/pages/(app)/app/_layout.tsx`
+- Live progress and blockers: `PROJECT_STATUS.md`
 
-Person A owns shared auth, record schemas, providers, and shell-level changes after Phase 0.
+Keep `src/shared/types.ts` stable until all three developers agree on a change.
 
 ## Person A — Platform, home, official updates, deployment
 
-**Branch:** `feat/home-alerts`
+**Feature branch after UI merge:** `feat/home-alerts`
 
-**Own these routes/files:**
+**Own:**
 
-- `src/pages/index.tsx`
-- `src/pages/(app)/app/index.tsx`
-- `src/pages/(app)/app/activity.tsx`
-- `src/pages/(app)/app/profile.tsx`
-- shared DeepSpace schemas/auth/provider configuration and deployment
+- `/`, `/app`, `/app/activity`, `/app/profile`
+- shared shell and reusable global UI
+- DeepSpace auth, shared schemas, providers, permissions coordination, and deployment
+- official BC Hydro server fetch and home aggregation
 
-**Next delivery:**
+**Deliver:**
 
-1. Add the demo/auth account flow and persist home-community selection.
-2. Connect aggregate counts and latest items through explicit service/hooks.
-3. Add a server-side BC Hydro RSS fetch only after verifying the real official feed URL; include
-   source, event time, fetched time, cache, and honest empty/error states.
-4. Keep the simulated scenario visually separate.
-5. Deploy early and verify on a phone.
+1. DeepSpace auth/demo-account flow and persisted home community.
+2. Shared record schemas and server-enforced identity/permission conventions for B/C.
+3. Home counts/latest items through documented hooks or services.
+4. Verified BC Hydro feed URL, server fetch, ~15-minute cache, source/event/fetched timestamps,
+   and honest empty/error handling.
+5. Deployed phone-accessible URL and integration checks.
 
-Coordinate with B/C on hook exports. Do not build their post or help views.
+Do not build B’s post flows or C’s help flows. Announce schema changes before merging them.
 
 ## Person B — Communities, membership, posts, comments
 
-**Branch:** `feat/communities`
+**Feature branch after UI merge:** `feat/communities`
 
-**Own these routes/files:**
+**Own:**
 
-- `src/pages/(app)/app/communities/index.tsx`
-- `src/pages/(app)/app/communities/[slug].tsx`
-- add `/app/communities/:slug/posts/:id`
-- community/post/comment components and hooks
+- `/app/communities`
+- `/app/communities/:slug`
+- `/app/communities/:slug/posts/:id`
+- community, membership, post, and comment components/hooks/services
 
-**Next delivery:**
+**Deliver:**
 
 1. Discover, join, request-to-join, pending state, and home selection.
-2. Community feed with create post, post details, and one-level comments.
-3. Approved-member write rules and author-only edits.
-4. Real-time post/comment updates if viable.
-5. Return stable hooks such as `useCommunityFeed` and `useMembership` for Person A.
+2. Community feed, create post, post detail, and one-level comments.
+3. Approved-member write rules and author-only mutation checks.
+4. Real-time post/comment updates where reliable.
+5. Stable `useCommunityFeed`/`useMembership`-style exports for A.
 
-Keep seeded disruption content marked community-reported or demo. Do not edit Home or Help roots.
+Keep community disruption reports labelled unverified/demo as appropriate. Do not edit Home or
+Help roots.
 
-## Person C — Help network, beacon, matching, realtime
+## Person C — Help network, beacon, Gemini, n8n
 
-**Branch:** `feat/help-beacon`
+**Feature branch after UI merge:** `feat/help-beacon`
 
-**Own these routes/files:**
+**Own:**
 
-- `src/pages/(app)/app/help/index.tsx`
-- `src/pages/(app)/app/help/new.tsx`
-- `src/pages/(app)/app/beacon/new.tsx`
-- help cards, forms, responses, status hooks/services
+- `/app/help`
+- `/app/help/new`
+- `/app/beacon/new`
+- help cards/forms, responses, lifecycle, realtime behavior
+- Gemini Request Clarity Assistant
+- optional n8n workflow after the core lifecycle works
 
-**Next delivery:**
+**Deliver in this order:**
 
-1. Create ordinary request/offer items with category and lifecycle.
-2. Implement “I can help,” requester acceptance, and owner-only resolve/cancel.
-3. Implement beacon confirmation, 911 disclaimer, allowed targets, cooldown, and demo isolation.
-4. Prioritize reliable two-browser realtime synchronization.
-5. Expose aggregate count hooks to Person A.
+1. Manual request/offer form and status lifecycle.
+2. “I can help,” requester acceptance, and owner-only resolve/cancel.
+3. Beacon confirmation, 911 disclaimer, allowed targets, cooldown, and demo isolation.
+4. Reliable two-browser/two-user realtime synchronization.
+5. Editable Gemini suggestions for title/category/summary/tags/privacy note; never auto-publish or
+   infer emergency severity.
+6. Only then, an anonymized replay-safe n8n event/workflow and aggregate hooks for A.
 
-Do not add chat, exact geolocation, mass notifications, or public contact details. Add n8n only
-after matching works.
+The user already has the Gemini API key. Ask them to follow the secure setup in `README.md` only
+when the server endpoint is ready. The n8n account is pending and does not block steps 1–4.
 
-## Integration protocol
+Do not add generic chat, exact geolocation, public contact details, medical triage, mass
+notifications, or automatic external broadcasting.
 
-- Person A owns shared schemas and auth configuration.
-- Propose contract changes in a small commit before depending on them.
-- Keep route ownership strict; avoid broad formatting passes.
-- Merge working vertical slices every couple of hours.
-- Every lane includes a smoke test and a short demo script.
-- Preserve a working end-to-end flow over architecture cleanup near the deadline.
+## Integration and agent protocol
+
+- Person A owns shared schemas/auth/provider configuration.
+- Each lane updates `PROJECT_STATUS.md` at every safe handoff.
+- Each lane includes tests and a short demo script.
+- Use small commits and pull current `main` before proposing a merge.
+- Never claim a sponsor integration on Devpost until its actual code path and demo were verified.
+- Preserve the working end-to-end path over architecture cleanup near the deadline.
