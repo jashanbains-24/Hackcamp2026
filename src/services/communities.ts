@@ -1,63 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Comment, Community, Membership, Post, PostKind } from '@/shared/types'
-import { communities as seededCommunities, demoPosts, demoUser, postAuthors } from '@/shared/demo-data'
+import { communities as communityCatalog, demoPosts, demoUser, postAuthors } from '@/shared/demo-data'
+import { useNeighbourGridSession } from '@/neighbourgrid/exports'
+
+export { communityCatalog }
 
 export const currentUserId = demoUser.id
-
-const extraCommunities: Community[] = [
-  {
-    id: 'community-cloverdale',
-    slug: 'cloverdale',
-    name: 'Cloverdale',
-    municipality: 'Surrey',
-    description: 'Neighbour conversations, local resources, and practical support.',
-    visibility: 'public',
-    adjacentCommunityIds: ['community-newton', 'community-city-centre'],
-    createdAt: '2026-11-07T20:00:00.000Z',
-  },
-  {
-    id: 'community-city-centre',
-    slug: 'city-centre',
-    name: 'City Centre',
-    municipality: 'Surrey',
-    description: 'A shared space for people living and spending time in central Surrey.',
-    visibility: 'public',
-    adjacentCommunityIds: ['community-newton', 'community-cloverdale'],
-    createdAt: '2026-11-07T20:00:00.000Z',
-  },
-  {
-    id: 'community-ladner',
-    slug: 'ladner',
-    name: 'Ladner',
-    municipality: 'Delta',
-    description: 'A calm place for local updates and neighbour-to-neighbour offers.',
-    visibility: 'request_to_join',
-    adjacentCommunityIds: ['community-north-delta'],
-    createdAt: '2026-11-07T20:00:00.000Z',
-  },
-  {
-    id: 'community-north-delta',
-    slug: 'north-delta',
-    name: 'North Delta',
-    municipality: 'Delta',
-    description: 'Connect with neighbours around everyday community needs.',
-    visibility: 'public',
-    adjacentCommunityIds: ['community-ladner', 'community-newton'],
-    createdAt: '2026-11-07T20:00:00.000Z',
-  },
-  {
-    id: 'community-burnaby-metrotown',
-    slug: 'burnaby-metrotown',
-    name: 'Burnaby Metrotown',
-    municipality: 'Burnaby',
-    description: 'Local conversations and resource sharing around Metrotown.',
-    visibility: 'request_to_join',
-    adjacentCommunityIds: [],
-    createdAt: '2026-11-07T20:00:00.000Z',
-  },
-]
-
-export const communityCatalog = [...seededCommunities, ...extraCommunities]
 
 const initialMemberships: Membership[] = [
   {
@@ -80,7 +28,6 @@ const initialComments: Comment[] = [
 ]
 
 const storageKey = 'neighbourgrid.communities.v1'
-const homeCommunityKey = 'neighbourgrid.home-community'
 type CommunityState = { memberships: Membership[]; posts: Post[]; comments: Comment[] }
 
 const seedState: CommunityState = {
@@ -121,24 +68,6 @@ export function getCommunityBySlug(slug: string | undefined) {
 
 export function getCommunityById(id: string | undefined) {
   return communityCatalog.find((community) => community.id === id)
-}
-
-export function useHomeCommunity() {
-  const [homeCommunityId, setHomeCommunityId] = useState(
-    () => (typeof window === 'undefined' ? demoUser.homeCommunityId : window.localStorage.getItem(homeCommunityKey)) ??
-      demoUser.homeCommunityId,
-  )
-
-  useEffect(() => {
-    const onHomeChange = (event: Event) => {
-      const next = (event as CustomEvent<string>).detail
-      if (next) setHomeCommunityId(next)
-    }
-    window.addEventListener('neighbourgrid:home-community', onHomeChange)
-    return () => window.removeEventListener('neighbourgrid:home-community', onHomeChange)
-  }, [])
-
-  return { homeCommunityId }
 }
 
 export function getAuthorName(authorId: string) {
@@ -210,6 +139,7 @@ export function useCommunityState() {
 
 export function useMembership(communityId: string | undefined) {
   const { state, update } = useCommunityState()
+  const session = useNeighbourGridSession()
   const membership = communityId ? getMembership(communityId, state.memberships) : undefined
 
   const join = useCallback(() => {
@@ -227,16 +157,11 @@ export function useMembership(communityId: string | undefined) {
     })
   }, [communityId, membership?.status, state, update])
 
-  const selectHome = useCallback(() => {
+  const selectHome = useCallback(async () => {
     if (!communityId || !canPublish(communityId, state.memberships)) return false
-    update({
-      ...state,
-      memberships: state.memberships,
-    })
-    window.localStorage.setItem(homeCommunityKey, communityId)
-    window.dispatchEvent(new CustomEvent('neighbourgrid:home-community', { detail: communityId }))
+    await session.setHomeCommunityId(communityId)
     return true
-  }, [communityId, state, update])
+  }, [communityId, session, state.memberships])
 
   return { membership, join, selectHome, isApproved: membership?.status === 'approved' }
 }

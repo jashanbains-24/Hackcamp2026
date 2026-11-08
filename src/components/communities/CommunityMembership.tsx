@@ -33,7 +33,7 @@ export function CommunityMembership({
           Home community
         </StatusLabel>
       ) : (
-        <Button variant="outline" onClick={selectHome}>
+        <Button variant="outline" onClick={() => void selectHome()}>
           <Home className="size-4" aria-hidden />
           Make home community
         </Button>
@@ -42,4 +42,3 @@ export function CommunityMembership({
     </div>
   )
 }
-
