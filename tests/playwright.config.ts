@@ -34,10 +34,13 @@ export default defineConfig({
     },
   },
   webServer: {
-    // Bind the local test server directly. A bare `--host` asks Vite to
-    // enumerate every interface, which fails in restricted containers before
-    // the app can start (`uv_interface_addresses`).
-    command: `npx vite --port ${PORT} --strictPort --host 127.0.0.1`,
+    // Prefer Vite when the environment can run the Cloudflare plugin. In
+    // restricted sandboxes (EMFILE / Preferences EPERM), fall back to the
+    // already-built dist/client static server for UI smoke.
+    command:
+      process.env.SMOKE_STATIC === '1'
+        ? `node tests/static-smoke-server.mjs ${PORT}`
+        : `npx vite --port ${PORT} --strictPort --host 127.0.0.1`,
     cwd: '..',
     // Phase 0 is mock-only and intentionally boots without a registered
     // DeepSpace account, so readiness gates on the public landing page.

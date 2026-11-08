@@ -66,3 +66,17 @@ secrets are forbidden.
 - The preview cannot send a beacon.
 - Official and simulated information are visually and semantically separate.
 - Approximate community is used instead of geolocation or precise addresses.
+
+## 2026-11-07 — BC Hydro Surrey feed URL
+
+**Decision:** Use the municipality feed linked from the official RSS index as
+`https://www.bchydro.com/rss/outages/surrey.xml`.
+
+**Why:** Verified by opening
+https://www.bchydro.com/safety-outages/power-outages/outages_rss.html and following the
+“Surrey” municipality link. The Worker fetches and caches this feed for ~15 minutes and must
+not claim Surrey municipality items are Newton-specific.
+
+## 2026-11-07 — UI overhaul gate complete
+
+**Decision:** Parallel A/B/C feature branches start from `main` at/after `ed5c7ba`.

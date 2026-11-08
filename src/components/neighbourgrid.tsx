@@ -12,6 +12,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useNeighbourGridSession } from '@/neighbourgrid/session'
 
 export function BrandMark({
   compact = false,
@@ -243,6 +244,13 @@ function isActive(pathname: string, to: string, exact: boolean) {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
+  const session = useNeighbourGridSession()
+  const initial = session.displayName.slice(0, 1).toUpperCase() || 'N'
+  const modeLine = session.isDemo
+    ? 'Demo mode · Fictional Newton preview. Not an emergency service.'
+    : session.mode === 'authenticated'
+      ? `${session.homeCommunity.name} · Not an emergency service.`
+      : 'Sign in or enter demo mode from Profile. Not an emergency service.'
 
   return (
     <div className="min-h-dvh bg-background">
@@ -264,9 +272,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             to="/app/profile"
             viewTransition
             className="grid size-11 place-items-center rounded-full bg-secondary font-bold text-foreground ring-1 ring-border"
-            aria-label="Open Maya's profile"
+            aria-label={`Open ${session.displayName}'s profile`}
           >
-            M
+            {initial}
           </Link>
         </div>
       </header>
@@ -306,18 +314,16 @@ export function AppShell({ children }: { children: ReactNode }) {
             })}
           </nav>
           <div className="mt-auto border-t border-border px-1 pt-4">
-            <p className="text-xs leading-5 text-muted-foreground">
-              Demo mode · Fictional Newton preview. Not an emergency service.
-            </p>
+            <p className="text-xs leading-5 text-muted-foreground">{modeLine}</p>
             <Link
               to="/app/profile"
               viewTransition
               className="mt-3 inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-1 text-sm font-semibold text-foreground hover:bg-muted"
             >
               <span className="grid size-8 place-items-center rounded-full bg-secondary text-sm font-bold text-foreground">
-                M
+                {initial}
               </span>
-              Maya
+              {session.displayName}
             </Link>
           </div>
         </aside>
