@@ -1,6 +1,6 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 10:59 p.m. Vancouver time
+**Last updated:** 2026-11-07, 11:08 p.m. Vancouver time
 **Current stage:** Gemini Neighbourhood Guide integration and owner key verification
 **Shared branch:** `main` at `48b7fd1` (UI animation polish merged via PR #9)
 **Active lane in this checkout:** Developer C / owner AI integration on `feat/neighbourhood-guide`
@@ -130,6 +130,17 @@ and verifies one authenticated, source-linked answer. Then open/merge the PR and
 ```
 
 ## Session history
+
+### 2026-11-07 23:08 — Developer C (`feat/neighbourhood-guide`)
+
+- Fixed local authenticated Guide requests incorrectly stopping when DeepSpace could validate the
+  session cookie but could not mint a separate bearer token.
+- The client now sends the bearer token when available and otherwise lets the server validate the
+  existing same-origin session cookie; the endpoint remains authenticated server-side.
+- Added a regression test for the cookie-authenticated fallback.
+- Verification: `npm run type-check` ✅, `npm run lint` ✅, `npm run test:unit` ✅
+  (8 files, 18 tests), IDE diagnostics ✅.
+- Next: refresh the local app and retry the Guide question; then verify source links.
 
 ### 2026-11-07 22:59 — Developer C (`feat/neighbourhood-guide`)
 

@@ -55,14 +55,13 @@ export async function askNeighbourhoodGuide(input: {
   searchWeb: boolean
 }): Promise<GuideAnswer> {
   const token = await getAuthToken()
-  if (!token) throw new Error('Sign in before using Neighbourhood Guide.')
 
   const response = await fetch('/api/assistant/ask', {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(input),
   })

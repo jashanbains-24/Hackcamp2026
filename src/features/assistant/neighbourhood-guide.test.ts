@@ -1,0 +1,55 @@
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { getAuthToken } from 'deepspace'
+import { askNeighbourhoodGuide } from './neighbourhood-guide'
+
+vi.mock('deepspace', () => ({
+  getAuthToken: vi.fn(),
+}))
+
+const input = {
+  message: 'What is happening nearby?',
+  history: [],
+  searchWeb: true,
+  appContext: {
+    source: 'live' as const,
+    homeCommunity: { name: 'Newton', municipality: 'Surrey' },
+    communities: [],
+    recentPosts: [],
+    recentHelp: [],
+  },
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.clearAllMocks()
+})
+
+describe('askNeighbourhoodGuide', () => {
+  it('uses the signed-in session cookie when no bearer token is available', async () => {
+    vi.mocked(getAuthToken).mockResolvedValue(null)
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          answer: 'No current updates were found.',
+          sources: [],
+          searchedWeb: true,
+          searchQueries: [],
+          officialFetchedAt: new Date(0).toISOString(),
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(askNeighbourhoodGuide(input)).resolves.toMatchObject({
+      answer: 'No current updates were found.',
+    })
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/assistant/ask',
+      expect.objectContaining({
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    )
+  })
+})
