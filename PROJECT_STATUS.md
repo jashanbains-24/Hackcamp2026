@@ -1,7 +1,7 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:52 p.m. Vancouver time
-**Current stage:** Anonymous n8n help-request event
+**Last updated:** 2026-11-07, 11:57 p.m. Vancouver time
+**Current stage:** n8n help-request event verified locally
 **Shared branch:** `main` includes PR #10; active work is `feat/n8n-help-event`
 **Active lane in this checkout:** Developer C on `feat/n8n-help-event`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
@@ -20,8 +20,9 @@
 - The owner verified a signed-in local answer on the free Gemini plan. Live Google Search is not
   included without billing, so the Guide falls back to visible community activity and BC Hydro.
 - Production does not have the Guide until `main` is redeployed.
-- `feat/n8n-help-event` sends one anonymous event after a verified help request. The owner has
-  published the n8n workflow and uploaded both secrets. A live execution is not yet confirmed.
+- `feat/n8n-help-event` sends one anonymous event after a verified help request. The owner
+  confirmed one successful n8n execution at 11:56 p.m. on November 7. Production still needs the
+  merge and a redeploy.
 - UI overhaul is merged into `main`. Landing, shell, home, and placeholders use the NeighbourGrid
   design system.
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
@@ -93,8 +94,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
 - **Gemini API:** request clarity and the Home Guide are merged. The free model passed locally
   without web-search quota. Production still needs a redeploy.
-- **n8n:** workflow `NeighbourGrid help event` is published and both secrets are uploaded. The
-  server event is on `feat/n8n-help-event` and still needs one live execution.
+- **n8n:** workflow `NeighbourGrid help event` is published. One local signed-in help request
+  produced a successful execution. The branch still needs to be merged and deployed.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
 
@@ -108,13 +109,14 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
    4. Paste the URL into **Figma URL** above and `README.md` → Design file.
 2. **Redeploy:** from clean `main`, run `npx deepspace deploy`, then ask the signed-in Guide one
    question on the live URL. The Gemini secret is already uploaded.
-3. **n8n live check:** restart `npm run dev:deepspace`, create one signed-in help request, then
-   confirm one execution in the n8n workflow. Do not paste the webhook or token into chat.
+3. **Merge and redeploy:** merge `feat/n8n-help-event`, pull `main`, then run
+   `npx deepspace deploy`. Create one signed-in help request on the live URL and confirm a new
+   n8n execution.
 
 ## Next safe handoff
 
-Verify one n8n execution from a signed-in help request. Then merge `feat/n8n-help-event` and
-redeploy `main`. A local `WIP dark pastel palette` stash remains on purpose.
+The local n8n path is verified. Merge `feat/n8n-help-event`, pull `main`, and redeploy before
+claiming the live automation. A local `WIP dark pastel palette` stash remains on purpose.
 
 ## Session log template
 
@@ -129,6 +131,13 @@ redeploy `main`. A local `WIP dark pastel palette` stash remains on purpose.
 ```
 
 ## Session history
+
+### 2026-11-07 23:57 — Developer C (`feat/n8n-help-event`)
+
+- Owner confirmed the published n8n workflow execution succeeded in 67ms at 11:56 p.m.
+- The local signed-in help-request path is verified. Production does not have it until merge and
+  redeploy.
+- Next: merge the branch, pull `main`, redeploy, and repeat one live help request.
 
 ### 2026-11-07 23:52 — Developer C (`feat/n8n-help-event`)
 

@@ -134,8 +134,8 @@ The browser-local adapter remains only for the labelled fictional demo. Two auth
 DeepSpace test users have now completed create → respond → accept → resolve in separate browser
 contexts without refresh. That rehearsal exposed and fixed the profile bootstrap sending a
 server-owned `userBound` field. The Home Guide is merged. `feat/n8n-help-event` sends the
-anonymous help-request webhook after the record is saved. Confirm one live execution in n8n
-before claiming that sponsor track.
+anonymous help-request webhook after the record is saved. One local n8n execution succeeded.
+Repeat it on the deployed URL after the branch is merged before claiming that sponsor track.
 
 ## Integration and agent protocol
 
