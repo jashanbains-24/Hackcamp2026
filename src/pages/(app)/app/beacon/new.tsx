@@ -1,11 +1,15 @@
-import { useState, type FormEvent } from 'react'
+import { useId, useState, type FormEvent } from 'react'
 import { ArrowLeft, Radio, ShieldAlert } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Textarea, useToast } from '@/components/ui'
-import { BackLink, StatusLabel } from '@/components/neighbourgrid'
+import { Button, Checkbox, Textarea, useToast } from '@/components/ui'
+import { BackLink, Footnote, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { useHelpNetwork } from '@/features/help/help-network'
 import { helpCategoryLabels } from '@/features/help/help-store'
 import type { HelpCategory } from '@/shared/types'
+
+/* Glass check: 20px, 6px radius, themed from the glass border and the teal accent. */
+const beaconCheckbox =
+  'size-5 rounded-[6px] border-glass-border bg-card/70 shadow-[inset_0_1px_0_0_var(--color-glass-highlight)] data-[checked]:shadow-none disabled:opacity-70'
 
 const categoryTitles: Record<HelpCategory, string> = {
   power_charging: 'Power or charging help needed',
@@ -25,6 +29,7 @@ export default function BeaconPage() {
   const [targetCommunityIds, setTargetCommunityIds] = useState<string[]>([])
   const [confirming, setConfirming] = useState(false)
   const [sending, setSending] = useState(false)
+  const sendToId = useId()
   const cooldown = help.beaconCooldown
   const remainingMinutes = Math.max(1, Math.ceil(cooldown.remainingMs / 60_000))
   const adjacentCommunities = help.session.communitiesCatalog
@@ -86,37 +91,33 @@ export default function BeaconPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[640px] px-4 py-5 sm:px-6 sm:py-7">
+    <div className="mx-auto max-w-[640px] px-4 py-5 sm:px-6 sm:py-8">
       <BackLink to="/app">
         <ArrowLeft className="size-4" aria-hidden /> Home
       </BackLink>
 
-      <div className="mt-4 border-t border-border pt-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <StatusLabel tone="help">{help.source === 'live' ? 'LIVE' : 'DEMO'}</StatusLabel>
-          <StatusLabel tone="warning">High visibility</StatusLabel>
-        </div>
-        <h1 className="ng-type-display mt-3 text-foreground">Community Help Beacon</h1>
-        <p className="ng-type-body mt-3 max-w-[46ch] text-muted-foreground">
-          Ask opted-in neighbours for timely practical help in {help.session.homeCommunity.name}
-          {' '}and an eligible nearby community.
+      <div className="mt-3 flex flex-wrap items-center gap-2.5 px-1">
+        <h1 className="ng-type-display text-foreground">Help Beacon</h1>
+        <StatusLabel tone="help">{help.source === 'live' ? 'LIVE' : 'DEMO'}</StatusLabel>
+      </div>
+      <p className="ng-type-body mt-1.5 px-1 text-muted-foreground">
+        A high-visibility ask to opted-in neighbours nearby.
+      </p>
+
+      <Pane
+        className="ng-attend ng-pane-in mt-5 flex gap-3 border-beacon/30 p-4"
+        role="note"
+      >
+        <ShieldAlert className="mt-0.5 size-5 shrink-0 text-beacon" aria-hidden />
+        <p className="text-sm font-medium leading-6 text-foreground">
+          Community volunteers may not respond. For immediate danger, call 911. This is not an
+          emergency service.
         </p>
+      </Pane>
 
-        <div className="mt-6 flex flex-col gap-4">
-          <div
-            className="ng-attend flex gap-3 rounded-xl border border-beacon/30 bg-beacon/8 p-4"
-            role="note"
-          >
-            <ShieldAlert className="mt-0.5 size-5 shrink-0 text-beacon" aria-hidden />
-            <p className="text-sm font-medium leading-6 text-foreground">
-              Community volunteers may not respond. For immediate danger, call 911. This is not an
-              emergency service.
-            </p>
-          </div>
-        </div>
-
-        {!confirming ? (
-          <form className="mt-7 space-y-5" onSubmit={review}>
+      {!confirming ? (
+        <form className="mt-4" onSubmit={review}>
+          <Pane className="ng-pane-in ng-pane-in-delay-1 space-y-4 p-4 sm:p-5">
             <div>
               <label htmlFor="beacon-category" className="text-sm font-semibold text-foreground">
                 What kind of help?
@@ -125,7 +126,7 @@ export default function BeaconPage() {
                 id="beacon-category"
                 value={category}
                 onChange={(event) => setCategory(event.target.value as HelpCategory)}
-                className="mt-2 min-h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground"
+                className="ng-field mt-1.5"
               >
                 {Object.entries(helpCategoryLabels).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
@@ -134,129 +135,134 @@ export default function BeaconPage() {
             </div>
 
             <div>
-              <label htmlFor="beacon-description" className="text-sm font-semibold text-foreground">
-                Short explanation
-              </label>
+              <div className="flex items-baseline justify-between">
+                <label htmlFor="beacon-description" className="text-sm font-semibold text-foreground">
+                  Short explanation
+                </label>
+                <span className="text-xs text-muted-foreground">{description.length}/300</span>
+              </div>
               <Textarea
                 id="beacon-description"
-                className="mt-2"
+                className="mt-1.5"
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 maxLength={300}
-                rows={4}
-                placeholder="For example: looking to charge a phone for an hour this evening."
+                rows={3}
+                placeholder="Need to charge a phone for an hour this evening."
                 required
               />
-              <p className="mt-1 text-right text-xs text-muted-foreground">
-                {description.length}/300
-              </p>
             </div>
+          </Pane>
 
-            <fieldset>
-              <legend className="text-sm font-semibold text-foreground">Target communities</legend>
-              <div className="mt-2 space-y-2">
-                <label className="flex min-h-12 items-center gap-3 rounded-lg border border-border bg-card px-3">
-                  <input type="checkbox" checked disabled className="size-4 accent-primary" />
-                  <span>
-                    <span className="block text-sm font-semibold text-foreground">
-                      {help.session.homeCommunity.name}
-                    </span>
-                    <span className="block text-xs text-muted-foreground">Home community</span>
+          <fieldset className="mt-4">
+            <legend className="mb-2 px-2 text-sm font-semibold text-foreground">Send to</legend>
+            <Pane className="ng-pane-in ng-pane-in-delay-2 ng-row-divide overflow-hidden">
+              <div className="ng-row min-h-13">
+                <Checkbox
+                  checked
+                  disabled
+                  aria-labelledby={`${sendToId}-home`}
+                  className={beaconCheckbox}
+                />
+                <span id={`${sendToId}-home`} className="min-w-0 flex-1">
+                  <span className="block text-base font-semibold text-foreground">
+                    {help.session.homeCommunity.name}
                   </span>
-                </label>
-                {adjacentCommunities.map((community) => (
-                  <label
-                    key={community.id}
-                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-card px-3"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={targetCommunityIds.includes(community.id)}
-                      onChange={(event) =>
-                        setTargetCommunityIds((current) =>
-                          event.target.checked
-                            ? [...current, community.id].slice(0, 2)
-                            : current.filter((id) => id !== community.id),
-                        )
-                      }
-                      className="size-4 accent-primary"
+                  <span className="block text-sm text-muted-foreground">Home</span>
+                </span>
+              </div>
+              {adjacentCommunities.map((community) => {
+                const labelId = `${sendToId}-${community.id}`
+                const toggle = (checked: boolean) =>
+                  setTargetCommunityIds((current) =>
+                    checked
+                      ? [...current, community.id].slice(0, 2)
+                      : current.filter((id) => id !== community.id),
+                  )
+                const checked = targetCommunityIds.includes(community.id)
+                return (
+                  <div key={community.id} className="ng-row min-h-13">
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={toggle}
+                      aria-labelledby={labelId}
+                      className={beaconCheckbox}
                     />
-                    <span>
-                      <span className="block text-sm font-semibold text-foreground">
-                        {community.name}
-                      </span>
-                      <span className="block text-xs text-muted-foreground">
-                        Eligible adjacent community
-                      </span>
+                    {/* The text is the tap target for the whole row; the checkbox carries the a11y. */}
+                    <span
+                      id={labelId}
+                      className="min-w-0 flex-1 cursor-pointer select-none"
+                      onClick={() => toggle(!checked)}
+                    >
+                      <span className="block text-base font-semibold text-foreground">{community.name}</span>
+                      <span className="block text-sm text-muted-foreground">Nearby</span>
                     </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+                  </div>
+                )
+              })}
+            </Pane>
+          </fieldset>
 
-            {!cooldown.available && (
-              <p className="rounded-lg bg-advisory px-3 py-2.5 text-sm text-advisory-foreground">
-                A demo beacon was recently created. Try again in about {remainingMinutes} minutes.
-              </p>
-            )}
+          {!cooldown.available && (
+            <p className="mt-4 rounded-[14px] bg-advisory px-3.5 py-2.5 text-sm text-advisory-foreground">
+              Recent beacon sent. Try again in about {remainingMinutes} min.
+            </p>
+          )}
 
+          <Button
+            type="submit"
+            size="lg"
+            disabled={!cooldown.available}
+            className="mt-4 w-full bg-beacon text-beacon-foreground hover:bg-beacon/90"
+          >
+            Review beacon
+          </Button>
+        </form>
+      ) : (
+        <Pane strong className="ng-pane-in mt-4 border-beacon/30 p-5" aria-labelledby="confirm-beacon-title">
+          <h2 id="confirm-beacon-title" className="inline-flex items-center gap-2 text-sm font-semibold text-beacon">
+            <Radio className="size-4" aria-hidden />
+            Final confirmation
+          </h2>
+          <p className="ng-type-title mt-2 text-foreground">{categoryTitles[category]}</p>
+          <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{description}</p>
+          <dl className="mt-4 grid gap-1.5 border-t border-border pt-3 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Category</dt>
+              <dd className="font-semibold text-foreground">{helpCategoryLabels[category]}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">Communities</dt>
+              <dd className="text-right font-semibold text-foreground">
+                {[help.session.homeCommunity.name, ...adjacentCommunities
+                  .filter((community) => targetCommunityIds.includes(community.id))
+                  .map((community) => community.name)]
+                  .join(' + ')}
+              </dd>
+            </div>
+          </dl>
+          <p className="mt-4 text-sm font-medium leading-6 text-foreground">
+            Community volunteers may not respond. For immediate danger, call 911. This is not an
+            emergency service.
+          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Button
-              type="submit"
-              disabled={!cooldown.available}
-              className="h-12 w-full bg-beacon text-beacon-foreground hover:bg-beacon/90"
+              size="lg"
+              className="flex-1 bg-beacon text-beacon-foreground hover:bg-beacon/90"
+              onClick={sendBeacon}
+              loading={sending}
             >
-              Review beacon
+              Send to community
             </Button>
-          </form>
-        ) : (
-          <section className="mt-7 rounded-xl border border-beacon/35 bg-beacon/5 p-5" aria-labelledby="confirm-beacon-title">
-            <div className="flex items-center gap-2 text-beacon">
-              <Radio className="size-5" aria-hidden />
-              <p className="text-xs font-bold uppercase tracking-wide">Final confirmation</p>
-            </div>
-            <h2 id="confirm-beacon-title" className="ng-type-title mt-3 text-foreground">
-              {categoryTitles[category]}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-            <dl className="mt-4 grid gap-2 text-sm">
-              <div className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">Category</dt>
-                <dd className="font-semibold text-foreground">{helpCategoryLabels[category]}</dd>
-              </div>
-              <div className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">Communities</dt>
-                <dd className="text-right font-semibold text-foreground">
-                  {[help.session.homeCommunity.name, ...adjacentCommunities
-                    .filter((community) => targetCommunityIds.includes(community.id))
-                    .map((community) => community.name)]
-                    .join(' + ')}
-                </dd>
-              </div>
-            </dl>
-            <p className="mt-5 text-sm font-medium leading-6 text-foreground">
-              Community volunteers may not respond. For immediate danger, call 911. This is not an
-              emergency service.
-            </p>
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <Button
-                className="h-12 flex-1 bg-beacon text-beacon-foreground hover:bg-beacon/90"
-                onClick={sendBeacon}
-                loading={sending}
-              >
-                Send to community
-              </Button>
-              <Button variant="outline" className="h-12" onClick={() => setConfirming(false)}>
-                Go back
-              </Button>
-            </div>
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              {help.source === 'live'
-                ? 'In-app only · No emergency service or external broadcaster is contacted.'
-                : 'DEMO only · No external service or real user is contacted.'}
-            </p>
-          </section>
-        )}
-      </div>
+            <Button variant="outline" size="lg" onClick={() => setConfirming(false)}>
+              Go back
+            </Button>
+          </div>
+          <Footnote className="mt-3">
+            {help.source === 'live' ? 'In-app only · contacts no one outside' : 'DEMO · contacts no one'}
+          </Footnote>
+        </Pane>
+      )}
     </div>
   )
 }

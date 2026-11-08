@@ -4,24 +4,26 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive",
+  "inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[14px] text-sm font-semibold transition-[transform,background-color,color,box-shadow,border-color,opacity] duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:border-destructive motion-reduce:transition-colors motion-reduce:active:scale-100",
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90',
+        default:
+          'bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)] hover:bg-primary-ink',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 focus-visible:ring-destructive/20',
+          'bg-destructive text-destructive-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)] hover:bg-destructive/90 focus-visible:ring-destructive/20',
         outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
-        secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'ng-glass-control text-foreground hover:bg-glass-strong',
+        secondary: 'bg-foreground/6 text-foreground hover:bg-foreground/10',
+        ghost: 'hover:bg-foreground/6 hover:text-foreground',
+        link: 'text-primary-ink underline-offset-4 hover:underline active:scale-100',
       },
       size: {
+        // 14px radius is the control shape; only compact chips and icon buttons are round.
         default: 'min-h-11 px-4 py-2',
-        sm: 'min-h-9 rounded-md px-3 text-xs',
-        lg: 'min-h-12 rounded-md px-8',
-        icon: 'size-11',
+        sm: 'min-h-9 rounded-full px-3.5 text-xs',
+        lg: 'min-h-12 px-7',
+        icon: 'size-11 rounded-full',
       },
     },
     defaultVariants: {

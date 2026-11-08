@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ArrowLeft, PenLine } from 'lucide-react'
 import { useLocation, useParams } from 'react-router-dom'
-import { BackLink, EmptyPanel, PageIntro, StatusLabel } from '@/components/neighbourgrid'
+import { BackLink, EmptyPanel, Footnote, PageIntro, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from '@/components/ui'
 import { CommunityMembership } from '@/components/communities/CommunityMembership'
 import { PostCard } from '@/components/communities/PostCard'
@@ -53,36 +53,37 @@ export default function CommunityPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
+    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
       <BackLink to="/app/communities">
         <ArrowLeft className="size-4" aria-hidden />
         Communities
       </BackLink>
-      <PageIntro
-        title={community.name}
-        description={`${community.municipality} · ${community.description}`}
-        action={<CommunityMembership communityId={community.id} isHome={session.homeCommunityId === community.id} />}
-      />
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
-        <div>
-          <StatusLabel tone="demo">Community-reported content</StatusLabel>
-          <p className="mt-1 text-xs text-muted-foreground">Posts are not independently verified.</p>
-        </div>
-        <Button onClick={() => setIsComposing((open) => !open)} disabled={!canWrite}>
-          <PenLine className="size-4" aria-hidden />
-          {isComposing ? 'Close composer' : 'New post'}
-        </Button>
+      <div className="mt-3">
+        <PageIntro
+          title={community.name}
+          description={community.municipality}
+          action={
+            <Button onClick={() => setIsComposing((open) => !open)} disabled={!canWrite}>
+              <PenLine className="size-4" aria-hidden />
+              {isComposing ? 'Close' : 'New post'}
+            </Button>
+          }
+        />
+      </div>
+
+      {/* Provenance and membership read as one quiet line under the title. */}
+      <div className="-mt-1 flex flex-wrap items-center gap-1.5 px-1">
+        <StatusLabel tone="demo">Community-reported · unverified</StatusLabel>
+        <CommunityMembership communityId={community.id} isHome={session.homeCommunityId === community.id} size="sm" />
       </div>
       {!canWrite && (
-        <p className="mb-5 border-l-2 border-advisory bg-advisory/60 px-3 py-2 text-sm text-advisory-foreground">
-          Join this community and wait for approval before publishing or commenting.
-        </p>
+        <Footnote className="mt-3 text-left">Join and get approved to post or comment.</Footnote>
       )}
       {isComposing && (
-        <section className="mb-5 border border-border p-4" aria-labelledby="compose-title">
-          <h2 id="compose-title" className="ng-type-title-sm text-foreground">Create a community post</h2>
-          <div className="mt-4 grid gap-4">
-            <label className="grid gap-1.5 text-sm font-medium text-foreground">
+        <Pane className="ng-pane-in mt-4 p-4 sm:p-5" aria-labelledby="compose-title">
+          <h2 id="compose-title" className="text-base font-semibold text-foreground">New post</h2>
+          <div className="mt-3 grid gap-3.5">
+            <label className="grid gap-1.5 text-sm font-semibold text-foreground">
               Post type
               <Select value={kind} onValueChange={(value) => setKind(value as PostKind)}>
                 <SelectTrigger aria-label="Post type"><SelectValue /></SelectTrigger>
@@ -93,31 +94,33 @@ export default function CommunityPage() {
                 </SelectContent>
               </Select>
             </label>
-            <label className="grid gap-1.5 text-sm font-medium text-foreground">
+            <label className="grid gap-1.5 text-sm font-semibold text-foreground">
               Title
               <Input value={title} onChange={(event) => setTitle(event.target.value)} maxLength={120} />
             </label>
-            <label className="grid gap-1.5 text-sm font-medium text-foreground">
+            <label className="grid gap-1.5 text-sm font-semibold text-foreground">
               What would you like neighbours to know?
-              <Textarea value={body} onChange={(event) => setBody(event.target.value)} maxLength={1000} rows={5} />
+              <Textarea value={body} onChange={(event) => setBody(event.target.value)} maxLength={1000} rows={4} />
             </label>
             {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
             <Button onClick={submitPost}>Publish post</Button>
           </div>
-        </section>
+        </Pane>
       )}
-      {posts.length > 0 ? (
-        <div>
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} slug={community.slug} commentCount={commentsFor(post.id).length} />
-          ))}
-        </div>
-      ) : (
-        <EmptyPanel icon={PenLine} title="No posts yet" description="Be the first neighbour to start a conversation." />
-      )}
-      <p className="mt-6 text-xs text-muted-foreground">
-        Signed in as {currentUserId === 'demo-user-maya' ? 'Maya' : 'your demo profile'} · demo data stays in this browser.
-      </p>
+      <div className="mt-4">
+        {posts.length > 0 ? (
+          <div className="ng-stagger space-y-3">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} slug={community.slug} commentCount={commentsFor(post.id).length} />
+            ))}
+          </div>
+        ) : (
+          <EmptyPanel icon={PenLine} title="No posts yet" description="Start the first conversation." />
+        )}
+      </div>
+      <Footnote className="mt-4">
+        {currentUserId === 'demo-user-maya' ? 'Maya' : 'Demo profile'} · DEMO data stays in this browser.
+      </Footnote>
     </div>
   )
 }

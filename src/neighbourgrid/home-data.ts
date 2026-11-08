@@ -54,6 +54,15 @@ function helpKindLabel(kind: HelpItem['kind']): string {
   return 'Request'
 }
 
+/** Same wording as the Help card's status chip, so Activity never shows a raw key. */
+const helpStatusLabels: Record<HelpItem['status'], string> = {
+  open: 'Open',
+  offered: 'Help offered',
+  matched: 'Matched',
+  resolved: 'Resolved',
+  cancelled: 'Cancelled',
+}
+
 declare const __DEEPSPACE_REGISTERED__: boolean
 
 export function useHomeAggregates(session: NeighbourGridSession): HomeAggregates {
@@ -227,7 +236,7 @@ function buildActivity(
     ...help.map((item) => ({
       id: `help-${item.id}`,
       title: item.title,
-      detail: `${helpKindLabel(item.kind)} · ${item.status}`,
+      detail: `${helpKindLabel(item.kind)} · ${helpStatusLabels[item.status]}`,
       href: '/app/help',
       at: item.createdAt,
       tone: item.demo ? ('demo' as const) : ('help' as const),

@@ -1,41 +1,64 @@
 /*
  * Theme overrides — applied via <html data-theme="<id>">.
- * NeighbourGrid defaults live in styles.css @theme. Paper remains as a
+ * NeighbourGrid light defaults live in styles.css @theme; the dark scheme
+ * below follows the device (prefers-color-scheme). Paper remains as a
  * light alternate for scaffold tooling.
  */
 
 [data-theme="neighbourgrid"] {
-  color-scheme: light;
-  --color-background: #f3f6f2;
-  --color-foreground: #10243a;
-  --color-card: #ffffff;
-  --color-card-foreground: #10243a;
-  --color-popover: #ffffff;
-  --color-popover-foreground: #10243a;
-  --color-primary: #0a6560;
-  --color-primary-foreground: #ffffff;
-  --color-primary-ink: #084f4b;
-  --color-secondary: #e4efea;
-  --color-secondary-foreground: #10243a;
-  --color-muted: #e8eee9;
-  --color-muted-foreground: #4d5d6b;
-  --color-accent: #d9ebe6;
-  --color-accent-foreground: #10243a;
-  --color-destructive: #c85a45;
-  --color-destructive-foreground: #ffffff;
-  --color-border: #d4ded8;
-  --color-input: #c3d0c9;
-  --color-ring: #0a6560;
-  --color-navy: #10243a;
-  --color-navy-foreground: #f3f6f2;
-  --color-advisory: #fff6e5;
-  --color-advisory-foreground: #6a4a12;
-  --color-beacon: #c85a45;
-  --color-beacon-foreground: #ffffff;
-  --shadow-card: 0 1px 2px 0 rgba(16, 36, 58, 0.05), 0 8px 24px -12px rgba(16, 36, 58, 0.12);
-  --shadow-card-hover: 0 2px 4px 0 rgba(16, 36, 58, 0.06), 0 16px 32px -14px rgba(16, 36, 58, 0.16);
-  --color-shell: #e8eee9;
-  --color-shell-panel: #ffffff;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="neighbourgrid"] {
+    /* Neutral near-black ground; the teal/sky ambient is a glow on it, not a tint of it. */
+    --color-background: #0d1014;
+    --color-foreground: #eef1f3;
+    --color-card: #16191e;
+    --color-card-foreground: #eef1f3;
+    --color-popover: #1a1e24;
+    --color-popover-foreground: #eef1f3;
+    --color-primary: #3fb3a9;
+    --color-primary-foreground: #06201e;
+    --color-primary-ink: #8fdcd3;
+    --color-secondary: #17302f;
+    --color-secondary-foreground: #eef1f3;
+    --color-muted: #1c2026;
+    --color-muted-foreground: #a7afb6;
+    --color-accent: #173231;
+    --color-accent-foreground: #eef1f3;
+    --color-destructive: #e2795f;
+    --color-destructive-foreground: #1a0d09;
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-input: rgba(255, 255, 255, 0.16);
+    --color-ring: #3fb3a9;
+    --color-navy: #0d1014;
+    --color-navy-foreground: #eef1f3;
+    --color-advisory: #3a2d12;
+    --color-advisory-foreground: #f3d9a0;
+    --color-beacon: #e2795f;
+    --color-beacon-foreground: #1a0d09;
+    --color-success: #5fc8a6;
+    --color-warning: #e8b85a;
+    --color-warning-foreground: #1a1206;
+    --color-info: #6fb3dc;
+
+    --color-glass: rgba(20, 22, 26, 0.55);
+    --color-glass-strong: rgba(26, 28, 34, 0.78);
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+    --color-glass-highlight: rgba(255, 255, 255, 0.14);
+    --color-ambient-a: #1f8f86;
+    --color-ambient-b: #2e5fa8;
+    --ambient-a: 45%;
+    --ambient-b: 40%;
+    --ambient-c: 22%;
+    --shadow-glass: 0 1px 1px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+    --shadow-glass-float: 0 2px 4px rgba(0, 0, 0, 0.25), 0 20px 48px -18px rgba(0, 0, 0, 0.7);
+    --shadow-card: var(--shadow-glass);
+    --shadow-card-hover: var(--shadow-glass-float);
+    --color-shell: #111418;
+    --color-shell-panel: rgba(20, 22, 26, 0.55);
+  }
 }
 
 [data-theme="paper"] {

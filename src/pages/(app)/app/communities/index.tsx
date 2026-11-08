@@ -1,6 +1,6 @@
-import { MapPin } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { PageIntro, StatusLabel } from '@/components/neighbourgrid'
+import { Footnote, PageIntro, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { CommunityMembership } from '@/components/communities/CommunityMembership'
 import { communityCatalog } from '@/services/communities'
 import { useNeighbourGridSession } from '@/neighbourgrid/exports'
@@ -9,43 +9,39 @@ export default function CommunitiesPage() {
   const session = useNeighbourGridSession()
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
-      <PageIntro
-        title="Communities"
-        description="Find your local space, join the conversation, and choose a home community."
-      />
-      <p className="mb-5 text-sm text-muted-foreground">
-        Curated BC communities use approximate neighbourhood boundaries. They are not precise GIS areas.
-      </p>
-      <ul className="divide-y divide-border border-t border-border">
-        {communityCatalog.map((community) => (
-          <li key={community.id} className="py-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link
-                    to={`/app/communities/${community.slug}`}
-                    viewTransition
-                    className="ng-type-title-sm rounded text-foreground hover:text-primary-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    {community.name}
-                  </Link>
-                  {session.homeCommunityId === community.id && <StatusLabel tone="success">Home</StatusLabel>}
-                </div>
-                <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-                  <MapPin className="size-3.5" aria-hidden />
-                  {community.municipality}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{community.description}</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {community.visibility === 'public' ? 'Open to join' : 'Request to join'}
-                </p>
+    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
+      <PageIntro title="Communities" />
+      <Pane className="ng-pane-in ng-row-divide overflow-hidden">
+        {communityCatalog.map((community) => {
+          const isHome = session.homeCommunityId === community.id
+          return (
+            <div key={community.id} className="ng-row min-h-16 flex-wrap gap-y-2 py-3 sm:flex-nowrap">
+              <Link
+                to={`/app/communities/${community.slug}`}
+                viewTransition
+                className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2">
+                    <span className="truncate text-base font-semibold text-foreground group-hover:text-primary-ink">
+                      {community.name}
+                    </span>
+                    {isHome && <StatusLabel tone="official">Home</StatusLabel>}
+                  </span>
+                  <span className="block text-sm text-muted-foreground">
+                    {community.municipality} · {community.visibility === 'public' ? 'Open' : 'Request to join'}
+                  </span>
+                </span>
+                {isHome && <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />}
+              </Link>
+              <div className="shrink-0">
+                <CommunityMembership communityId={community.id} isHome={isHome} compact />
               </div>
-              <CommunityMembership communityId={community.id} isHome={session.homeCommunityId === community.id} />
             </div>
-          </li>
-        ))}
-      </ul>
+          )
+        })}
+      </Pane>
+      <Footnote className="mt-3">Approximate neighbourhood areas, not precise boundaries.</Footnote>
     </div>
   )
 }

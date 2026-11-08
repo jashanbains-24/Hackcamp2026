@@ -258,8 +258,10 @@ function ToastItem({ toast, onDismiss }: ToastItemProps): React.ReactElement {
         overflow-hidden rounded-lg border border-border bg-popover
         text-popover-foreground pl-3.5 pr-2 py-2.5 shadow-lg
         ${exiting
-          ? 'animate-out fade-out-0 slide-out-to-right-2 duration-150'
-          : 'animate-in fade-in-0 slide-in-from-right-2 duration-200'
+          ? 'animate-out fade-out-0 slide-out-to-right-2 duration-[160ms]'
+          : `animate-in fade-in-0 slide-in-from-right-2 duration-200${
+              toast.type === 'success' ? ' ng-pulse-once' : ''
+            }`
         }
       `}
       role="alert"

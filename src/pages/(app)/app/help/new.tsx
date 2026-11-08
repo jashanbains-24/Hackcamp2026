@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { ArrowLeft, ShieldCheck, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Textarea, useToast } from '@/components/ui'
-import { BackLink } from '@/components/neighbourgrid'
+import { BackLink, Footnote, Pane } from '@/components/neighbourgrid'
 import { useHelpNetwork } from '@/features/help/help-network'
 import { helpCategoryLabels } from '@/features/help/help-store'
 import {
@@ -96,91 +96,72 @@ export default function NewHelpPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[640px] px-4 py-5 sm:px-6 sm:py-7">
+    <div className="mx-auto max-w-[640px] px-4 py-5 sm:px-6 sm:py-8">
       <BackLink to="/app/help">
-        <ArrowLeft className="size-4" aria-hidden /> Help board
+        <ArrowLeft className="size-4" aria-hidden /> Help
       </BackLink>
 
-      <div className="mt-4 border-t border-border pt-6">
-        <h1 className="ng-type-display text-foreground">
-          {kind === 'request' ? 'Ask for help' : 'Offer help'}
-        </h1>
-        <p className="ng-type-body mt-3 max-w-[48ch] text-muted-foreground">
-          Share only what neighbours need to understand the practical request. Exact handoff
-          details stay private.
-        </p>
+      <h1 className="ng-type-display mt-3 px-1 text-foreground">
+        {kind === 'request' ? 'Ask for help' : 'Offer help'}
+      </h1>
 
-        {kind === 'request' && (
-          <section className="mt-7 rounded-xl border border-primary/25 bg-secondary/60 p-4 sm:p-5" aria-labelledby="clarity-title">
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-5 text-primary" aria-hidden />
-              <h2 id="clarity-title" className="text-sm font-semibold text-foreground">
-                Request Clarity Assistant
-              </h2>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Gemini can suggest clearer, safer wording. It never publishes, broadcasts, or
-              decides emergency severity.
+      <div className="ng-segment mt-4 grid w-full grid-cols-2" role="group" aria-label="What are you posting?">
+        {([
+          ['request', 'I need help'],
+          ['offer', 'I can offer'],
+        ] as const).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={kind === value}
+            onClick={() => setKind(value)}
+            className="ng-press"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {kind === 'request' && (
+        <Pane className="ng-pane-in mt-5 p-4 sm:p-5" aria-labelledby="clarity-title">
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="clarity-title" className="inline-flex items-center gap-2 text-base font-semibold text-foreground">
+              <Sparkles className="size-4 text-primary" aria-hidden />
+              Clearer wording
+            </h2>
+            <span className="text-xs font-medium text-muted-foreground">Gemini · you edit, you post</span>
+          </div>
+          <label htmlFor="rough-help-draft" className="sr-only">Rough request draft</label>
+          <Textarea
+            id="rough-help-draft"
+            className="mt-3"
+            value={roughDraft}
+            onChange={(event) => setRoughDraft(event.target.value)}
+            maxLength={1000}
+            rows={2}
+            placeholder="My block is out and I need somewhere to charge my phone."
+          />
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-3"
+            loading={clarifying}
+            onClick={improveDraft}
+          >
+            <Sparkles aria-hidden />
+            Improve draft
+          </Button>
+          {suggestion && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              {suggestion.suggestedTags.map((tag) => `#${tag}`).join(' ')}
+              {suggestion.safetyNote ? ` · ${suggestion.safetyNote}` : ''}
             </p>
-            <label htmlFor="rough-help-draft" className="sr-only">Rough request draft</label>
-            <Textarea
-              id="rough-help-draft"
-              className="mt-3 bg-card"
-              value={roughDraft}
-              onChange={(event) => setRoughDraft(event.target.value)}
-              maxLength={1000}
-              rows={3}
-              placeholder="My block is out and I need somewhere to charge my phone for an hour."
-            />
-            <Button
-              type="button"
-              variant="outline"
-              className="mt-3 bg-card"
-              loading={clarifying}
-              onClick={improveDraft}
-            >
-              <Sparkles aria-hidden />
-              Improve my draft
-            </Button>
-            {suggestion && (
-              <div className="mt-4 border-t border-primary/20 pt-3">
-                <p className="text-xs font-semibold text-foreground">Suggested tags</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {suggestion.suggestedTags.map((tag) => `#${tag}`).join(' ')}
-                </p>
-                <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  {suggestion.safetyNote}
-                </p>
-              </div>
-            )}
-          </section>
-        )}
+          )}
+        </Pane>
+      )}
 
-        <form className="mt-7 space-y-5" onSubmit={submit}>
-          <fieldset>
-            <legend className="text-sm font-semibold text-foreground">What are you posting?</legend>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {([
-                ['request', 'I need help'],
-                ['offer', 'I can offer'],
-              ] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={kind === value}
-                  onClick={() => setKind(value)}
-                  className={
-                    kind === value
-                      ? 'min-h-12 rounded-lg border border-primary bg-secondary px-3 text-sm font-semibold text-foreground'
-                      : 'min-h-12 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-muted-foreground hover:border-primary/40 hover:text-foreground'
-                  }
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
+      <form className="mt-5" onSubmit={submit}>
+        <Pane className="ng-pane-in ng-pane-in-delay-1 space-y-4 p-4 sm:p-5">
           <div>
             <label htmlFor="help-category" className="text-sm font-semibold text-foreground">
               Category
@@ -189,7 +170,7 @@ export default function NewHelpPage() {
               id="help-category"
               value={category}
               onChange={(event) => setCategory(event.target.value as HelpCategory)}
-              className="mt-2 min-h-11 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground"
+              className="ng-field mt-1.5"
             >
               {Object.entries(helpCategoryLabels).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
@@ -203,57 +184,48 @@ export default function NewHelpPage() {
             </label>
             <Input
               id="help-title"
-              className="mt-2 h-11"
+              className="mt-1.5 h-11"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               maxLength={80}
               required
               placeholder={
-                kind === 'request'
-                  ? 'Looking to borrow a portable charger'
-                  : 'Two battery lanterns available'
+                kind === 'request' ? 'Borrow a portable charger' : 'Two battery lanterns to lend'
               }
             />
-            <p className="mt-1 text-right text-xs text-muted-foreground">{title.length}/80</p>
           </div>
 
           <div>
-            <label htmlFor="help-description" className="text-sm font-semibold text-foreground">
-              Description
-            </label>
+            <div className="flex items-baseline justify-between">
+              <label htmlFor="help-description" className="text-sm font-semibold text-foreground">
+                Description
+              </label>
+              <span className="text-xs text-muted-foreground">{description.length}/500</span>
+            </div>
             <Textarea
               id="help-description"
-              className="mt-2"
+              className="mt-1.5"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
               maxLength={500}
-              rows={5}
+              rows={4}
               required
-              placeholder="Describe what would help, when you need it, and a safe public handoff area if useful."
+              placeholder="What would help, when, and a public place to meet."
             />
-            <p className="mt-1 text-right text-xs text-muted-foreground">
-              {description.length}/500
+            <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-primary" aria-hidden />
+              No addresses, phone numbers, or medical details.
             </p>
           </div>
+        </Pane>
 
-          <div className="flex gap-3 rounded-xl border border-border bg-muted/45 p-4">
-            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden />
-            <p className="text-sm leading-6 text-muted-foreground">
-              Avoid exact addresses, phone numbers, email addresses, and sensitive medical
-              information. Prefer a safe public handoff where appropriate.
-            </p>
-          </div>
-
-          <Button type="submit" className="h-12 w-full" loading={submitting}>
-            {kind === 'request' ? 'Post request' : 'Post offer'}
-          </Button>
-          <p className="text-center text-xs leading-5 text-muted-foreground">
-            {help.source === 'live'
-              ? 'LIVE · Saved through DeepSpace and synchronized across signed-in sessions.'
-              : 'DEMO · Saved in this browser and synchronized across open local tabs.'}
-          </p>
-        </form>
-      </div>
+        <Button type="submit" size="lg" className="mt-4 w-full" loading={submitting}>
+          {kind === 'request' ? 'Post request' : 'Post offer'}
+        </Button>
+        <Footnote className="mt-3">
+          {help.source === 'live' ? 'LIVE · synced via DeepSpace' : 'DEMO · saved in this browser'}
+        </Footnote>
+      </form>
     </div>
   )
 }

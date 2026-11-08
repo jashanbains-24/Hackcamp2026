@@ -141,7 +141,7 @@ function SelectContent({
           data-slot="select-content"
           className={cn(
             'bg-popover text-popover-foreground relative z-50 max-h-(--available-height) min-w-(--anchor-width) origin-(--transform-origin) overflow-y-auto overflow-x-hidden rounded-lg border border-border p-1 shadow-md',
-            'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2',
+            'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[open]:duration-200 data-[closed]:duration-[160ms] data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2',
             className,
           )}
           {...props}
