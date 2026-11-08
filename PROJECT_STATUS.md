@@ -1,6 +1,6 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-08, 10:52 a.m. Vancouver time
+**Last updated:** 2026-11-08, 11:00 a.m. Vancouver time
 **Current stage:** Offer writing, wider beacons, and the darker palette are on `polish/home-quiet`; production redeploy still waiting
 **Shared branch:** `main` at `c3ec84e` (PR #11 plus the n8n status commit)
 **Active lane in this checkout:** Developer C on `polish/home-quiet`
@@ -96,7 +96,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 - **n8n:** workflow `NeighbourGrid help event` is published and merged. One local execution
   succeeded. Production needs the same check after redeploy.
 - **Best Design:** Figma share link still required before claiming that track.
-- **Auth0 and unrelated sponsor services:** intentionally excluded.
+- **GoDaddy:** the owner has a domain. After redeploy, give the exact DNS steps. The domain name is not recorded yet.
+- **Do not add before deploy:** Freebuff, Databricks, Maritime, Lovable, Auth0, Solana, Tiger Data, Vultr, and Entire. Credits or a workspace do not count as use. These either were not used to build the app, or they would add a second auth system, database, host, or git forge.
 
 ## Current blockers and user actions
 
@@ -107,7 +108,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
    3. Enable link sharing (view).
    4. Paste the URL into **Figma URL** above and `README.md` → Design file.
 2. **Redeploy `main`:** run `npx deepspace deploy`. Then, on the live URL, ask the signed-in Guide
-   one question and create one help request. Confirm a new n8n execution.
+   one question and create one help request. Confirm a new n8n execution. After that, connect the
+   GoDaddy domain. Ask for the domain name first, then give the DNS steps.
 
 ## Next safe handoff
 
@@ -128,6 +130,13 @@ remains on purpose.
 ```
 
 ## Session history
+
+### 2026-11-08 11:00 — Developer C (`polish/home-quiet`)
+
+- Checked the HackCamp sponsor list against the app. Opt in for DeepSpace, n8n, and Gemini. Those are already in real user flows.
+- Leave Freebuff, Databricks, Maritime, Lovable, Auth0, Solana, Tiger Data, Vultr, and Entire out. A Databricks workspace credit is not a product integration.
+- Community Impact can be claimed with a short statement. Best Design still needs the Figma link. Best Hardware does not apply.
+- The owner has a GoDaddy domain. DNS steps come after redeploy, once the domain name is known.
 
 ### 2026-11-08 10:40 — Developer C (`polish/home-quiet`)
 
