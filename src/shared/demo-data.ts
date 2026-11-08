@@ -1,4 +1,4 @@
-import type { Community, OfficialUpdate, Post, UserProfile } from './types'
+import type { Community, HelpItem, OfficialUpdate, Post, UserProfile } from './types'
 
 export const demoUser: UserProfile = {
   id: 'demo-user-maya',
@@ -69,6 +69,38 @@ export const postAuthors: Record<string, string> = {
   'demo-user-aisha': 'Aisha K.',
   'demo-user-daniel': 'Daniel R.',
 }
+
+export const demoHelpItems: HelpItem[] = [
+  {
+    id: 'help-power-bank',
+    communityId: 'community-newton',
+    authorId: 'demo-user-maya',
+    kind: 'request',
+    title: 'Need a phone power bank for two hours',
+    description:
+      'SIMULATED SCENARIO: Looking for a loaner power bank nearby while practising outage prep.',
+    category: 'power_charging',
+    status: 'open',
+    demo: true,
+    targetCommunityIds: ['community-newton'],
+    createdAt: '2026-11-07T22:05:00.000Z',
+    updatedAt: '2026-11-07T22:05:00.000Z',
+  },
+  {
+    id: 'help-spare-torches',
+    communityId: 'community-newton',
+    authorId: 'demo-user-daniel',
+    kind: 'offer',
+    title: 'Extra LED torches to lend',
+    description: 'Fictional offer for the demo preparedness exercise.',
+    category: 'supplies',
+    status: 'open',
+    demo: true,
+    targetCommunityIds: ['community-newton'],
+    createdAt: '2026-11-07T21:20:00.000Z',
+    updatedAt: '2026-11-07T21:20:00.000Z',
+  },
+]
 
 export const demoOfficialState: OfficialUpdate = {
   id: 'official-empty-state',

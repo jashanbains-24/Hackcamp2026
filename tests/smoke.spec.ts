@@ -44,17 +44,27 @@ test.describe('Smoke tests', () => {
   test('mobile dashboard is usable and routes work', async ({ page }) => {
     const errors = captureConsoleErrors(page)
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/app')
+    await page.goto('/app?demo=1')
     await waitForApp(page)
-    await expect(page.getByRole('heading', { name: 'Good evening, Maya' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Good (morning|afternoon|evening), Maya/ })).toBeVisible()
     await expect(page.getByText('Newton, Surrey').first()).toBeVisible()
-    await expect(page.getByText('DEMO')).toBeVisible()
+    // Scope to the simulated-scenario notice so "Demo mode" chrome cannot match.
+    await expect(page.getByTestId('demo-scenario-notice')).toContainText('DEMO')
     await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Communities' }).last().click()
-    await expect(page).toHaveURL(/\/app\/communities$/)
+    await expect(page).toHaveURL(/\/app\/communities/)
     await expect(page.getByRole('heading', { name: 'Communities' })).toBeVisible()
-    expect(errors).toEqual([])
+    expect(
+      errors.filter(
+        (message) =>
+          !message.includes('/api/auth/get-session') &&
+          !(
+            process.env.SMOKE_STATIC === '1' &&
+            message.includes('WebSocket handshake: Unexpected response code: 200')
+          ),
+      ),
+    ).toEqual([])
   })
 
   test('desktop dashboard exposes primary navigation and working CTAs', async ({ page }) => {

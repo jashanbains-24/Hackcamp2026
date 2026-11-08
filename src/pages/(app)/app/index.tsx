@@ -2,33 +2,47 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight, ExternalLink, MapPin } from 'lucide-react'
 import { Button, Modal } from '@/components/ui'
-import {
-  demoOfficialState,
-  demoPosts,
-  demoUser,
-  homeCommunity,
-  postAuthors,
-  resourceLinks,
-} from '@/shared/demo-data'
+import { ErrorPanel, LoadingSkeleton, StatusLabel } from '@/components/neighbourgrid'
+import { resourceLinks } from '@/shared/demo-data'
+import { useHomeAggregates } from '@/neighbourgrid/home-data'
+import { useOfficialUpdates } from '@/neighbourgrid/official-updates'
+import { formatTimestamp, timeOfDayGreeting } from '@/neighbourgrid/format'
+import { useNeighbourGridSession } from '@/neighbourgrid/session'
 
 export default function AppHomePage() {
-  const [showDemoInfo, setShowDemoInfo] = useState(false)
+  const session = useNeighbourGridSession()
+  const aggregates = useHomeAggregates(session)
+  const official = useOfficialUpdates()
+  const [showHomePicker, setShowHomePicker] = useState(false)
+  const [savingHome, setSavingHome] = useState(false)
+
+  const greeting = `${timeOfDayGreeting()}, ${session.displayName}`
 
   return (
     <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
       <header className="border-b border-border pb-5">
-        <h1 className="ng-type-display text-foreground">
-          Good evening, {demoUser.displayName}
-        </h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="ng-type-display text-foreground">{greeting}</h1>
+          {session.isDemo && <StatusLabel tone="demo">DEMO account</StatusLabel>}
+        </div>
         <button
           type="button"
           className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-muted-foreground transition hover:text-foreground"
-          onClick={() => setShowDemoInfo(true)}
+          onClick={() => setShowHomePicker(true)}
         >
           <MapPin className="size-4 text-primary" aria-hidden />
-          {homeCommunity.name}, {homeCommunity.municipality}
+          {session.homeCommunity.name}, {session.homeCommunity.municipality}
           <ChevronRight className="size-4" aria-hidden />
         </button>
+        {(aggregates.status === 'ready' || aggregates.status === 'demo') && (
+          <p className="ng-type-meta mt-3 text-muted-foreground">
+            {aggregates.postCount} recent post{aggregates.postCount === 1 ? '' : 's'}
+            {' · '}
+            {aggregates.openHelpCount} open help item
+            {aggregates.openHelpCount === 1 ? '' : 's'}
+            {aggregates.source === 'demo' ? ' · demo data' : ''}
+          </p>
+        )}
       </header>
 
       <section className="border-b border-border py-7" aria-labelledby="help-heading">
@@ -71,28 +85,117 @@ export default function AppHomePage() {
             Official updates
           </h2>
           <a
-            href={demoOfficialState.sourceUrl}
+            href={official.data?.sourceUrl ?? 'https://www.bchydro.com/safety-outages/power-outages.html'}
             target="_blank"
             rel="noreferrer"
             className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-primary-ink hover:underline"
           >
-            {demoOfficialState.sourceName}
+            {official.data?.sourceName ?? 'BC Hydro'}
             <ExternalLink className="size-3.5" aria-hidden />
           </a>
         </div>
-        <h3 className="mt-3 text-base font-semibold leading-snug text-foreground">
-          {demoOfficialState.title}
-        </h3>
-        <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
-          {demoOfficialState.description}
-        </p>
+
+        {official.status === 'loading' && (
+          <div className="mt-3 space-y-3">
+            <LoadingSkeleton className="h-16" />
+            <LoadingSkeleton className="h-12" />
+          </div>
+        )}
+
+        {official.status === 'unavailable' && (
+          <div className="mt-3">
+            <ErrorPanel
+              title="Official feed unavailable here"
+              description="This preview cannot reach the Worker endpoint. Open the DeepSpace runtime or a deployed URL for live BC Hydro Surrey updates, or use the source link."
+              action={
+                <Button variant="secondary" onClick={official.refresh}>
+                  Try again
+                </Button>
+              }
+            />
+          </div>
+        )}
+
+        {official.status === 'error' && official.data && (
+          <div className="mt-3">
+            <ErrorPanel
+              title="Could not refresh BC Hydro updates"
+              description={
+                official.data.errorMessage ??
+                'The Surrey municipality feed did not load. NeighbourGrid will keep source links available.'
+              }
+              action={
+                <Button variant="secondary" onClick={official.refresh}>
+                  Retry
+                </Button>
+              }
+            />
+            <p className="ng-type-meta mt-3 text-muted-foreground">
+              Last attempt {formatTimestamp(official.data.fetchedAt)}
+            </p>
+          </div>
+        )}
+
+        {official.status === 'empty' && official.data && (
+          <div className="mt-3">
+            <h3 className="text-base font-semibold leading-snug text-foreground">
+              No current Surrey outage items in the feed
+            </h3>
+            <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+              BC Hydro’s Surrey municipality RSS had no items when fetched. That is not a claim about
+              Newton specifically.
+            </p>
+            <p className="ng-type-meta mt-3 text-muted-foreground">
+              Fetched {formatTimestamp(official.data.fetchedAt)} · Source BC Hydro Surrey feed
+            </p>
+          </div>
+        )}
+
+        {official.status === 'ok' && official.data && (
+          <div className="mt-3">
+            <ul className="divide-y divide-border">
+              {official.data.updates.slice(0, 3).map((update) => (
+                <li key={update.id} className="py-3.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusLabel tone="official">
+                      {update.status === 'current'
+                        ? 'Current'
+                        : update.status === 'restored'
+                          ? 'Restored'
+                          : 'Official'}
+                    </StatusLabel>
+                    <span className="ng-type-meta text-muted-foreground">
+                      {update.municipality ?? 'Surrey'} municipality
+                    </span>
+                  </div>
+                  <h3 className="mt-1.5 text-base font-semibold leading-snug text-foreground">
+                    {update.title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                    {update.description.slice(0, 220)}
+                    {update.description.length > 220 ? '…' : ''}
+                  </p>
+                  <p className="ng-type-meta mt-2 text-muted-foreground">
+                    Event {formatTimestamp(update.publishedAt)} · Fetched{' '}
+                    {formatTimestamp(update.fetchedAt)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <p className="ng-type-meta mt-3 text-muted-foreground">
+              {official.data.municipalityNote}
+            </p>
+          </div>
+        )}
+
         <p
           className="mt-4 rounded-lg bg-advisory px-3 py-2.5 text-sm leading-6 text-advisory-foreground"
           aria-label="Simulated scenario notice"
+          data-testid="demo-scenario-notice"
         >
           <span className="font-semibold">DEMO</span>
           {' · '}
-          Sample posts below are fictional, not live warnings.
+          Sample neighbour posts below are fictional, not live warnings.
         </p>
       </section>
 
@@ -102,33 +205,61 @@ export default function AppHomePage() {
             From your neighbours
           </h2>
           <Link
-            to="/app/communities/newton"
+            to={`/app/communities/${session.homeCommunity.slug}`}
             viewTransition
             className="inline-flex min-h-11 items-center text-sm font-medium text-primary-ink hover:underline"
           >
             View all
           </Link>
         </div>
-        <ul className="mt-2 divide-y divide-border">
-          {demoPosts.map((post) => (
-            <li key={post.id}>
-              <Link
-                to="/app/communities/newton"
-                viewTransition
-                className="block py-3.5 transition hover:bg-muted/40 focus-visible:outline-none sm:-mx-2 sm:rounded-lg sm:px-2"
-              >
-                <p className="ng-type-meta text-muted-foreground">
-                  {post.kind === 'resource_offer' ? 'Resource offer' : 'Discussion'}
-                  {' · '}
-                  {postAuthors[post.authorId]}
-                </p>
-                <h3 className="mt-1 text-base font-semibold leading-snug text-foreground">
-                  {post.title}
-                </h3>
-              </Link>
-            </li>
-          ))}
-        </ul>
+
+        {aggregates.status === 'loading' && (
+          <div className="mt-3 space-y-3">
+            <LoadingSkeleton className="h-14" />
+            <LoadingSkeleton className="h-14" />
+          </div>
+        )}
+
+        {aggregates.status === 'error' && (
+          <div className="mt-3">
+            <ErrorPanel
+              title="Could not load community activity"
+              description={aggregates.error ?? 'Please try again in a moment.'}
+            />
+          </div>
+        )}
+
+        {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
+          aggregates.latestPosts.length === 0 && (
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              No posts in {session.homeCommunity.name} yet. Community posting lands in Developer B’s
+              lane.
+            </p>
+          )}
+
+        {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
+          aggregates.latestPosts.length > 0 && (
+            <ul className="mt-2 divide-y divide-border">
+              {aggregates.latestPosts.map((post) => (
+                <li key={post.id}>
+                  <Link
+                    to={`/app/communities/${post.communitySlug}`}
+                    viewTransition
+                    className="block py-3.5 transition hover:bg-muted/40 focus-visible:outline-none sm:-mx-2 sm:rounded-lg sm:px-2"
+                  >
+                    <p className="ng-type-meta text-muted-foreground">
+                      {post.kindLabel}
+                      {' · '}
+                      {post.authorLabel}
+                    </p>
+                    <h3 className="mt-1 text-base font-semibold leading-snug text-foreground">
+                      {post.title}
+                    </h3>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
       </section>
 
       <section className="py-6" aria-labelledby="resources-heading">
@@ -157,16 +288,42 @@ export default function AppHomePage() {
         </ul>
       </section>
 
-      <Modal open={showDemoInfo} onClose={() => setShowDemoInfo(false)} size="sm">
+      <Modal open={showHomePicker} onClose={() => setShowHomePicker(false)} size="sm">
         <Modal.Header>
-          <Modal.Title>Newton is your demo home</Modal.Title>
+          <Modal.Title>Choose home community</Modal.Title>
           <Modal.Description>
-            Community switching arrives in the next build. This preview never requests your precise
-            location.
+            Approximate neighbourhood only. NeighbourGrid never requests precise location.
           </Modal.Description>
         </Modal.Header>
+        <div className="space-y-2 px-1 pb-2">
+          {session.communitiesCatalog.map((community) => {
+            const selected = community.id === session.homeCommunityId
+            return (
+              <button
+                key={community.id}
+                type="button"
+                disabled={savingHome}
+                className="flex min-h-11 w-full items-center justify-between rounded-lg border border-border px-3 text-left text-sm font-medium transition hover:bg-muted/60 disabled:opacity-60"
+                onClick={() => {
+                  setSavingHome(true)
+                  void session.setHomeCommunityId(community.id).finally(() => {
+                    setSavingHome(false)
+                    setShowHomePicker(false)
+                  })
+                }}
+              >
+                <span>
+                  {community.name}, {community.municipality}
+                </span>
+                {selected && <StatusLabel tone="neutral">Home</StatusLabel>}
+              </button>
+            )
+          })}
+        </div>
         <Modal.Footer>
-          <Button onClick={() => setShowDemoInfo(false)}>Got it</Button>
+          <Button variant="secondary" onClick={() => setShowHomePicker(false)}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
