@@ -30,7 +30,7 @@ export default function NewHelpPage() {
     }
     setClarifying(true)
     try {
-      const next = await clarifyHelpRequest(roughDraft.trim())
+      const next = await clarifyHelpRequest(roughDraft.trim(), kind)
       setTitle(next.title)
       setDescription(next.summary)
       setCategory(next.category)
@@ -117,40 +117,38 @@ export default function NewHelpPage() {
         ))}
       </div>
 
-      {kind === 'request' && (
-        <section className="mt-6 px-1" aria-labelledby="clarity-title">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 id="clarity-title" className="text-base font-semibold text-foreground">
-              Let AI help you write your post
-            </h2>
-            <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary-ink">
-              Gemini
-            </span>
-          </div>
-          <label htmlFor="rough-help-draft" className="sr-only">
-            Rough idea for your post
-          </label>
-          <Textarea
-            id="rough-help-draft"
-            className="mt-3"
-            value={roughDraft}
-            onChange={(event) => setRoughDraft(event.target.value)}
-            maxLength={1000}
-            rows={2}
-            placeholder="Jot a rough idea"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            className="mt-3"
-            loading={clarifying}
-            onClick={improveDraft}
-          >
-            <Sparkles aria-hidden />
-            Help me write
-          </Button>
-        </section>
-      )}
+      <section className="mt-6 px-1" aria-labelledby="clarity-title">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 id="clarity-title" className="text-base font-semibold text-foreground">
+            Let AI help you write your post
+          </h2>
+          <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary-ink">
+            Gemini
+          </span>
+        </div>
+        <label htmlFor="rough-help-draft" className="sr-only">
+          Rough idea for your post
+        </label>
+        <Textarea
+          id="rough-help-draft"
+          className="mt-3"
+          value={roughDraft}
+          onChange={(event) => setRoughDraft(event.target.value)}
+          maxLength={1000}
+          rows={2}
+          placeholder="Jot a rough idea"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-3"
+          loading={clarifying}
+          onClick={improveDraft}
+        >
+          <Sparkles aria-hidden />
+          Help me write
+        </Button>
+      </section>
 
       <form className="mt-6" onSubmit={submit}>
         <h2 className="mb-2 px-1 text-base font-semibold text-foreground">Your post</h2>

@@ -24,12 +24,15 @@ export class RequestClarityError extends Error {
   }
 }
 
-export async function clarifyHelpRequest(draft: string): Promise<RequestClaritySuggestion> {
+export async function clarifyHelpRequest(
+  draft: string,
+  kind: 'request' | 'offer' | 'beacon' = 'request',
+): Promise<RequestClaritySuggestion> {
   const response = await fetch('/api/help/clarify', {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ draft }),
+    body: JSON.stringify({ draft, kind }),
   })
   const payload = (await response.json().catch(() => ({}))) as ClarityResponse
   if (!response.ok || !payload.suggestion) {

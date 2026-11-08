@@ -32,6 +32,7 @@ export interface CreateBeaconInput {
   category: HelpCategory
   communityId: string
   targetCommunityIds: string[]
+  reach?: 'nearby' | 'city' | 'region'
 }
 
 export const demoActors: DemoActor[] = [
@@ -244,7 +245,7 @@ export const helpDemoActions = {
       demo: true,
       targetCommunityIds: Array.from(
         new Set([input.communityId, ...input.targetCommunityIds]),
-      ).slice(0, 3),
+      ),
       createdAt: timestamp,
       updatedAt: timestamp,
     }

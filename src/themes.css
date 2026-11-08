@@ -11,53 +11,55 @@
 
 @media (prefers-color-scheme: dark) {
   [data-theme="neighbourgrid"] {
-    /* Neutral near-black ground; the teal/sky ambient is a glow on it, not a tint of it. */
-    --color-background: #0d1014;
-    --color-foreground: #eef1f3;
-    --color-card: #16191e;
-    --color-card-foreground: #eef1f3;
-    --color-popover: #1a1e24;
-    --color-popover-foreground: #eef1f3;
-    --color-primary: #3fb3a9;
-    --color-primary-foreground: #06201e;
-    --color-primary-ink: #8fdcd3;
-    --color-secondary: #17302f;
-    --color-secondary-foreground: #eef1f3;
-    --color-muted: #1c2026;
-    --color-muted-foreground: #a7afb6;
-    --color-accent: #173231;
-    --color-accent-foreground: #eef1f3;
-    --color-destructive: #e2795f;
-    --color-destructive-foreground: #1a0d09;
-    --color-border: rgba(255, 255, 255, 0.1);
-    --color-input: rgba(255, 255, 255, 0.16);
-    --color-ring: #3fb3a9;
-    --color-navy: #0d1014;
-    --color-navy-foreground: #eef1f3;
-    --color-advisory: #3a2d12;
-    --color-advisory-foreground: #f3d9a0;
-    --color-beacon: #e2795f;
-    --color-beacon-foreground: #1a0d09;
-    --color-success: #5fc8a6;
-    --color-warning: #e8b85a;
-    --color-warning-foreground: #1a1206;
-    --color-info: #6fb3dc;
+    /* Darker Egyptian field. Panes are solid, a step above the ground, with no outline. */
+    --color-background: #010c14;
+    --color-foreground: #e7eef6;
+    --color-card: #0a2230;
+    --color-card-foreground: #e7eef6;
+    --color-popover: #0c2836;
+    --color-popover-foreground: #e7eef6;
+    --color-primary: #839cc5;
+    --color-primary-foreground: #03303d;
+    --color-primary-ink: #d5e1f0;
+    --color-secondary: #0e2a38;
+    --color-secondary-foreground: #e7eef6;
+    --color-muted: #0c2632;
+    --color-muted-foreground: #b7c6dc;
+    --color-accent: #0e2a38;
+    --color-accent-foreground: #e7eef6;
+    --color-destructive: #e82f33;
+    --color-destructive-foreground: #fff8f7;
+    --color-border: transparent;
+    --color-input: rgba(183, 198, 220, 0.45);
+    --color-ring: #839cc5;
+    --color-navy: #010c14;
+    --color-navy-foreground: #e7eef6;
+    --color-advisory: #3a3220;
+    --color-advisory-foreground: #f0ddb0;
+    --color-beacon: #e82f33;
+    --color-beacon-foreground: #fff8f7;
+    --color-beacon-ink: #f6b4b6;
+    --color-success: #b7d4c8;
+    --color-success-foreground: #03303d;
+    --color-warning: #e6c98a;
+    --color-warning-foreground: #03303d;
+    --color-info: #c5d4ea;
+    --color-info-foreground: #03303d;
 
-    --color-glass: rgba(20, 22, 26, 0.55);
-    --color-glass-strong: rgba(26, 28, 34, 0.78);
-    --color-glass-border: rgba(255, 255, 255, 0.1);
-    --color-glass-highlight: rgba(255, 255, 255, 0.14);
-    --color-ambient-a: #1f8f86;
-    --color-ambient-b: #2e5fa8;
-    --ambient-a: 45%;
-    --ambient-b: 40%;
-    --ambient-c: 22%;
-    --shadow-glass: 0 1px 1px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
-    --shadow-glass-float: 0 2px 4px rgba(0, 0, 0, 0.25), 0 20px 48px -18px rgba(0, 0, 0, 0.7);
+    --color-glass: #0a2230;
+    --color-glass-strong: #0e2c3c;
+    --color-glass-border: transparent;
+    --color-glass-highlight: transparent;
+    --color-ambient-a: #021820;
+    --color-ambient-b: #021820;
+    --ambient-a: 0%;
+    --ambient-b: 0%;
+    --shadow-glass: 0 12px 28px -20px rgba(0, 0, 0, 0.55);
+    --shadow-glass-float: 0 16px 32px -18px rgba(0, 0, 0, 0.6);
     --shadow-card: var(--shadow-glass);
     --shadow-card-hover: var(--shadow-glass-float);
-    --color-shell: #111418;
-    --color-shell-panel: rgba(20, 22, 26, 0.55);
+    --color-shell: #010910;
+    --color-shell-panel: #0a2230;
   }
 }
 

@@ -34,8 +34,8 @@ export function NeighbourhoodGridCanvas({ className }: { className?: string }) {
     const darkScheme = window.matchMedia('(prefers-color-scheme: dark)')
     const palette = () =>
       darkScheme.matches
-        ? { line: 'rgba(238, 243, 246, 0.06)', node: '63, 179, 169' }
-        : { line: 'rgba(16, 36, 58, 0.07)', node: '10, 101, 96' }
+        ? { line: 'rgba(231, 238, 246, 0.08)', node: '131, 156, 197' }
+        : { line: 'rgba(3, 48, 61, 0.08)', node: '3, 48, 61' }
     let colors = palette()
     const onScheme = () => {
       colors = palette()

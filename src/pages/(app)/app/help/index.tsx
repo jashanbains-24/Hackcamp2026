@@ -36,7 +36,7 @@ export default function HelpBoardPage() {
           <Link
             to="/app/help/new"
             viewTransition
-            className="ng-press inline-flex min-h-11 items-center gap-1.5 rounded-[14px] bg-primary pl-3.5 pr-4 text-sm font-semibold text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)] transition-[transform,background-color] duration-150 hover:bg-primary-ink"
+            className="ng-press inline-flex min-h-11 items-center gap-1.5 rounded-[14px] bg-primary pl-3.5 pr-4 text-sm font-semibold text-primary-foreground shadow-none transition-[transform,background-color] duration-150 hover:bg-primary-ink"
           >
             <Plus className="size-4" aria-hidden /> New
           </Link>

@@ -172,7 +172,7 @@ export function NeighbourhoodGuide({
               value={draft}
               maxLength={1_000}
               placeholder="Ask anything"
-              className="h-14 w-full rounded-full border border-foreground/10 bg-foreground/8 pl-5 pr-16 text-base text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              className="h-14 w-full rounded-full border-0 bg-card pl-5 pr-16 text-base text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
               onChange={(event) => setDraft(event.target.value)}
             />
             <button

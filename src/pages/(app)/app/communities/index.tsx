@@ -57,7 +57,7 @@ export default function CommunitiesPage() {
           aria-label="Search communities"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="h-12 w-full rounded-full border border-foreground/10 bg-foreground/8 pr-12 pl-11 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-search-cancel-button]:appearance-none"
+          className="h-12 w-full rounded-full border-0 bg-card pr-12 pl-11 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary [&::-webkit-search-cancel-button]:appearance-none"
         />
         {query && (
           <button

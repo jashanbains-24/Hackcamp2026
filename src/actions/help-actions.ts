@@ -30,6 +30,7 @@ const createHelpSchema = baseHelpSchema.extend({
 
 const createBeaconSchema = baseHelpSchema.extend({
   targetCommunityIds: z.array(z.string().trim().min(1).max(120)).max(2),
+  reach: z.enum(['nearby', 'city', 'region']).default('nearby'),
 })
 
 const respondSchema = z.object({
@@ -174,12 +175,30 @@ export const createHelpBeaconAction: ActionHandler<Env> = async ({
   const community = communityResult.success
     ? asEnvelope<CommunityRow>(communityResult.data.record)
     : null
-  const allowedTargets = new Set([
-    parsed.data.communityId,
-    ...(community?.data.adjacentCommunityIds ?? []),
-  ])
-  if (parsed.data.targetCommunityIds.some((targetId) => !allowedTargets.has(targetId))) {
-    return fail('One or more selected communities cannot receive this beacon.')
+  const reach = parsed.data.reach
+  let extraTargets: string[]
+  if (reach === 'nearby') {
+    const allowedTargets = new Set([
+      parsed.data.communityId,
+      ...(community?.data.adjacentCommunityIds ?? []),
+    ])
+    if (parsed.data.targetCommunityIds.some((targetId) => !allowedTargets.has(targetId))) {
+      return fail('One or more selected communities cannot receive this beacon.')
+    }
+    extraTargets = parsed.data.targetCommunityIds
+  } else {
+    const listed = await tools.query('communities', { limit: 80 })
+    if (!listed.success) return listed
+    if (reach === 'city' && !community?.data.municipality) {
+      return fail('This community has no city, so a city-wide beacon cannot be sent.')
+    }
+    extraTargets = listed.data.records
+      .map((record) => asEnvelope<CommunityRow>(record))
+      .filter((row) => row.recordId !== parsed.data.communityId)
+      .filter((row) =>
+        reach === 'region' || row.data.municipality === community?.data.municipality,
+      )
+      .map((row) => row.recordId)
   }
 
   const recent = await tools.query('help_items', {
@@ -200,7 +219,7 @@ export const createHelpBeaconAction: ActionHandler<Env> = async ({
 
   const timestamp = new Date().toISOString()
   const targetCommunityIds = Array.from(
-    new Set([parsed.data.communityId, ...parsed.data.targetCommunityIds]),
+    new Set([parsed.data.communityId, ...extraTargets]),
   )
   return tools.create('help_items', {
     title: parsed.data.title,

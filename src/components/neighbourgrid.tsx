@@ -25,7 +25,7 @@ export function BrandMark({
     <span className="inline-flex items-center gap-2.5">
       <span
         className={cn(
-          'grid size-8 place-items-center rounded-[10px] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35)]',
+          'grid size-8 place-items-center rounded-[10px]',
           inverted ? 'bg-white/15 text-white ring-1 ring-white/25' : 'bg-primary text-primary-foreground',
         )}
         aria-hidden
@@ -98,7 +98,7 @@ export function StatusLabel({
         tone === 'official' && 'bg-primary/12 text-primary-ink',
         tone === 'demo' && 'bg-foreground/8 text-foreground',
         tone === 'warning' && 'bg-advisory text-advisory-foreground',
-        tone === 'help' && 'bg-beacon/12 text-beacon',
+        tone === 'help' && 'bg-beacon/12 text-beacon-ink',
         tone === 'success' && 'bg-success/14 text-success',
         className,
       )}
@@ -288,7 +288,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     className={cn(
                       'ng-press inline-flex min-h-11 items-center gap-3 rounded-[14px] px-3 text-sm font-semibold transition-[color,background-color,box-shadow,transform] duration-200 ease-[cubic-bezier(0.77,0,0.175,1)]',
                       active
-                        ? 'bg-glass-strong text-foreground shadow-[inset_0_1px_0_0_var(--color-glass-highlight),0_1px_2px_rgba(16,36,58,0.08)]'
+                        ? 'bg-glass-strong text-foreground'
                         : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground',
                     )}
                   >
@@ -334,7 +334,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="ng-glass-pill relative mx-auto grid h-16 max-w-md grid-cols-5 p-1.5">
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-1.5 left-1.5 w-[calc((100%-0.75rem)/5)] rounded-full bg-foreground/8 shadow-[inset_0_1px_0_0_var(--color-glass-highlight)] transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
+            className="pointer-events-none absolute inset-y-1.5 left-1.5 w-[calc((100%-0.75rem)/5)] rounded-full bg-foreground/8 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
             style={{ transform: `translateX(${activeIndex * 100}%)` }}
           />
           {navItems.map((item) => {
