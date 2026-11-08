@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:57 p.m. Vancouver time
-**Current stage:** n8n help-request event verified locally
-**Shared branch:** `main` includes PR #10; active work is `feat/n8n-help-event`
-**Active lane in this checkout:** Developer C on `feat/n8n-help-event`
+**Last updated:** 2026-11-08, 12:00 a.m. Vancouver time
+**Current stage:** Guide and n8n merged; production redeploy pending
+**Shared branch:** `main` at `7b79a56` (PR #11)
+**Active lane in this checkout:** Developer C on clean `main`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -19,10 +19,9 @@
 - Gemini request clarity and the Home Neighbourhood Guide are merged through PR #10 (`07ff10c`).
 - The owner verified a signed-in local answer on the free Gemini plan. Live Google Search is not
   included without billing, so the Guide falls back to visible community activity and BC Hydro.
-- Production does not have the Guide until `main` is redeployed.
-- `feat/n8n-help-event` sends one anonymous event after a verified help request. The owner
-  confirmed one successful n8n execution at 11:56 p.m. on November 7. Production still needs the
-  merge and a redeploy.
+- Production does not yet have the Guide or n8n event. Both are on `main` and need one redeploy.
+- The anonymous n8n help-request event is merged through PR #11 (`7b79a56`). One local execution
+  succeeded at 11:56 p.m. on November 7.
 - UI overhaul is merged into `main`. Landing, shell, home, and placeholders use the NeighbourGrid
   design system.
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
@@ -48,7 +47,7 @@
 
 - **Developer A:** UI/presentation work merged; Figma share URL remains an owner action.
 - **Developer B:** Communities and home sync merged; no further feature work expected.
-- **Developer C:** Help/Beacon and Neighbourhood Guide merged. Production redeploy is the next step.
+- **Developer C:** Help/Beacon, Neighbourhood Guide, and n8n event are merged. Redeploy is next.
 
 **Figma URL:** Pending owner create/share — follow [`docs/FIGMA_HANDOFF.md`](./docs/FIGMA_HANDOFF.md).
 Paste the share link here and in `README.md` when ready.
@@ -94,8 +93,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
 - **Gemini API:** request clarity and the Home Guide are merged. The free model passed locally
   without web-search quota. Production still needs a redeploy.
-- **n8n:** workflow `NeighbourGrid help event` is published. One local signed-in help request
-  produced a successful execution. The branch still needs to be merged and deployed.
+- **n8n:** workflow `NeighbourGrid help event` is published and merged. One local execution
+  succeeded. Production needs the same check after redeploy.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
 
@@ -107,16 +106,13 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
       `docs/presentation/` screenshots onto frames).
    3. Enable link sharing (view).
    4. Paste the URL into **Figma URL** above and `README.md` → Design file.
-2. **Redeploy:** from clean `main`, run `npx deepspace deploy`, then ask the signed-in Guide one
-   question on the live URL. The Gemini secret is already uploaded.
-3. **Merge and redeploy:** merge `feat/n8n-help-event`, pull `main`, then run
-   `npx deepspace deploy`. Create one signed-in help request on the live URL and confirm a new
-   n8n execution.
+2. **Redeploy `main`:** run `npx deepspace deploy`. Then, on the live URL, ask the signed-in Guide
+   one question and create one help request. Confirm a new n8n execution.
 
 ## Next safe handoff
 
-The local n8n path is verified. Merge `feat/n8n-help-event`, pull `main`, and redeploy before
-claiming the live automation. A local `WIP dark pastel palette` stash remains on purpose.
+PR #11 is merged and this checkout is on clean `main`. Redeploy before treating the live site as
+having the Guide or n8n event. A local `WIP dark pastel palette` stash remains on purpose.
 
 ## Session log template
 
@@ -131,6 +127,12 @@ claiming the live automation. A local `WIP dark pastel palette` stash remains on
 ```
 
 ## Session history
+
+### 2026-11-08 00:00 — Developer C (`main`)
+
+- Merged PR #11 (`7b79a56`) and fast-forwarded this checkout to `main`.
+- Removed the merged n8n feature branch. The dark-pastel stash remains.
+- Next: redeploy `main`, then verify the live Guide and one live n8n execution.
 
 ### 2026-11-07 23:57 — Developer C (`feat/n8n-help-event`)
 

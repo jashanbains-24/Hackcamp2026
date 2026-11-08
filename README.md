@@ -8,22 +8,23 @@ emergency service or official alert system.
 
 **Live app:** [hackcamp2026.app.space](https://hackcamp2026.app.space)
 
-`main` includes PR #10 (`07ff10c`), with UI overhaul, platform/home, Communities, Help/Beacon,
-authenticated two-user Help realtime, presentation assets, and the Home Neighbourhood Guide. The
-deployed source is the claimed GitHub repository `jashanbains-24/hackcamp2026`. Production still
-needs a redeploy before the live site shows the Guide.
+`main` includes PR #11 (`7b79a56`), with UI overhaul, platform/home, Communities, Help/Beacon,
+authenticated two-user Help realtime, presentation assets, the Home Neighbourhood Guide, and the
+anonymous n8n help-request event. The deployed source is the claimed GitHub repository
+`jashanbains-24/hackcamp2026`. Production still needs a redeploy before the live site shows the
+Guide or sends n8n events.
 
 | Lane | Status | Owner |
 | --- | --- | --- |
 | Platform / home / official updates | Merged (`feat/home-alerts`) | Developer A |
 | Communities / posts / comments | Merged (`feat/communities`) | Developer B |
-| Help / beacon / Gemini / n8n | Help, Home Guide, and anonymous n8n event implemented; live n8n execution pending | Developer C |
+| Help / beacon / Gemini / n8n | Help, Home Guide, and n8n event merged; production redeploy pending | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
 fallback. The live two-user DeepSpace lifecycle passed. Production landing, demo home,
 Communities, and the real BC Hydro Surrey feed were verified. The Home Guide is now on `main`:
 an authenticated, read-only Gemini assistant. A signed-in local answer passed on the free plan.
-Figma, production redeploy, and n8n remain pending.
+Figma and the production redeploy remain pending. The local n8n execution passed.
 
 ## Local setup
 
