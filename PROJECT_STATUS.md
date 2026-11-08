@@ -1,7 +1,7 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-08, 12:21 a.m. Vancouver time
-**Current stage:** Home page polish on `polish/home-quiet`; production redeploy still waiting
+**Last updated:** 2026-11-08, 12:26 a.m. Vancouver time
+**Current stage:** Home and Communities polish on `polish/home-quiet`; production redeploy still waiting
 **Shared branch:** `main` at `c3ec84e` (PR #11 plus the n8n status commit)
 **Active lane in this checkout:** Developer C on `polish/home-quiet`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
@@ -128,6 +128,14 @@ remains on purpose.
 ```
 
 ## Session history
+
+### 2026-11-08 00:26 — Developer C (`polish/home-quiet`)
+
+- Removed the mobile NeighbourGrid bar on every page. The desktop sidebar stays.
+- Communities list keeps the city under each name, drops Open / Request to join from that line, and puts Request on the button when a community is request-to-join.
+- Removed the approximate-area footnote. Added fictional demo member counts as a person icon and a number.
+- Tests run: `npm run type-check` and eslint on the touched files passed. Checked `/app/communities?demo=1` at 393px and requested to join Guildford, which switched to Request pending.
+- Next: owner visual review, then the following page. Redeploy after the polish is accepted.
 
 ### 2026-11-08 00:15 — Developer C (`polish/home-quiet`)
 

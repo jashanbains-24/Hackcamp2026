@@ -92,6 +92,18 @@ export const communities: Community[] = [
 
 export const homeCommunity = communities[0]
 
+/** Fictional demo figures for the communities list. Not a live member count. */
+export const demoMemberCounts: Record<string, number> = {
+  'community-newton': 186,
+  'community-fleetwood': 142,
+  'community-guildford': 97,
+  'community-cloverdale': 118,
+  'community-city-centre': 231,
+  'community-ladner': 64,
+  'community-north-delta': 109,
+  'community-burnaby-metrotown': 154,
+}
+
 export const demoPosts: Post[] = [
   {
     id: 'post-library-hours',

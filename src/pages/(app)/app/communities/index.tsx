@@ -1,9 +1,10 @@
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Footnote, PageIntro, Pane, StatusLabel } from '@/components/neighbourgrid'
+import { PageIntro, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { CommunityMembership } from '@/components/communities/CommunityMembership'
 import { communityCatalog } from '@/services/communities'
 import { useNeighbourGridSession } from '@/neighbourgrid/exports'
+import { demoMemberCounts } from '@/shared/demo-data'
 
 export default function CommunitiesPage() {
   const session = useNeighbourGridSession()
@@ -28,8 +29,15 @@ export default function CommunitiesPage() {
                     </span>
                     {isHome && <StatusLabel tone="official">Home</StatusLabel>}
                   </span>
-                  <span className="block text-sm text-muted-foreground">
-                    {community.municipality} · {community.visibility === 'public' ? 'Open' : 'Request to join'}
+                  <span className="mt-0.5 flex items-center gap-2 text-sm text-muted-foreground">
+                    <span>{community.municipality}</span>
+                    {demoMemberCounts[community.id] != null && (
+                      <span className="inline-flex items-center gap-1">
+                        <Users className="size-3.5" aria-hidden />
+                        <span className="sr-only">{demoMemberCounts[community.id]} members</span>
+                        <span aria-hidden>{demoMemberCounts[community.id]}</span>
+                      </span>
+                    )}
                   </span>
                 </span>
                 {isHome && <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />}
@@ -41,7 +49,6 @@ export default function CommunitiesPage() {
           )
         })}
       </Pane>
-      <Footnote className="mt-3">Approximate neighbourhood areas, not precise boundaries.</Footnote>
     </div>
   )
 }
