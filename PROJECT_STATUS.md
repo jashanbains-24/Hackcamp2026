@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 6:30 p.m. Vancouver time  
-**Current stage:** Developer A UI-overhaul polish complete on `feat/ui-overhaul` (uncommitted); awaiting review, Figma URL, then commit/push  
-**Shared branch:** `main` (unchanged)  
-**Active lane branch:** `feat/ui-overhaul`  
+**Last updated:** 2026-11-07, 6:44 p.m. Vancouver time
+**Current stage:** UI overhaul merged; Developers A/B/C may work in parallel
+**Shared branch:** `main` at UI merge `ed5c7ba`
+**Active lane in this checkout:** Developer C on `feat/help-beacon`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 
 ## Verified baseline
@@ -14,22 +14,15 @@
 - No persistent records, product auth flow, realtime feature, RSS integration, Gemini call, or n8n
   workflow is implemented yet.
 
-## Immediate sequence
+## Current parallel lanes
 
-### Developer A: UI-overhaul gate — in progress / ready for review
-
-Implementation is on `feat/ui-overhaul` locally (not committed yet, per owner direction):
-
-1. ~~Pull latest `main` and create `feat/ui-overhaul`~~
-2. ~~Rework tokens, shell, landing, home, and placeholder presentation~~
-3. Shared Figma file still needs a share URL (see user action below)
-4. Owner/team reviews UI in the running local app
-5. On approval: commit, push `feat/ui-overhaul`, then merge into `main`
-6. Only after that merge: A/B/C start `feat/home-alerts`, `feat/communities`, `feat/help-beacon`
+- **Developer A:** `feat/home-alerts` — platform, schemas/auth, home, official updates, deploy.
+- **Developer B:** `feat/communities` — bounded community membership/post/comment work.
+- **Developer C:** `feat/help-beacon` — help lifecycle, beacon, Gemini, realtime handoff.
 
 **Figma URL:** Not created yet — Developer A owns this action.
 
-### All developers: start parallel lanes only after A merges
+### Starting or refreshing a lane
 
 Each developer runs:
 
@@ -58,18 +51,24 @@ git switch -c feat/help-beacon  # C
 
 ## Current blockers and user actions
 
-1. **Review the UI overhaul** at `http://localhost:8780` (mobile 390px + desktop) before asking for a commit.
-2. **Create the shared Figma file** (Developer A ownership):
+1. **Create the shared Figma file** (Developer A ownership):
    1. In Figma, create a file named `NeighbourGrid — HackCamp 2026`.
    2. Add frames for: tokens/components, landing mobile+desktop, home mobile+desktop, communities, help, beacon confirmation, focus/error/empty states.
    3. Turn on link sharing for the team.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
-3. **n8n account** remains optional and does not block this gate.
-4. **Gemini secret setup** waits for Person C’s server endpoint.
+2. **Gemini key:** Developer C’s server endpoint is ready. The owner may now follow the secure
+   upload commands in `README.md`; the endpoint also requires Developer A’s authenticated session
+   flow before the UI button can succeed.
+3. **Developer A schema exports:** C’s persisted cross-device realtime adapter waits for A’s
+   approved `help_items`/`help_responses` schemas and permission hooks.
+4. **n8n account:** remains optional and is intentionally deferred until persisted help matching
+   works.
 
 ## Next safe handoff
 
-UI implementation is ready for human visual review on `feat/ui-overhaul`. Do **not** merge or start B/C feature branches until the branch is committed, pushed, reviewed, and merged into `main`. Do not start `feat/home-alerts` until after that merge.
+Developer C should replace the local demo adapter with A’s stable DeepSpace exports when available,
+then verify cross-device realtime and add n8n only if time remains. The local adapter already
+supports the full lifecycle and no-refresh synchronization between two open demo sessions.
 
 ## Session log template
 
@@ -84,6 +83,22 @@ UI implementation is ready for human visual review on `feat/ui-overhaul`. Do **n
 ```
 
 ## Session history
+
+### 2026-11-07 18:44 — Developer C, branch `feat/help-beacon`
+
+- Completed: Ordinary request/offer creation; participant demo switcher; offer, accept, matched,
+  resolve, and cancel lifecycle; targeted beacon confirmation; safety warning; cooldown;
+  owner-only controls; local persistence; no-refresh two-tab synchronization; server-only Gemini
+  Request Clarity endpoint and editable manual fallback.
+- Notable files: `src/features/help/`, help/beacon routes, `src/server/help-routes.ts`, `worker.ts`,
+  `tests/help.spec.ts`.
+- Tests run: type-check passed; lint passed; 6 unit tests passed; production build passed; 4/4 help
+  browser tests passed, including two-session synchronization. IDE diagnostics clean.
+- Service/schema/config changes: Added `/api/help/clarify`; no shared DeepSpace schema changes and
+  no secret values committed.
+- Blockers or user action: Gemini key upload and A’s authenticated session flow; A-owned
+  DeepSpace help schemas for real cross-device persistence/realtime; n8n account/workflow deferred.
+- Next task / handoff: integrate A’s schema exports, verify on two devices, then consider n8n.
 
 ### 2026-11-07 18:30 — Developer A / UI lead, branch `feat/ui-overhaul`
 
