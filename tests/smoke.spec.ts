@@ -55,7 +55,16 @@ test.describe('Smoke tests', () => {
     await page.getByRole('link', { name: 'Communities' }).last().click()
     await expect(page).toHaveURL(/\/app\/communities/)
     await expect(page.getByRole('heading', { name: 'Communities' })).toBeVisible()
-    expect(errors.filter((message) => !message.includes('/api/auth/get-session'))).toEqual([])
+    expect(
+      errors.filter(
+        (message) =>
+          !message.includes('/api/auth/get-session') &&
+          !(
+            process.env.SMOKE_STATIC === '1' &&
+            message.includes('WebSocket handshake: Unexpected response code: 200')
+          ),
+      ),
+    ).toEqual([])
   })
 
   test('desktop dashboard exposes primary navigation and working CTAs', async ({ page }) => {

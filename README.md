@@ -6,7 +6,8 @@ emergency service or official alert system.
 
 ## Current status
 
-The **UI overhaul is merged** into `main` (`ed5c7ba`). Parallel feature lanes are unlocked:
+The **UI overhaul and Developer A platform baseline are merged** into `main` (`ea4574c`).
+Parallel feature lanes are active:
 
 | Lane | Branch | Owner |
 | --- | --- | --- |
@@ -14,8 +15,10 @@ The **UI overhaul is merged** into `main` (`ed5c7ba`). Parallel feature lanes ar
 | Communities / posts / comments | `feat/communities` | Developer B |
 | Help / beacon / Gemini / n8n | `feat/help-beacon` | Developer C |
 
-Developer A’s `feat/home-alerts` work adds shared DeepSpace schemas, auth/demo session, home
-aggregates, Activity/Profile, and a server-side BC Hydro Surrey feed.
+Developer A’s baseline provides shared DeepSpace schemas, auth/demo session, home aggregates,
+Activity/Profile, and a server-side BC Hydro Surrey feed. Developer C’s branch connects Help and
+Beacon to those authenticated realtime collections through server-checked lifecycle actions while
+retaining the clearly labelled local demo fallback.
 
 ## Local setup
 
@@ -33,8 +36,8 @@ npm run dev
 Open `http://localhost:8780`. `npm run dev` starts the mock-capable UI; `npm run dev:deepspace`
 starts the full registered DeepSpace runtime (needed for live records + `/api/official-updates`).
 
-No application secrets are required for the current A-lane baseline. Copy `.env.example` only when
-a later workstream adds an integration:
+No application secret is required for the manual help lifecycle. Gemini suggestions require the
+server-only secret described below:
 
 ```bash
 cp .env.example .env
@@ -47,7 +50,7 @@ cp .env.example .env
 - React Router file-based routes
 - Tailwind CSS 4 semantic theme tokens
 - Lucide icons and accessible scaffold UI primitives
-- Hono/Cloudflare Worker (official updates API + records)
+- Hono/Cloudflare Worker (official updates, Gemini, help actions, and records)
 
 The technology decision and fallback threshold are recorded in `DECISIONS.md`.
 
@@ -109,8 +112,8 @@ import {
 Do not put real values in `.env`, `.env.example`, client code, `VITE_*`, chat, or commits. Do not
 manually edit `.dev.vars`; DeepSpace regenerates it from the encrypted app store.
 
-The user already has the Gemini API key. Wait until Person C has implemented the server endpoint,
-then ask the user to run these commands locally from the repository:
+The Gemini endpoint is implemented. The owner can enable it by running these commands locally from
+the repository:
 
 ```bash
 read -s GEMINI_API_KEY
@@ -134,7 +137,8 @@ When the n8n account and server workflow are ready, use the same pattern with
 - Official updates use the verified BC Hydro Surrey municipality feed and never claim Newton
   specificity without verified detail.
 - Official resource cards link directly to BC Hydro, PreparedBC, or EmergencyInfoBC.
-- The beacon preview sends nothing and prominently says to call 911 for immediate danger.
+- Demo beacons remain browser-local and contact nobody. Authenticated live beacons create only an
+  in-app DeepSpace record; they do not contact emergency services or external broadcasters.
 - No precise location, phone number, or sensitive personal information is collected.
 
 ## Project map
@@ -143,6 +147,8 @@ When the n8n account and server workflow are ready, use the same pattern with
 - `src/pages/(app)/app/` — app shell routes
 - `src/components/neighbourgrid.tsx` — brand, shell, and shared UI primitives
 - `src/neighbourgrid/` — A-owned session/home/official hooks and B/C exports
+- `src/features/help/` — help UI adapter, demo fallback, and lifecycle presentation
+- `src/actions/help-actions.ts` — authenticated, server-checked help lifecycle
 - `src/schemas/neighbourgrid-schema.ts` — product collections + RBAC
 - `src/shared/types.ts` — stable shared contracts
 - `src/shared/demo-data.ts` — centralized fictional demo data

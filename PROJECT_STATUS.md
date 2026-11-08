@@ -1,10 +1,10 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, ~6:55 p.m. Vancouver time  
-**Current stage:** Developer A platform/home lane on `feat/home-alerts` (ready for team review)  
-**Shared branch:** `main` @ `ed5c7ba` (UI overhaul merged)  
-**Active lane branch:** `feat/home-alerts`  
-**Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`  
+**Last updated:** 2026-11-07, 7:20 p.m. Vancouver time
+**Current stage:** Parallel lanes integrating on the Developer A platform baseline
+**Shared branch:** `main` at `ea4574c` (Developer A home/platform PR merged)
+**Active lane in this checkout:** Developer C on `feat/help-beacon`
+**Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 
 ## Verified baseline
@@ -13,31 +13,33 @@
   design system.
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
 - Developer A schemas, session/demo fence, home aggregates, Activity/Profile, and BC Hydro Surrey
-  official-updates API are implemented on `feat/home-alerts`.
-- Gemini and n8n remain intentionally unimplemented (Person C).
+  official-updates API are merged into `main`.
+- Developer C’s branch now uses A’s authenticated session and `help_items`/`help_responses`
+  collections, with server-enforced lifecycle actions and the local demo adapter as fallback.
+- The Gemini endpoint is implemented but the secret and live authenticated call are not verified.
+- n8n remains intentionally deferred.
 
-## Immediate sequence
+## Current parallel lanes
 
-### Gate complete — UI overhaul merged
+- **Developer A:** platform/home baseline merged; next owns deployment, Figma, and integration review.
+- **Developer B:** `feat/communities` — bounded community membership/post/comment work.
+- **Developer C:** `feat/help-beacon` — DeepSpace help lifecycle, beacon, Gemini verification.
 
-1. ~~Developer A UI overhaul~~ merged at `ed5c7ba`
-2. All developers pull `main` and create parallel branches
+**Figma URL:** Not created yet — Developer A owns this action.
+
+### Starting or refreshing a lane
+
+Each developer runs:
 
 ```bash
 git switch main
 git pull origin main
 npm install
 npm run build
-git switch -c feat/home-alerts       # A (this branch)
+git switch -c feat/home-alerts       # A
 # or: git switch -c feat/communities # B
 # or: git switch -c feat/help-beacon # C
 ```
-
-### Developer A — `feat/home-alerts` (in review)
-
-Completed in this session (see session history). Do **not** merge without team review.
-
-**Figma URL:** Not created yet — Developer A still owns adding the share link to README + status.
 
 ## B/C import contract (stable)
 
@@ -62,11 +64,12 @@ import {
 | HelpResponse | `help_responses` | `responderId` userBound |
 | OfficialUpdate | `official_updates` | Admin write; live path prefers API |
 
-Live official feed: `GET /api/official-updates`  
-Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`  
+Live official feed: `GET /api/official-updates`
+Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 (from official index `.../outages_rss.html`)
 
-Propose schema/permission changes to Person A before depending on new fields.
+Developer C hardened the two help collections so writes occur only through authenticated server
+actions. Developer A should review this schema adjustment during integration.
 
 ## Sponsor/integration plan
 
@@ -78,44 +81,23 @@ Propose schema/permission changes to Person A before depending on new fields.
 
 ## Current blockers and user actions
 
-1. **Approve / review `feat/home-alerts`** (do not merge until reviewed).
-2. **Run smoke locally** (agent sandbox blocked Chrome + Cloudflare Vite watchers):
-
-```bash
-git switch feat/home-alerts
-npm install
-npm run build
-npm run test:smoke
-# if Vite/Cloudflare fails in a restricted environment:
-SMOKE_STATIC=1 npm run test:smoke
-```
-
-3. **Deploy verification** (owner machine; agent is not logged in to DeepSpace):
-
-```bash
-npx deepspace auth login
-npx deepspace deploy
-```
-
-Success: CLI prints a live `*.space` URL; phone-width + desktop home show DEMO fence or signed-in
-profile; Official updates show Surrey feed items or an honest empty/error state with timestamps.
-
-4. **Create the shared Figma file** (Developer A ownership):
-   1. In Figma, create `NeighbourGrid — HackCamp 2026`.
-   2. Add frames for tokens/components, landing, home, communities, help, beacon, states.
-   3. Enable link sharing.
+1. **Create the shared Figma file** (Developer A ownership):
+   1. In Figma, create a file named `NeighbourGrid — HackCamp 2026`.
+   2. Add frames for: tokens/components, landing mobile+desktop, home mobile+desktop, communities, help, beacon confirmation, focus/error/empty states.
+   3. Turn on link sharing for the team.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
-
-5. **n8n account** remains optional.
-6. **Gemini secret setup** waits for Person C’s server endpoint.
+2. **Gemini key:** upload it through the secure commands in `README.md`, restart the DeepSpace
+   runtime, and verify one authenticated Request Clarity call.
+3. **DeepSpace live rehearsal:** use two authenticated users on separate browser/device sessions
+   to verify create → offer → accept → resolve without refresh.
+4. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
+5. **n8n account:** remains optional and deferred until the persisted rehearsal passes.
 
 ## Next safe handoff
 
-- B may start `feat/communities` from current `main`, then rebase onto `feat/home-alerts` after
-  merge (or branch from `feat/home-alerts` now if coordinating schema early).
-- C may start `feat/help-beacon` similarly; import help aggregates via documented exports once A
-  merges.
-- A next: address review feedback, complete deploy URL verification, add Figma URL when ready.
+Developer C should complete the authenticated two-user rehearsal and live Gemini check, then push
+the integration commit for review. Developer A reviews the help schema/action boundary and deploys
+the integrated app. Add n8n only if the persisted lifecycle is verified and time remains.
 
 ## Session log template
 
@@ -130,6 +112,40 @@ profile; Official updates show Surrey feed items or an honest empty/error state 
 ```
 
 ## Session history
+
+### 2026-11-07 19:05 — Developer C, branch `feat/help-beacon`
+
+- Completed: Merged Developer A’s platform baseline; connected Help/Beacon to authenticated
+  DeepSpace queries and session identity; added server actions for create/respond/accept/
+  resolve/cancel; enforced community eligibility, response uniqueness, owner transitions, beacon
+  target checks, and cooldown; retained the labelled browser-local demo fallback.
+- Notable files: `src/actions/help-actions.ts`, `src/features/help/help-network.ts`,
+  `src/schemas/neighbourgrid-schema.ts`, Help/Beacon routes, and integration documentation.
+- Tests run: type-check passed; lint passed; 11 unit tests passed; production build passed;
+  6/6 static smoke tests passed; 4/4 help demo browser tests passed.
+- Service/schema/config changes: normal members can read but cannot directly mutate help
+  collections; authenticated server actions own all help writes; response user/item pairs are
+  unique. No secret values were added.
+- Blockers or user action: authenticated two-user DeepSpace rehearsal and Gemini secret/live call
+  remain unverified; deployment URL and Figma URL remain Developer A actions; n8n stays deferred.
+- Next task / handoff: push C’s integration update; Developer A reviews the help schema/action
+  boundary and deploys; owner runs the two-user rehearsal and secure Gemini setup.
+
+### 2026-11-07 18:44 — Developer C, branch `feat/help-beacon`
+
+- Completed: Ordinary request/offer creation; participant demo switcher; offer, accept, matched,
+  resolve, and cancel lifecycle; targeted beacon confirmation; safety warning; cooldown;
+  owner-only controls; local persistence; no-refresh two-tab synchronization; server-only Gemini
+  Request Clarity endpoint and editable manual fallback.
+- Notable files: `src/features/help/`, help/beacon routes, `src/server/help-routes.ts`, `worker.ts`,
+  `tests/help.spec.ts`.
+- Tests run: type-check passed; lint passed; 6 unit tests passed; production build passed; 4/4 help
+  browser tests passed, including two-session synchronization. IDE diagnostics clean.
+- Service/schema/config changes: Added `/api/help/clarify`; no shared DeepSpace schema changes and
+  no secret values committed.
+- Blockers or user action: Gemini key upload and A’s authenticated session flow; A-owned
+  DeepSpace help schemas for real cross-device persistence/realtime; n8n account/workflow deferred.
+- Next task / handoff: integrate A’s schema exports, verify on two devices, then consider n8n.
 
 ### 2026-11-07 18:55 — Developer A, branch `feat/home-alerts`
 

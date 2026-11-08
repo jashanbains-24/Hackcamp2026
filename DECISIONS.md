@@ -63,7 +63,8 @@ secrets are forbidden.
 ## Safety and product language
 
 - “Community Help Beacon” is an opt-in community assistance concept, never SOS or dispatch.
-- The preview cannot send a beacon.
+- Demo beacons never leave the browser. Authenticated beacons create only in-app records and do
+  not contact emergency services or external broadcasters.
 - Official and simulated information are visually and semantically separate.
 - Approximate community is used instead of geolocation or precise addresses.
 
@@ -80,3 +81,13 @@ not claim Surrey municipality items are Newton-specific.
 ## 2026-11-07 — UI overhaul gate complete
 
 **Decision:** Parallel A/B/C feature branches start from `main` at/after `ed5c7ba`.
+
+## 2026-11-07 — Help lifecycle uses server actions
+
+**Decision:** Normal members may read help records but cannot write those collections directly.
+Authenticated server actions create requests/beacons/responses and enforce ownership, community
+eligibility, lifecycle transitions, response uniqueness, allowed beacon targets, and cooldowns.
+
+**Why:** Per-record owner RBAC alone cannot safely let a responder move somebody else’s request to
+`offered`, or let only the requester mark a response accepted. Keeping those multi-record
+transitions in one server-owned boundary prevents browser clients from skipping the workflow.

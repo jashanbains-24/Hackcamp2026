@@ -330,21 +330,9 @@ export const helpItemsSchema: CollectionSchema = {
   ownerField: 'authorId',
   permissions: {
     viewer: publicReadOnly,
-    member: {
-      ...memberOwnWrite,
-      writableFields: [
-        'communityId',
-        'kind',
-        'title',
-        'description',
-        'category',
-        'status',
-        'demo',
-        'targetCommunityIds',
-        'createdAt',
-        'updatedAt',
-      ],
-    },
+    // Help lifecycle writes are orchestrated by authenticated server actions.
+    // This prevents clients from skipping status transitions or beacon cooldowns.
+    member: publicReadOnly,
     admin: { read: true, create: true, update: true, delete: true },
   },
 }
@@ -382,15 +370,12 @@ export const helpResponsesSchema: CollectionSchema = {
     },
   ],
   ownerField: 'responderId',
+  uniqueOn: ['helpItemId', 'responderId'],
   permissions: {
     viewer: { read: false, create: false, update: false, delete: false },
-    member: {
-      read: true,
-      create: true,
-      update: 'own',
-      delete: 'own',
-      writableFields: ['helpItemId', 'note', 'acceptedByRequester', 'createdAt'],
-    },
+    // Only help server actions may create or accept responses. Members can
+    // read the short public notes but cannot forge requester acceptance.
+    member: { read: true, create: false, update: false, delete: false },
     admin: { read: true, create: true, update: true, delete: true },
   },
 }
