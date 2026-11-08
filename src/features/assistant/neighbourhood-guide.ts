@@ -39,6 +39,7 @@ export type GuideAnswer = {
   answer: string
   sources: GuideSource[]
   searchedWeb: boolean
+  searchNote: string | null
   searchQueries: string[]
   officialFetchedAt: string
 }

@@ -100,6 +100,62 @@ function safeHttpUrl(value: string | undefined): string | null {
   }
 }
 
+type GeminiContent = {
+  role: 'user' | 'model'
+  parts: Array<{ text: string }>
+}
+
+type GeminiCallResult = {
+  ok: boolean
+  status: number
+  payload: GeminiAssistantResponse | null
+}
+
+async function requestGeminiAnswer(
+  env: GeminiEnv,
+  model: string,
+  systemInstruction: string,
+  contents: GeminiContent[],
+  searchWeb: boolean,
+): Promise<GeminiCallResult> {
+  let response: Response
+  try {
+    response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': env.GEMINI_API_KEY ?? '',
+        },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: systemInstruction }],
+          },
+          contents,
+          ...(searchWeb ? { tools: [{ google_search: {} }] } : {}),
+          generationConfig: {
+            maxOutputTokens: 2_048,
+          },
+        }),
+        signal: AbortSignal.timeout(20_000),
+      },
+    )
+  } catch {
+    return { ok: false, status: 0, payload: null }
+  }
+
+  const payload = (await response.json().catch(() => null)) as
+    | (GeminiAssistantResponse & { error?: { message?: string } })
+    | null
+  if (!response.ok) {
+    const detail = payload?.error?.message?.replace(/\s+/g, ' ').slice(0, 180) ?? ''
+    console.warn(`[gemini-assistant] request failed status=${response.status} search=${searchWeb} detail=${detail}`)
+    return { ok: false, status: response.status, payload: null }
+  }
+  return { ok: true, status: response.status, payload }
+}
+
 export function extractGroundingSources(chunks: GeminiGroundingChunk[] | undefined): AssistantSource[] {
   const sources = new Map<string, AssistantSource>()
   for (const chunk of chunks ?? []) {
@@ -202,52 +258,34 @@ export function registerAssistantRoutes(
       officialContext,
     })
     const model = env.GEMINI_MODEL || 'gemini-3.5-flash-lite'
+    const contents: GeminiContent[] = [
+      ...parsed.data.history.map((turn) => ({
+        role: turn.role === 'assistant' ? 'model' as const : 'user' as const,
+        parts: [{ text: turn.content }],
+      })),
+      { role: 'user', parts: [{ text: parsed.data.message }] },
+    ]
 
-    let response: Response
-    try {
-      response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': env.GEMINI_API_KEY,
-          },
-          body: JSON.stringify({
-            systemInstruction: {
-              parts: [{ text: systemInstruction }],
-            },
-            contents: [
-              ...parsed.data.history.map((turn) => ({
-                role: turn.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: turn.content }],
-              })),
-              { role: 'user', parts: [{ text: parsed.data.message }] },
-            ],
-            ...(parsed.data.searchWeb ? { tools: [{ google_search: {} }] } : {}),
-            generationConfig: {
-              maxOutputTokens: 2_048,
-            },
-          }),
-          signal: AbortSignal.timeout(20_000),
-        },
-      )
-    } catch {
-      return c.json(
-        { error: 'Neighbourhood Guide is temporarily unavailable.', code: 'upstream_unavailable' },
-        502,
-      )
+    let usedWebSearch = parsed.data.searchWeb
+    let searchNote: string | null = null
+    let result = await requestGeminiAnswer(env, model, systemInstruction, contents, usedWebSearch)
+    // Google Search grounding is not included on no-billing Gemini 3 plans and
+    // returns 429 even when the model itself still has free quota.
+    if (!result.ok && result.status === 429 && usedWebSearch) {
+      usedWebSearch = false
+      searchNote =
+        'Live web search is not included on the free Gemini plan. This answer uses visible community activity and the BC Hydro feed.'
+      result = await requestGeminiAnswer(env, model, systemInstruction, contents, false)
     }
 
-    if (!response.ok) {
-      console.warn(`[gemini-assistant] request failed status=${response.status}`)
-      const quotaLimited = response.status === 429
-      const configurationRejected = [400, 401, 403, 404].includes(response.status)
+    if (!result.ok || !result.payload) {
+      const quotaLimited = result.status === 429
+      const configurationRejected = [400, 401, 403, 404].includes(result.status)
       return c.json(
         {
           error: quotaLimited
             ? 'Gemini free quota is currently exhausted. Try again later.'
-            : response.status === 404
+            : result.status === 404
               ? 'This Gemini model is not available for the current API key.'
               : configurationRejected
                 ? 'Gemini rejected the key or request configuration.'
@@ -256,13 +294,15 @@ export function registerAssistantRoutes(
             ? 'quota_exhausted'
             : configurationRejected
               ? 'configuration_rejected'
-              : 'upstream_error',
+              : result.status === 0
+                ? 'upstream_unavailable'
+                : 'upstream_error',
         },
         502,
       )
     }
 
-    const payload = (await response.json()) as GeminiAssistantResponse
+    const payload = result.payload
     const candidate = payload.candidates?.[0]
     const answer = candidate?.content?.parts
       ?.filter((part) => !part.thought)
@@ -286,7 +326,8 @@ export function registerAssistantRoutes(
     return c.json({
       answer,
       sources,
-      searchedWeb: parsed.data.searchWeb,
+      searchedWeb: usedWebSearch,
+      searchNote,
       searchQueries: candidate?.groundingMetadata?.webSearchQueries?.slice(0, 5) ?? [],
       officialFetchedAt: official.fetchedAt,
     })

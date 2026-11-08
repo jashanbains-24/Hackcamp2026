@@ -119,8 +119,9 @@ manually edit `.dev.vars`; DeepSpace regenerates it from the encrypted app store
 
 Gemini powers two server-only features: editable request clarity and the authenticated
 **Neighbourhood Guide** on Home. The Guide receives a bounded snapshot of community activity the
-user can already see, the existing BC Hydro server feed, and—when the user enables it—Gemini
-Google Search grounding with source links. It is read-only and never publishes or mutates records.
+user can already see and the existing BC Hydro server feed. Live Google Search is optional.
+A no-billing Gemini plan does not include Search on Gemini 3, so the Guide answers without it
+and says so. It is read-only and never publishes or mutates records.
 
 The default model is `gemini-3.5-flash-lite`. `gemini-2.5-flash` returns 404 for new API keys.
 A no-billing Google AI project can use only whatever free

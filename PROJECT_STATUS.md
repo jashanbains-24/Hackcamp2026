@@ -1,6 +1,6 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:20 p.m. Vancouver time
+**Last updated:** 2026-11-07, 11:23 p.m. Vancouver time
 **Current stage:** Gemini Neighbourhood Guide integration and owner key verification
 **Shared branch:** `main` at `48b7fd1` (UI animation polish merged via PR #9)
 **Active lane in this checkout:** Developer C / owner AI integration on `feat/neighbourhood-guide`
@@ -130,6 +130,15 @@ and verifies one authenticated, source-linked answer. Then open/merge the PR and
 ```
 
 ## Session history
+
+### 2026-11-07 23:23 — Developer C (`feat/neighbourhood-guide`)
+
+- The 429 was not used-up model quota. Google Search grounding is unavailable on a no-billing
+  Gemini 3 plan, and the checkbox was on, so the first real request was rejected.
+- The Guide now retries without web search and answers from visible community activity plus the
+  BC Hydro feed. The checkbox defaults off and the answer explains when search was skipped.
+- No billing change is required for the core Guide. Billing is only needed for live web search.
+- Next: retry the same question at `http://127.0.0.1:5173/app`.
 
 ### 2026-11-07 23:20 — Developer C (`feat/neighbourhood-guide`)
 

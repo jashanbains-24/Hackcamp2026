@@ -15,6 +15,7 @@ import {
 type DisplayTurn = GuideTurn & {
   id: string
   sources?: GuideSource[]
+  searchNote?: string | null
 }
 
 const starterQuestions = [
@@ -42,7 +43,7 @@ export function NeighbourhoodGuide({
   const { error: showError } = useToast()
   const [turns, setTurns] = useState<DisplayTurn[]>([])
   const [draft, setDraft] = useState('')
-  const [searchWeb, setSearchWeb] = useState(true)
+  const [searchWeb, setSearchWeb] = useState(false)
   const [asking, setAsking] = useState(false)
 
   const appContext = useMemo<GuideAppContext>(
@@ -102,6 +103,7 @@ export function NeighbourhoodGuide({
           role: 'assistant',
           content: result.answer,
           sources: result.sources,
+          searchNote: result.searchNote,
         },
       ])
     } catch (caught) {
@@ -183,6 +185,9 @@ export function NeighbourhoodGuide({
                     }
                   >
                     <p className="whitespace-pre-wrap text-sm leading-6">{turn.content}</p>
+                    {turn.searchNote && (
+                      <p className="mt-2 text-xs leading-5 opacity-80">{turn.searchNote}</p>
+                    )}
                     {turn.sources && turn.sources.length > 0 && (
                       <div className="mt-3 border-t border-current/10 pt-2">
                         <p className="text-xs font-semibold opacity-70">Sources</p>
@@ -234,7 +239,7 @@ export function NeighbourhoodGuide({
                     onChange={(event) => setSearchWeb(event.target.checked)}
                   />
                   <Globe2 className="size-4" aria-hidden />
-                  Search current web sources
+                  Search the live web
                 </label>
                 <Button type="submit" loading={asking} disabled={draft.trim().length < 2}>
                   <Send aria-hidden />
