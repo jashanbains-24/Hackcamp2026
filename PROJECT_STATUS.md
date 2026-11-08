@@ -1,11 +1,13 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 7:20 p.m. Vancouver time
-**Current stage:** Parallel lanes integrating on the Developer A platform baseline
-**Shared branch:** `main` at `ea4574c` (Developer A home/platform PR merged)
-**Active lane in this checkout:** Developer C on `feat/help-beacon`
+**Last updated:** 2026-11-07, 7:25 p.m. Vancouver time
+**Current stage:** Help + Communities merged; Developer A integration review in progress
+**Shared branch:** `main` at `c212d00` (Help PR #2 + Communities PR #4 merged)
+**Active lane in this checkout:** Developer A (integration / deployment)
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
+**Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
+**Communities merge:** `c212d00 Merge pull request #4 from jashanbains-24/feat/communities`
 
 ## Verified baseline
 
@@ -14,16 +16,17 @@
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
 - Developer A schemas, session/demo fence, home aggregates, Activity/Profile, and BC Hydro Surrey
   official-updates API are merged into `main`.
-- Developer C’s branch now uses A’s authenticated session and `help_items`/`help_responses`
-  collections, with server-enforced lifecycle actions and the local demo adapter as fallback.
-- The Gemini endpoint is implemented but the secret and live authenticated call are not verified.
+- Developer C Help/Beacon is merged: authenticated server actions, read-only help collections for
+  members, demo fallback, Gemini clarify route present (secret not configured/tested this session).
+- Developer B Communities is also on `main` (A did not edit B-owned files during this review).
 - n8n remains intentionally deferred.
 
 ## Current parallel lanes
 
-- **Developer A:** platform/home baseline merged; next owns deployment, Figma, and integration review.
-- **Developer B:** `feat/communities` — bounded community membership/post/comment work.
-- **Developer C:** `feat/help-beacon` — DeepSpace help lifecycle, beacon, Gemini verification.
+- **Developer A:** integration review of merged Help on `main`; next owns two-user DeepSpace
+  rehearsal (owner-assisted), deploy URL, and Figma.
+- **Developer B:** `feat/communities` merged via PR #4 — no A edits to B files this session.
+- **Developer C:** `feat/help-beacon` merged via PR #2 — Gemini secret/live call still deferred.
 
 **Figma URL:** Not created yet — Developer A owns this action.
 
@@ -81,23 +84,32 @@ actions. Developer A should review this schema adjustment during integration.
 
 ## Current blockers and user actions
 
-1. **Create the shared Figma file** (Developer A ownership):
+1. **DeepSpace live two-user rehearsal** (owner; blocked in agent environment — not logged in,
+   no `.dev.vars`):
+   1. From the repo: `npx deepspace auth login`
+   2. `npm run dev:deepspace` and open the printed local URL.
+   3. Sign in as User 1 in one browser profile; User 2 in another (or a second device).
+   4. Ensure both users share an approved community / home community.
+   5. User 1 creates a request → User 2 offers → User 1 accepts → User 1 resolves.
+   6. Confirm both screens update without refresh; confirm User 2 cannot accept/resolve User 1’s item.
+   Success: both sessions show `matched` then `resolved` without a page reload.
+2. **Create the shared Figma file** (Developer A ownership):
    1. In Figma, create a file named `NeighbourGrid — HackCamp 2026`.
    2. Add frames for: tokens/components, landing mobile+desktop, home mobile+desktop, communities, help, beacon confirmation, focus/error/empty states.
    3. Turn on link sharing for the team.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
-2. **Gemini key:** upload it through the secure commands in `README.md`, restart the DeepSpace
-   runtime, and verify one authenticated Request Clarity call.
-3. **DeepSpace live rehearsal:** use two authenticated users on separate browser/device sessions
-   to verify create → offer → accept → resolve without refresh.
-4. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
+3. **Gemini key:** deferred this session per A instructions. When ready, use the secure upload
+   steps in `README.md`, restart `npm run dev:deepspace`, and verify one authenticated Request
+   Clarity call. Do not paste the key into chat or source.
+4. **Deploy verification:** Developer A deploys and records the live `*.space` URL after the
+   authenticated help rehearsal passes (or is explicitly waived).
 5. **n8n account:** remains optional and deferred until the persisted rehearsal passes.
 
 ## Next safe handoff
 
-Developer C should complete the authenticated two-user rehearsal and live Gemini check, then push
-the integration commit for review. Developer A reviews the help schema/action boundary and deploys
-the integrated app. Add n8n only if the persisted lifecycle is verified and time remains.
+Help schema/action boundary reviewed and accepted on `main`. Owner runs the authenticated
+two-user DeepSpace rehearsal above. Developer A then deploys and records the `*.space` URL.
+Gemini and n8n stay deferred until that rehearsal succeeds.
 
 ## Session log template
 
@@ -112,6 +124,31 @@ the integrated app. Add n8n only if the persisted lifecycle is verified and time
 ```
 
 ## Session history
+
+### 2026-11-07 19:25 — Developer A, branch `main` @ `c212d00`
+
+- Completed: Synced `main` after Help PR #2 and Communities PR #4; confirmed help actions,
+  schemas, routes, docs, and demo adapter are present; reviewed server-enforced ownership,
+  permissions, beacon targets, and cooldown; ran full verification suite for the merged Help lane.
+- Notable files reviewed (no product-code edits): `src/actions/help-actions.ts`,
+  `src/actions/help-actions.test.ts`, `src/schemas/neighbourgrid-schema.ts`,
+  `src/features/help/*`, `src/server/help-routes.ts`, `src/server/action-routes.ts`,
+  `tests/help.spec.ts`, Help/Beacon routes.
+- Tests run: `type-check` pass; `lint` pass; `test:unit` 15/15 pass; `build` pass;
+  `SMOKE_STATIC=1 npm run test:smoke` 6/6 pass; Playwright `tests/help.spec.ts` 4/4 pass
+  (create request, offer→accept→resolve, beacon confirm, two-tab demo sync).
+- Service/schema/config changes: none. Gemini key not configured or tested. n8n not added.
+  Developer B community feature files were not edited.
+- Integration review: `help_items`/`help_responses` are member read-only; writes go through
+  authenticated `/api/actions/*` with RBAC bypass only after action-level checks for identity
+  stamping, community eligibility, self-response block, response uniqueness, owner-only
+  accept/resolve/cancel, lifecycle transitions, home+adjacent beacon targets, and 5-minute
+  beacon cooldown. Gemini clarify route is present and correctly returns 503 when unconfigured.
+- Blockers or user action: agent environment has no DeepSpace login / `.dev.vars`, so the live
+  authenticated two-user create→offer→accept→resolve path was not executed here. Owner must run
+  the numbered DeepSpace rehearsal above. Figma URL and deploy URL remain A actions. Gemini deferred.
+- Next task / handoff: owner completes two-user DeepSpace rehearsal; A deploys when that passes;
+  then optional Gemini secret setup. Do not start n8n yet.
 
 ### 2026-11-07 19:05 — Developer C, branch `feat/help-beacon`
 

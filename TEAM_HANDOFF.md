@@ -118,14 +118,13 @@ when the server endpoint is ready. The n8n account is pending and does not block
 Do not add generic chat, exact geolocation, public contact details, medical triage, mass
 notifications, or automatic external broadcasting.
 
-**Current C integration status:** Developer A’s platform PR is merged. `feat/help-beacon` now uses
-the shared authenticated session plus `help_items` and `help_responses` realtime queries.
-Authenticated writes run through `src/actions/help-actions.ts`, which checks ownership, lifecycle,
-community eligibility, response uniqueness, beacon targets, and cooldowns before bypassing RBAC.
-The collection schemas are read-only to normal members so clients cannot forge transitions.
-The browser-local adapter remains only for the labelled fictional demo. Remaining proof: run the
-flow with two authenticated users on separate sessions, configure/test Gemini, then request A’s
-review of the help schema/action boundary. n8n is still deferred.
+**Current C integration status:** Help/Beacon is merged into `main` (PR #2). Authenticated writes
+run through `src/actions/help-actions.ts`, which checks ownership, lifecycle, community
+eligibility, response uniqueness, beacon targets, and cooldowns before bypassing RBAC. Collection
+schemas stay read-only to normal members. The labelled demo adapter remains for unsigned/demo
+mode. Developer A reviewed the schema/action boundary on 2026-11-07 and verified the demo
+Playwright lifecycle. Remaining proof: owner two-user authenticated DeepSpace rehearsal, then
+optional Gemini secret setup. n8n is still deferred.
 
 ## Integration and agent protocol
 

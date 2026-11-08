@@ -6,19 +6,18 @@ emergency service or official alert system.
 
 ## Current status
 
-The **UI overhaul and Developer A platform baseline are merged** into `main` (`ea4574c`).
-Parallel feature lanes are active:
+`main` is at `c212d00` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2), and
+Communities (PR #4) merged. Developer A is the integration/deployment lead on this baseline.
 
-| Lane | Branch | Owner |
+| Lane | Status | Owner |
 | --- | --- | --- |
-| Platform / home / official updates | `feat/home-alerts` | Developer A |
-| Communities / posts / comments | `feat/communities` | Developer B |
-| Help / beacon / Gemini / n8n | `feat/help-beacon` | Developer C |
+| Platform / home / official updates | Merged (`feat/home-alerts`) | Developer A |
+| Communities / posts / comments | Merged (`feat/communities`) | Developer B |
+| Help / beacon / Gemini / n8n | Help lifecycle merged; Gemini/n8n deferred | Developer C |
 
-Developer A’s baseline provides shared DeepSpace schemas, auth/demo session, home aggregates,
-Activity/Profile, and a server-side BC Hydro Surrey feed. Developer C’s branch connects Help and
-Beacon to those authenticated realtime collections through server-checked lifecycle actions while
-retaining the clearly labelled local demo fallback.
+Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
+fallback. Live two-user DeepSpace rehearsal, deploy URL, Figma URL, and Gemini secret setup are
+still outstanding (see `PROJECT_STATUS.md`).
 
 ## Local setup
 
