@@ -16,13 +16,13 @@ GitHub repository `jashanbains-24/hackcamp2026`.
 | --- | --- | --- |
 | Platform / home / official updates | Merged (`feat/home-alerts`) | Developer A |
 | Communities / posts / comments | Merged (`feat/communities`) | Developer B |
-| Help / beacon / Gemini / n8n | Help merged; source-grounded Gemini Guide in progress; n8n deferred | Developer C |
+| Help / beacon / Gemini / n8n | Help merged; Home Guide verified locally and awaiting merge; n8n deferred | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
 fallback. The live two-user DeepSpace lifecycle passed. Production landing, demo home,
 Communities, and the real BC Hydro Surrey feed were verified. `feat/neighbourhood-guide` adds an
-authenticated, read-only Gemini assistant on Home; its secret and live call still require owner
-verification. Figma and n8n remain pending.
+authenticated, read-only Gemini assistant on Home. A signed-in local answer passed on the free
+plan. Figma, production redeploy, and n8n remain pending.
 
 ## Local setup
 
