@@ -123,9 +123,11 @@ the shared authenticated session plus `help_items` and `help_responses` realtime
 Authenticated writes run through `src/actions/help-actions.ts`, which checks ownership, lifecycle,
 community eligibility, response uniqueness, beacon targets, and cooldowns before bypassing RBAC.
 The collection schemas are read-only to normal members so clients cannot forge transitions.
-The browser-local adapter remains only for the labelled fictional demo. Remaining proof: run the
-flow with two authenticated users on separate sessions, configure/test Gemini, then request A’s
-review of the help schema/action boundary. n8n is still deferred.
+The browser-local adapter remains only for the labelled fictional demo. Two authenticated
+DeepSpace test users have now completed create → respond → accept → resolve in separate browser
+contexts without refresh. That rehearsal exposed and fixed the profile bootstrap sending a
+server-owned `userBound` field. Gemini is intentionally deferred by the owner; n8n remains
+deferred until final A/B/C integration and deployment.
 
 ## Integration and agent protocol
 

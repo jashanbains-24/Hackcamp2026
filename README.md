@@ -83,6 +83,7 @@ npm run lint
 npm run type-check
 npm run test:unit
 npm run test:smoke      # Playwright UI smoke (needs Chrome + Vite/worker)
+npm run test:e2e        # Authenticated multi-user tests; needs 2 local DeepSpace test accounts
 SMOKE_STATIC=1 npm run test:smoke  # UI smoke against dist/client after build
 npm run build
 npx deepspace deploy

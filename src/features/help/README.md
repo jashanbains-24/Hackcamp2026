@@ -42,13 +42,14 @@ Use the existing `HelpItem` and `HelpResponse` interfaces as the field contract.
 An offer never silently claims or closes a request. Accept and resolve are explicit requester
 actions. Server actions must load the record and check ownership before each protected mutation.
 
-## Verification still required
+## Verification
 
-- Run `npm run dev:deepspace`.
-- Sign in as two different users in separate browser/device sessions.
-- Ensure both users are approved for the same community.
-- Create → respond → accept → resolve and confirm both screens update without refresh.
-- Confirm a responder cannot accept and a non-owner cannot cancel/resolve.
+- `tests/help-live.spec.ts` uses two authenticated DeepSpace test accounts in separate contexts.
+- The test verifies create → respond → accept → resolve and no-refresh updates on both screens.
+- Run it with
+  `npx deepspace test run e2e --grep "authenticated neighbours complete"`.
+- The test also checks that the authenticated browser can mint the bearer token required by
+  server actions.
 
 ## Gemini
 
@@ -58,6 +59,7 @@ emergency severity.
 
 ## n8n
 
-Deferred until the authenticated two-user rehearsal works. Emit a minimal server-side event after a
-verified help-item creation; include an event ID for replay safety and no description, identity,
-address, contact information, or medical information.
+The authenticated rehearsal now works, but n8n remains deferred until final A/B/C integration and
+deployment. If resumed, emit a minimal server-side event after verified help-item creation; include
+an event ID for replay safety and no description, identity, address, contact information, or
+medical information.

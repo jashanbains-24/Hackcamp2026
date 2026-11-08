@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 7:20 p.m. Vancouver time
-**Current stage:** Parallel lanes integrating on the Developer A platform baseline
-**Shared branch:** `main` at `ea4574c` (Developer A home/platform PR merged)
-**Active lane in this checkout:** Developer C on `feat/help-beacon`
+**Last updated:** 2026-11-07, 7:25 p.m. Vancouver time
+**Current stage:** Developer A and C merged; waiting for B and final integration/deployment
+**Shared branch:** `main` at `387828d` (Developer C Help/Beacon PR merged)
+**Active lane in this checkout:** Developer C verification on `test/help-live-rehearsal`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 
@@ -14,8 +14,10 @@
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
 - Developer A schemas, session/demo fence, home aggregates, Activity/Profile, and BC Hydro Surrey
   official-updates API are merged into `main`.
-- Developer C’s branch now uses A’s authenticated session and `help_items`/`help_responses`
+- Developer C’s merged work uses A’s authenticated session and `help_items`/`help_responses`
   collections, with server-enforced lifecycle actions and the local demo adapter as fallback.
+- Two authenticated DeepSpace test users completed create → respond → accept → resolve, with both
+  browser sessions updating without refresh.
 - The Gemini endpoint is implemented but the secret and live authenticated call are not verified.
 - n8n remains intentionally deferred.
 
@@ -23,7 +25,7 @@
 
 - **Developer A:** platform/home baseline merged; next owns deployment, Figma, and integration review.
 - **Developer B:** `feat/communities` — bounded community membership/post/comment work.
-- **Developer C:** `feat/help-beacon` — DeepSpace help lifecycle, beacon, Gemini verification.
+- **Developer C:** Help/Beacon merged; live DeepSpace lifecycle verified; Gemini intentionally deferred.
 
 **Figma URL:** Not created yet — Developer A owns this action.
 
@@ -74,7 +76,7 @@ actions. Developer A should review this schema adjustment during integration.
 ## Sponsor/integration plan
 
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
-- **Gemini API:** deferred until Person C has the server endpoint.
+- **Gemini API:** endpoint is implemented; key setup is intentionally deferred by the owner.
 - **n8n:** account setup pending; does not block A/B/C core lanes.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
@@ -86,18 +88,17 @@ actions. Developer A should review this schema adjustment during integration.
    2. Add frames for: tokens/components, landing mobile+desktop, home mobile+desktop, communities, help, beacon confirmation, focus/error/empty states.
    3. Turn on link sharing for the team.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
-2. **Gemini key:** upload it through the secure commands in `README.md`, restart the DeepSpace
-   runtime, and verify one authenticated Request Clarity call.
-3. **DeepSpace live rehearsal:** use two authenticated users on separate browser/device sessions
-   to verify create → offer → accept → resolve without refresh.
-4. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
-5. **n8n account:** remains optional and deferred until the persisted rehearsal passes.
+2. **Gemini key:** intentionally deferred for now. When the owner resumes it, use the secure
+   commands in `README.md`; never paste the key into source or chat.
+3. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
+4. **Developer B integration:** B must push/review the Communities PR before the final deployment.
+5. **n8n account:** remains optional and deferred until after final A/B/C integration.
 
 ## Next safe handoff
 
-Developer C should complete the authenticated two-user rehearsal and live Gemini check, then push
-the integration commit for review. Developer A reviews the help schema/action boundary and deploys
-the integrated app. Add n8n only if the persisted lifecycle is verified and time remains.
+Developer C should merge the profile-bootstrap fix and authenticated lifecycle regression test.
+Developer A then pulls `main`, runs final integration checks, and deploys after Developer B merges.
+Gemini and n8n remain deferred by current owner priority.
 
 ## Session log template
 
@@ -112,6 +113,23 @@ the integrated app. Add n8n only if the persisted lifecycle is verified and time
 ```
 
 ## Session history
+
+### 2026-11-07 19:25 — Developer C, branch `test/help-live-rehearsal`
+
+- Completed: Created two synthetic `@deepspace.test` users and added a true authenticated,
+  two-context help lifecycle regression. The first live run exposed a profile-bootstrap bug:
+  the client supplied the server-owned `userBound` profile ID, so no profile row was created and
+  help actions correctly rejected community writes. The client now omits that field.
+- Notable files: `src/neighbourgrid/session.tsx`, `tests/help-live.spec.ts`.
+- Tests run: authenticated DeepSpace create → respond → accept → resolve passed in two separate
+  browser contexts; all four server actions were observed and the second session updated without
+  refresh. Type-check, lint, 11 unit tests, and production build also passed.
+- Service/schema/config changes: two synthetic test accounts were created in the local DeepSpace
+  test-account pool; no credentials or secret values were committed.
+- Blockers or user action: Gemini intentionally deferred; Developer B branch is not yet on origin;
+  deployment and Figma remain Developer A actions.
+- Next task / handoff: complete checks, push the regression fix, merge it, then let A perform final
+  integration/deployment after B.
 
 ### 2026-11-07 19:05 — Developer C, branch `feat/help-beacon`
 
