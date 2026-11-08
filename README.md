@@ -4,23 +4,18 @@ NeighbourGrid is a mobile-first neighbourhood hub for local conversations, trust
 information, and opt-in neighbour-to-neighbour help. It is a HackCamp 2026 prototype—not an
 emergency service or official alert system.
 
-## Phase 0 status
+## Current status
 
-This repository currently contains **Phase 0 only**:
+The **UI overhaul is merged** into `main` (`ed5c7ba`). Parallel feature lanes are unlocked:
 
-- Polished public landing page at `/`
-- Responsive app shell and Newton, Surrey demo dashboard at `/app`
-- Working mobile and desktop navigation
-- Placeholder routes for Communities, Help, Activity, Profile, help creation, and the Community
-  Help Beacon
-- Centralized TypeScript contracts and fictional demo data
-- Clearly separated official-source empty state and simulated scenario
+| Lane | Branch | Owner |
+| --- | --- | --- |
+| Platform / home / official updates | `feat/home-alerts` | Developer A |
+| Communities / posts / comments | `feat/communities` | Developer B |
+| Help / beacon / Gemini / n8n | `feat/help-beacon` | Developer C |
 
-Persistent records, authentication UX, community posting, help matching, realtime updates, the BC
-Hydro feed, Gemini, and n8n are intentionally not implemented yet.
-
-The DeepSpace app is registered. Developer A’s UI overhaul lives on `feat/ui-overhaul` (pending
-review/commit). Parallel A/B/C feature branches start only after that work is merged into `main`.
+Developer A’s `feat/home-alerts` work adds shared DeepSpace schemas, auth/demo session, home
+aggregates, Activity/Profile, and a server-side BC Hydro Surrey feed.
 
 ## Local setup
 
@@ -29,15 +24,17 @@ Requirements: Node.js 22.15+ (or Node 24/26) and npm 11.6+.
 ```bash
 git clone https://github.com/jashanbains-24/Hackcamp2026.git
 cd Hackcamp2026
+git switch main
+git pull origin main
 npm install
 npm run dev
 ```
 
 Open `http://localhost:8780`. `npm run dev` starts the mock-capable UI; `npm run dev:deepspace`
-starts the full registered DeepSpace runtime.
+starts the full registered DeepSpace runtime (needed for live records + `/api/official-updates`).
 
-No application secrets are required for Phase 0. Copy `.env.example` only when a later workstream
-adds an integration:
+No application secrets are required for the current A-lane baseline. Copy `.env.example` only when
+a later workstream adds an integration:
 
 ```bash
 cp .env.example .env
@@ -50,7 +47,7 @@ cp .env.example .env
 - React Router file-based routes
 - Tailwind CSS 4 semantic theme tokens
 - Lucide icons and accessible scaffold UI primitives
-- Hono/Cloudflare Worker foundation (unused by Phase 0 product features)
+- Hono/Cloudflare Worker (official updates API + records)
 
 The technology decision and fallback threshold are recorded in `DECISIONS.md`.
 
@@ -77,13 +74,35 @@ Success means the shared app appears in `npx deepspace app list` with role `coll
 ## Useful commands
 
 ```bash
-npm run dev        # Phase 0 local app at http://localhost:8780
-npm run dev:deepspace # Full SDK runtime after app registration
-npm run lint       # React hooks lint
-npm run type-check # TypeScript validation
-npm run test:unit  # Unit/prerender checks
-npm run build      # Production build
+npm run dev             # Local app at http://localhost:8780
+npm run dev:deepspace   # Full SDK runtime after app registration
+npm run lint
+npm run type-check
+npm run test:unit
+npm run test:smoke      # Playwright UI smoke (needs Chrome + Vite/worker)
+SMOKE_STATIC=1 npm run test:smoke  # UI smoke against dist/client after build
+npm run build
+npx deepspace deploy
 ```
+
+## Exports for Developers B and C
+
+Import shared session/home helpers from:
+
+```ts
+import {
+  useNeighbourGridSession,
+  useHomeAggregates,
+  useOfficialUpdates,
+  neighbourgridCollectionNames,
+} from '@/neighbourgrid/exports'
+```
+
+- Domain interfaces remain in `@/shared/types` (do not rename).
+- Collection schemas live in `src/schemas/neighbourgrid-schema.ts` (Person A owns merges).
+- Collections: `profiles`, `communities`, `memberships`, `posts`, `comments`, `help_items`,
+  `help_responses`, `official_updates`.
+- Live official feed: `GET /api/official-updates` (Surrey municipality RSS, ~15 min cache).
 
 ## Secure Gemini and n8n setup
 
@@ -110,8 +129,10 @@ When the n8n account and server workflow are ready, use the same pattern with
 ## Demo and safety notes
 
 - `/demo` redirects to `/app?demo=1`.
-- Maya and all community activity shown in Phase 0 are fictional.
-- The dashboard truthfully states that no verified local outage update is connected.
+- Signed-out `/app` browsing uses a fenced Maya DEMO account unless the visitor leaves demo mode.
+- Maya and seed community/help activity are fictional.
+- Official updates use the verified BC Hydro Surrey municipality feed and never claim Newton
+  specificity without verified detail.
 - Official resource cards link directly to BC Hydro, PreparedBC, or EmergencyInfoBC.
 - The beacon preview sends nothing and prominently says to call 911 for immediate danger.
 - No precise location, phone number, or sensitive personal information is collected.
@@ -120,28 +141,23 @@ When the n8n account and server workflow are ready, use the same pattern with
 
 - `src/pages/index.tsx` — public landing
 - `src/pages/(app)/app/` — app shell routes
-- `src/components/neighbourgrid.tsx` — brand, shell, card, section, and loading primitives
+- `src/components/neighbourgrid.tsx` — brand, shell, and shared UI primitives
+- `src/neighbourgrid/` — A-owned session/home/official hooks and B/C exports
+- `src/schemas/neighbourgrid-schema.ts` — product collections + RBAC
 - `src/shared/types.ts` — stable shared contracts
 - `src/shared/demo-data.ts` — centralized fictional demo data
-- `src/styles.css` — NeighbourGrid visual tokens and global accessibility behavior
-- `TEAM_HANDOFF.md` — file ownership and the three next workstreams
+- `src/server/official-updates.ts` — BC Hydro Surrey RSS fetch/parse/cache
+- `TEAM_HANDOFF.md` — file ownership and the three workstreams
 - `PROJECT_STATUS.md` — current stage, blockers, test evidence, and next safe handoff
 
 ## Team workflow
 
-The team uses a serial UI gate before parallel feature work:
-
 ```bash
-# Owner first pushes the registered/documented Phase 0 baseline.
-
-# Developer A:
-git pull origin main
-git switch -c feat/ui-overhaul
-# Implement and verify shared Figma/design-system/UI work, then push and merge.
-
-# After the UI overhaul is merged, all three developers:
 git switch main
 git pull origin main
+npm install
+npm run build
+
 git switch -c feat/home-alerts       # A
 # or: git switch -c feat/communities # B
 # or: git switch -c feat/help-beacon # C

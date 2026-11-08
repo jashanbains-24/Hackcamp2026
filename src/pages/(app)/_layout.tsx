@@ -20,6 +20,7 @@ import { Outlet } from 'react-router-dom'
 import { DeepSpaceAuthProvider, useAuthStatus } from 'deepspace'
 import { RecordProvider, RecordScope, AgentTools } from 'deepspace'
 import { useToast } from '@/components/ui'
+import { NeighbourGridSessionProvider } from '@/neighbourgrid/session'
 import { APP_NAME, SCOPE_ID } from '../../constants'
 import { schemas } from '../../schemas'
 
@@ -80,8 +81,10 @@ function AuthBoot({ children }: { children: ReactNode }) {
       }
     >
       <RecordScope roomId={SCOPE_ID} schemas={schemas}>
-        <AgentTools />
-        {children}
+        <NeighbourGridSessionProvider>
+          <AgentTools />
+          {children}
+        </NeighbourGridSessionProvider>
       </RecordScope>
     </RecordProvider>
   )
