@@ -65,7 +65,7 @@ export default function Landing() {
                   <Link
                     to="/app"
                     viewTransition
-                    className="ng-cta-primary ng-press inline-flex min-h-12 items-center justify-center gap-2 rounded-[14px] bg-primary px-7 text-sm font-semibold text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28),0_10px_24px_-10px_rgba(10,101,96,0.55)] transition-[transform,background-color] duration-150 hover:bg-primary-ink"
+                    className="ng-cta-primary ng-press inline-flex min-h-12 items-center justify-center gap-2 rounded-[14px] bg-primary px-7 text-sm font-semibold text-primary-foreground shadow-none transition-[transform,background-color] duration-150 hover:bg-primary-ink"
                   >
                     Open the app
                     <ArrowRight className="ng-cta-arrow size-4" aria-hidden />

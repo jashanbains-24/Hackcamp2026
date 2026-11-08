@@ -1,7 +1,7 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-08, 1:24 a.m. Vancouver time
-**Current stage:** Page polish and post photos are on `polish/home-quiet`; production redeploy still waiting
+**Last updated:** 2026-11-08, 10:52 a.m. Vancouver time
+**Current stage:** Offer writing, wider beacons, and the darker palette are on `polish/home-quiet`; production redeploy still waiting
 **Shared branch:** `main` at `c3ec84e` (PR #11 plus the n8n status commit)
 **Active lane in this checkout:** Developer C on `polish/home-quiet`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
@@ -128,6 +128,28 @@ remains on purpose.
 ```
 
 ## Session history
+
+### 2026-11-08 10:40 — Developer C (`polish/home-quiet`)
+
+- Colour is now Egyptian blue for most of the screen, stone blue as the second colour, and scarlet only on the beacon.
+- Panes use one soft stone edge. The old gradient rim and the extra colour washes are gone.
+- Offers and beacons can use the same writing step. A beacon can reach the city or the whole region, and the confirmation says so.
+- Dark mode is a deeper solid field with no card outlines.
+- Saved on `polish/home-quiet` and pushed. Not merged to `main`. Production is unchanged.
+
+### 2026-11-08 10:26 — Developer C (`polish/home-quiet`)
+
+- Help Beacon drops the grey line under the title, the repeated warning on the confirmation, and the “in-app only” line.
+- The same writing step is on the beacon form. A beacon can stay nearby, or reach the whole city or every community. The confirmation says so.
+- Checked both wider confirmations locally. Help action tests passed, including a city-wide beacon.
+- Not committed. Production is unchanged.
+
+### 2026-11-08 10:16 — Developer C (`polish/home-quiet`)
+
+- “I can offer” now has the same writing step as “I need help”: rough idea, Gemini, and “Help me write”.
+- The suggestion still lands in the editable post. Offers stay offers.
+- Checked on the local offer form at phone width. The assistant button runs; this browser was signed out, so it asked to sign in.
+- Not committed. Production is unchanged.
 
 ### 2026-11-08 01:12 — Developer C (`polish/home-quiet`)
 

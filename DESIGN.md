@@ -2,33 +2,35 @@
 name: NeighbourGrid
 description: Ambient-glass neighbourhood hub for BC outage coordination and opt-in help
 colors:
-  field-light: "#F2F6F5"
-  field-dark: "#0D1014"
-  ink: "#10243A"
-  ink-dark: "#EEF1F3"
-  ink-muted: "#4D5D6B"
-  ink-muted-dark: "#A7AFB6"
-  primary: "#0A6560"
-  primary-ink: "#084F4B"
-  primary-dark: "#3FB3A9"
-  primary-ink-dark: "#8FDCD3"
-  primary-foreground: "#FFFFFF"
-  glass: "rgba(255, 255, 255, 0.46)"
-  glass-strong: "rgba(255, 255, 255, 0.64)"
-  glass-dark: "rgba(20, 22, 26, 0.55)"
-  glass-strong-dark: "rgba(26, 28, 34, 0.78)"
-  glass-border: "rgba(16, 36, 58, 0.09)"
-  glass-highlight: "rgba(255, 255, 255, 0.85)"
-  hairline: "rgba(16, 36, 58, 0.1)"
-  ambient-teal: "#9FE0D6"
-  ambient-sky: "#B4D2F2"
-  ambient-teal-dark: "#1F8F86"
-  ambient-sky-dark: "#2E5FA8"
-  advisory: "#FFF6E5"
-  advisory-foreground: "#6A4A12"
-  beacon: "#C85A45"
-  beacon-dark: "#E2795F"
-  success: "#1F7A62"
+  field-light: "#E6EEF4"
+  field-dark: "#03303D"
+  ink: "#03303D"
+  ink-dark: "#E7EEF6"
+  ink-muted: "#3E5674"
+  ink-muted-dark: "#B7C6DC"
+  primary: "#03303D"
+  primary-ink: "#022833"
+  primary-dark: "#839CC5"
+  primary-ink-dark: "#D5E1F0"
+  primary-foreground: "#F4F7FB"
+  stone: "#839CC5"
+  scarlet: "#E82F33"
+  glass: "rgba(247, 250, 252, 0.74)"
+  glass-strong: "rgba(247, 250, 252, 0.88)"
+  glass-dark: "rgba(131, 156, 197, 0.14)"
+  glass-strong-dark: "rgba(8, 52, 66, 0.82)"
+  glass-border: "rgba(131, 156, 197, 0.45)"
+  glass-highlight: "rgba(255, 255, 255, 0.4)"
+  hairline: "rgba(3, 48, 61, 0.12)"
+  ambient-stone: "#C9D7E8"
+  ambient-mist: "#D7E3F0"
+  ambient-egyptian-dark: "#1A5C6E"
+  ambient-stone-dark: "#839CC5"
+  advisory: "#F6F0E4"
+  advisory-foreground: "#5C4314"
+  beacon: "#E82F33"
+  beacon-dark: "#E82F33"
+  success: "#1A5560"
 typography:
   brand:
     fontFamily: "Fraunces, Georgia, serif"
@@ -153,7 +155,7 @@ components:
 
 **Creative North Star: "Ambient Glass"**
 
-NeighbourGrid is a quiet place to check on your block when the power is uncertain. The whole product sits on one near-white (or, following the device, near-black) field with two slow teal and sky ambient blobs drifting behind it. Every piece of interface is a translucent glass pane that lets that field through: blurred, saturated, rimmed with a specular hairline, and softly lifted. The field is atmosphere; the glass is structure; the copy is the content. Nothing else competes.
+NeighbourGrid is a quiet place to check on your block when the power is uncertain. The whole product sits on Egyptian blue: a pale wash in light, and `#03303D` itself in dark. Stone blue (`#839CC5`) is the second colour, about a fifth of what you see. Scarlet (`#E82F33`) is only the Community Help Beacon. Panes are soft glass with one stone hairline. There is no gradient rim and no second accent.
 
 Density is low and the text is cut hard: one short line per section, details behind a tap, disclaimers folded into a single footnote per screen. Fraunces appears exactly once per screen, on the brand or the one display headline; everything else is Manrope. Teal is the only accent and does only one job, action. Coral exists for the Community Help Beacon and nowhere else. The old navy full-bleed hero, divider-only lists, and amber badge stacks are the anti-reference this world replaced.
 
@@ -162,30 +164,30 @@ Density is low and the text is cut hard: one short line per section, details beh
 - Glass panes at three depths: grouped lists sit in the field, panes rest on it, controls float over it.
 - Settings-style grouped rows with hairline dividers and chevrons, never card grids.
 - Pill geometry for floating controls (top bar, tab bar, chips); 14px controls and 22px panes for everything else.
-- Light and dark follow `prefers-color-scheme`; dark is neutral near-black with the accents as glow.
+- Light and dark follow `prefers-color-scheme`. Light is a pastel Egyptian wash. Dark is the Egyptian blue itself, with stone blue for actions.
 - Required labels (Official / Community-reported / DEMO) and the beacon's 911 sentence are never designed away.
 
 ## Colors
 
-A near-white mint field with one deep teal accent, held together by translucent whites; in dark mode the same structure on neutral near-black with the accent lifted for contrast.
+A pastel Egyptian-blue field. Stone blue is the quieter second colour. Scarlet appears only on the beacon.
 
 ### Primary
-- **Deep Teal** (`primary`): filled actions, the active tab glyph, checked states, focus ring. On the light field, text links use the darker **Teal Ink** (`primary-ink`) so links clear 4.5:1. Dark mode lifts both to **Lagoon** (`primary-dark`) and **Lagoon Ink** (`primary-ink-dark`).
+- **Egyptian Blue** (`primary`, `#03303D`): the light-mode field's ink, filled actions, checked states. Text links use **Egyptian Ink** (`primary-ink`).
+- **Stone Blue** (`primary-dark`, `#839CC5`): dark-mode actions, checks, and the focus ring, with **Stone Ink** (`primary-ink-dark`) for links. About 20% of the screen.
 
 ### Tertiary
-- **Beacon Coral** (`beacon`, dark `beacon-dark`): the Community Help Beacon only, as a tinted button on Home and the filled "Review beacon" / "Send to community" actions. Never general error chrome.
-- **Advisory Amber** (`advisory` / `advisory-foreground`): the pending / cooldown notices only.
+- **Scarlet** (`beacon`, `#E82F33`): the Community Help Beacon only. Small scarlet text uses `beacon-ink` so it stays readable. Never a general decoration.
+- **Advisory sand** (`advisory` / `advisory-foreground`): the pending / cooldown notices only.
 
 ### Neutral
-- **Mint Field** (`field-light`) and **Graphite Field** (`field-dark`): the only opaque ground, painted on `html` so the fixed ambient layer stays visible.
-- **Ambient Teal / Ambient Sky** (`ambient-*`): the two radial blobs on `body::before`, blurred 32px, mixed at 100 % in light and ~45 / 40 % in dark.
-- **Glass / Glass Strong** (`glass`, `glass-strong`, dark variants): pane fills under `backdrop-filter: blur(24–28px) saturate(1.6–1.8)`.
-- **Glass Border** and **Glass Highlight**: the 1px hairline edge and the inset top highlight / specular rim.
-- **Ink** (`ink`, dark `ink-dark`) for text; **Muted Ink** for secondary copy and meta. Both scales clear 4.5:1 on their field.
-- **Hairline** (`hairline`): row dividers inside grouped panes.
+- **Pastel Field** (`field-light`) and **Egyptian Field** (`field-dark`, `#03303D`): the only opaque ground, painted on `html`.
+- **Ambient**: two soft washes of the same blue family on `body::before`. Not a multi-colour glow.
+- **Glass / Glass Strong**: pane fills under a light blur. One stone hairline. No gradient rim.
+- **Ink** for text; **Muted Ink** for secondary copy. Both clear 4.5:1 on their field.
+- **Hairline**: row dividers inside grouped panes, the same stone family as the pane edge.
 
 ### Named Rules
-**The One Accent Rule.** Teal is the only colour that means "act". Coral means "beacon" and nothing else. Status is carried by a text label, never by colour alone.
+**The 70 / 20 / 10 Rule.** Egyptian blue is most of what you see. Stone blue is the second colour. Scarlet means "beacon" and nothing else. Status is carried by a text label, never by colour alone.
 
 **The Field Shows Through Rule.** No element between `html` and a glass pane may paint an opaque background. If a pane reads as a white card, the glass alpha is too high or something underneath is opaque.
 
@@ -283,7 +285,7 @@ Soft, continuous geometry. Panes are 22px (`--radius-xl`), controls and the prim
 - **Don't** place a label, kicker, or chip above a heading.
 - **Don't** set more than one Fraunces element per screen.
 - **Don't** use a pill radius on a primary or full-width action; pills are for floating controls and chips.
-- **Don't** tint the dark ground toward navy; it is neutral near-black and the colour comes from the ambient glow.
+- **Don't** add a second accent, a gradient rim, or a border colour outside the stone hairline and the beacon.
 - **Don't** convey status by colour alone, nest panes, or invent live outage or response-time claims.
 
 ## Motion

@@ -264,4 +264,35 @@ describe('help server actions', () => {
       error: expect.stringContaining('cooldown'),
     })
   })
+
+  it('sends a city-wide beacon across that city only', async () => {
+    const { tools, records } = makeTools({
+      profiles: [{
+        recordId: 'profile-1',
+        data: { userId: 'maya', homeCommunityId: 'newton' },
+      }],
+      communities: [
+        { recordId: 'newton', data: { municipality: 'Surrey', adjacentCommunityIds: ['fleetwood'] } },
+        { recordId: 'fleetwood', data: { municipality: 'Surrey', adjacentCommunityIds: [] } },
+        { recordId: 'guildford', data: { municipality: 'Surrey', adjacentCommunityIds: [] } },
+        { recordId: 'kitsilano', data: { municipality: 'Vancouver', adjacentCommunityIds: [] } },
+      ],
+    })
+
+    const result = await createHelpBeaconAction(context(tools, 'maya', {
+      title: 'Charging help needed',
+      description: 'Looking to charge a phone for an hour.',
+      category: 'power_charging',
+      communityId: 'newton',
+      targetCommunityIds: [],
+      reach: 'city',
+    }))
+
+    expect(result).toMatchObject({ success: true })
+    expect(records.help_items[0].data.targetCommunityIds).toEqual([
+      'newton',
+      'fleetwood',
+      'guildford',
+    ])
+  })
 })

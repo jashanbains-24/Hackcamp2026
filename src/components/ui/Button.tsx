@@ -9,9 +9,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)] hover:bg-primary-ink',
+          'bg-primary text-primary-foreground hover:bg-primary-ink',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)] hover:bg-destructive/90 focus-visible:ring-destructive/20',
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20',
         outline:
           'ng-glass-control text-foreground hover:bg-glass-strong',
         secondary: 'bg-foreground/6 text-foreground hover:bg-foreground/10',

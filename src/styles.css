@@ -6,33 +6,32 @@
 @source "../node_modules/deepspace/dist/**/*.js";
 
 /*
- * NeighbourGrid design tokens — ambient glass.
- * Near-white (or near-black) field with two slow teal/sky ambient blobs;
- * translucent glass panes carry the UI. Teal is the only accent; coral is
- * reserved for the Community Help Beacon. Light values live here; the dark
- * scheme overrides them in themes.css under prefers-color-scheme.
+ * NeighbourGrid design tokens.
+ * Egyptian blue (#03303D) is the field and the action. Stone blue (#839CC5)
+ * is the quieter second colour. Scarlet (#E82F33) is only the beacon.
+ * Light values live here; the dark scheme overrides them in themes.css.
  */
 @theme {
-  --color-background: #f2f6f5;
-  --color-foreground: #10243a;
-  --color-card: #ffffff;
-  --color-card-foreground: #10243a;
-  --color-popover: #ffffff;
-  --color-popover-foreground: #10243a;
-  --color-primary: #0a6560;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #e4efea;
-  --color-secondary-foreground: #10243a;
-  --color-muted: #e6ece9;
-  --color-muted-foreground: #4d5d6b;
-  --color-accent: #d9ebe6;
-  --color-accent-foreground: #10243a;
-  --color-destructive: #c85a45;
-  --color-destructive-foreground: #ffffff;
-  --color-border: rgba(16, 36, 58, 0.1);
-  --color-input: rgba(16, 36, 58, 0.16);
-  --color-ring: #0a6560;
-  --color-primary-ink: #084f4b;
+  --color-background: #e6eef4;
+  --color-foreground: #03303d;
+  --color-card: #f7fafc;
+  --color-card-foreground: #03303d;
+  --color-popover: #f7fafc;
+  --color-popover-foreground: #03303d;
+  --color-primary: #03303d;
+  --color-primary-foreground: #f4f7fb;
+  --color-secondary: #d5e1ee;
+  --color-secondary-foreground: #03303d;
+  --color-muted: #dce6f0;
+  --color-muted-foreground: #3e5674;
+  --color-accent: #d5e1ee;
+  --color-accent-foreground: #03303d;
+  --color-destructive: #c41922;
+  --color-destructive-foreground: #fff8f7;
+  --color-border: transparent;
+  --color-input: rgba(3, 48, 61, 0.16);
+  --color-ring: #839cc5;
+  --color-primary-ink: #022833;
   --radius: 1.125rem;
 
   --radius-sm: calc(var(--radius) - 8px);
@@ -41,36 +40,37 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
 
-  /* Glass material */
-  --color-glass: rgba(255, 255, 255, 0.46);
-  --color-glass-strong: rgba(255, 255, 255, 0.64);
-  --color-glass-border: rgba(16, 36, 58, 0.09);
-  --color-glass-highlight: rgba(255, 255, 255, 0.85);
-  --color-ambient-a: #9fe0d6;
-  --color-ambient-b: #b4d2f2;
-  --shadow-glass: 0 1px 1px rgba(16, 36, 58, 0.04), 0 10px 30px -14px rgba(16, 36, 58, 0.22);
-  --shadow-glass-float: 0 2px 4px rgba(16, 36, 58, 0.06), 0 18px 44px -18px rgba(16, 36, 58, 0.32);
+  /* Solid panes. The edge is the fill, not a line. */
+  --color-glass: #f3f7fb;
+  --color-glass-strong: #ffffff;
+  --color-glass-border: transparent;
+  --color-glass-highlight: transparent;
+  --color-ambient-a: #c9d7e8;
+  --color-ambient-b: #d7e3f0;
+  --shadow-glass: 0 1px 1px rgba(3, 48, 61, 0.04), 0 10px 28px -16px rgba(3, 48, 61, 0.18);
+  --shadow-glass-float: 0 2px 4px rgba(3, 48, 61, 0.05), 0 16px 36px -18px rgba(3, 48, 61, 0.22);
 
-  --color-success: #1f7a62;
-  --color-success-foreground: #ffffff;
-  --color-warning: #e8a83a;
-  --color-warning-foreground: #10243a;
-  --color-info: #2a6f94;
-  --color-info-foreground: #ffffff;
+  --color-success: #1a5560;
+  --color-success-foreground: #f4f7fb;
+  --color-warning: #8a6420;
+  --color-warning-foreground: #03303d;
+  --color-info: #3e5674;
+  --color-info-foreground: #f4f7fb;
 
-  --color-navy: #10243a;
-  --color-navy-foreground: #f3f6f2;
-  --color-mist: #f3f6f2;
-  --color-advisory: #fff6e5;
-  --color-advisory-foreground: #6a4a12;
-  --color-beacon: #c85a45;
-  --color-beacon-foreground: #ffffff;
+  --color-navy: #03303d;
+  --color-navy-foreground: #f4f7fb;
+  --color-mist: #e6eef4;
+  --color-advisory: #f6f0e4;
+  --color-advisory-foreground: #5c4314;
+  --color-beacon: #e82f33;
+  --color-beacon-foreground: #fff8f7;
+  --color-beacon-ink: #c41922;
 
   --shadow-card: var(--shadow-glass);
   --shadow-card-hover: var(--shadow-glass-float);
 
-  --color-shell: #e6ece9;
-  --color-shell-panel: rgba(255, 255, 255, 0.62);
+  --color-shell: #d9e4ef;
+  --color-shell-panel: rgba(247, 250, 252, 0.82);
 
   --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
@@ -323,93 +323,53 @@
 
 @utility ng-surface {
   background-color: var(--color-card);
-  border: 1px solid var(--color-border);
+  border: 0;
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-card);
 }
 
 /* Liquid glass pane: blurred, saturated, inner highlight, hairline edge. */
-/* Specular rim: a 1px gradient ring masked onto the pane edge, so glass catches
-   light at the top-left corner the way a bevelled sheet does. */
+/* The pane edge is the single hairline on ng-glass. No gradient rim. */
 @utility ng-glass-rim {
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(
-      135deg,
-      var(--color-glass-highlight) 0%,
-      color-mix(in srgb, var(--color-glass-highlight) 15%, transparent) 45%,
-      transparent 100%
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
-  }
+  position: relative;
 }
 
-/* Resting glass pane. Grouped lists (ng-row-divide) zero out the offset shadow
-   so they sit *in* the field while floating controls sit *over* it. */
+/* Solid pane. Grouped lists zero the shadow so they sit in the field. */
 @utility ng-glass {
   @apply ng-glass-rim;
   position: relative;
   background-color: var(--color-glass);
-  -webkit-backdrop-filter: blur(24px) saturate(1.6);
-  backdrop-filter: blur(24px) saturate(1.6);
-  border: 1px solid var(--color-glass-border);
+  border: 0;
   border-radius: var(--radius-xl);
-  box-shadow:
-    inset 0 1px 0 0 var(--color-glass-highlight),
-    var(--ng-glass-shadow, var(--shadow-glass));
+  box-shadow: var(--ng-glass-shadow, var(--shadow-glass));
 }
 
 @utility ng-glass-strong {
   @apply ng-glass-rim;
   position: relative;
   background-color: var(--color-glass-strong);
-  -webkit-backdrop-filter: blur(28px) saturate(1.7);
-  backdrop-filter: blur(28px) saturate(1.7);
-  border: 1px solid var(--color-glass-border);
+  border: 0;
   border-radius: var(--radius-xl);
-  box-shadow:
-    inset 0 1px 0 0 var(--color-glass-highlight),
-    var(--shadow-glass-float);
+  box-shadow: var(--shadow-glass-float);
 }
 
-/* Floating glass control (tab bar, header pills). */
+/* Floating control (tab bar, header pills). */
 @utility ng-glass-pill {
   @apply ng-glass-rim;
   position: relative;
   background-color: var(--color-glass-strong);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8);
-  backdrop-filter: blur(28px) saturate(1.8);
-  border: 1px solid var(--color-glass-border);
+  border: 0;
   border-radius: 9999px;
-  box-shadow:
-    inset 0 1px 0 0 var(--color-glass-highlight),
-    var(--shadow-glass-float);
+  box-shadow: var(--shadow-glass-float);
 }
 
-/* Glass control (outline buttons): same material as the pill, radius left to the caller. */
+/* Outline-style control: same solid fill, radius left to the caller. */
 @utility ng-glass-control {
   @apply ng-glass-rim;
   position: relative;
   background-color: var(--color-glass-strong);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8);
-  backdrop-filter: blur(28px) saturate(1.8);
-  border: 1px solid var(--color-glass-border);
-  box-shadow:
-    inset 0 1px 0 0 var(--color-glass-highlight),
-    var(--shadow-glass);
+  border: 0;
+  box-shadow: var(--shadow-glass);
 }
 
 /* Grouped inset list rows (Settings-style) inside a glass pane. */
@@ -422,11 +382,8 @@
 }
 
 @utility ng-row-divide {
-  /* Grouped list: inset in the field, no floating shadow. */
+  /* Grouped list: inset in the field, no floating shadow and no divider line. */
   --ng-glass-shadow: 0 0 #0000;
-  & > * + * {
-    border-top: 1px solid var(--color-border);
-  }
 }
 
 @utility ng-tap {
@@ -454,48 +411,31 @@
     background-color: transparent;
   }
 
-  /* Ambient strength: light wants the field fully present so glass reads;
-     dark keeps a near-black ground with the accent as a glow (themes.css). */
+  /* One soft wash of the same blue family. Dark turns it down in themes.css. */
   :root {
-    --ambient-a: 100%;
-    --ambient-b: 100%;
-    --ambient-c: 70%;
+    --ambient-a: 70%;
+    --ambient-b: 55%;
   }
 
   /* Ambient field behind every glass pane. Fixed so blur has something to read. */
   body::before {
     content: '';
     position: fixed;
-    inset: -20%;
+    inset: -12%;
     z-index: -1;
     pointer-events: none;
     background:
       radial-gradient(
-        46% 42% at 16% 20%,
+        58% 48% at 18% 12%,
         color-mix(in srgb, var(--color-ambient-a) var(--ambient-a), transparent) 0%,
-        transparent 72%
+        transparent 70%
       ),
       radial-gradient(
-        50% 44% at 84% 80%,
+        52% 46% at 86% 88%,
         color-mix(in srgb, var(--color-ambient-b) var(--ambient-b), transparent) 0%,
         transparent 72%
-      ),
-      radial-gradient(
-        38% 34% at 58% 46%,
-        color-mix(in srgb, var(--color-ambient-b) var(--ambient-c), transparent) 0%,
-        transparent 72%
-      ),
-      radial-gradient(
-        34% 30% at 72% 10%,
-        color-mix(in srgb, var(--color-ambient-a) var(--ambient-c), transparent) 0%,
-        transparent 72%
-      ),
-      radial-gradient(
-        30% 26% at 30% 88%,
-        color-mix(in srgb, var(--color-ambient-a) var(--ambient-c), transparent) 0%,
-        transparent 72%
       );
-    filter: blur(32px);
+    filter: blur(40px);
   }
 
   body {
@@ -594,10 +534,7 @@
   .ng-segment > button[aria-pressed='true'] {
     background-color: var(--color-glass-strong);
     color: var(--color-foreground);
-    box-shadow:
-      inset 0 1px 0 0 var(--color-glass-highlight),
-      0 1px 2px rgba(16, 36, 58, 0.08),
-      0 6px 16px -8px rgba(16, 36, 58, 0.25);
+    box-shadow: none;
   }
 
   /* Native select/input inside glass. */
@@ -605,8 +542,8 @@
     min-height: 2.75rem;
     width: 100%;
     border-radius: var(--radius-md);
-    border: 1px solid var(--color-input);
-    background-color: color-mix(in srgb, var(--color-card) 70%, transparent);
+    border: 0;
+    background-color: var(--color-card);
     padding-inline: 0.875rem;
     font-size: 1rem;
     color: var(--color-foreground);

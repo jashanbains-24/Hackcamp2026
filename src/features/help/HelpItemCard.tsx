@@ -18,7 +18,7 @@ const statusLabels = {
 const kindStyle = {
   request: { label: 'Need', icon: HandHeart, pill: 'bg-primary/15 text-primary-ink' },
   offer: { label: 'Offer', icon: Package, pill: 'bg-success/15 text-success' },
-  beacon: { label: 'Beacon', icon: Radio, pill: 'bg-beacon/15 text-beacon' },
+  beacon: { label: 'Beacon', icon: Radio, pill: 'bg-beacon/15 text-beacon-ink' },
 } as const
 
 const statusStyle = {
@@ -120,7 +120,7 @@ export function HelpItemCard({
     <article
       className={
         item.kind === 'beacon'
-          ? 'ng-glass border-beacon/30 p-4 sm:p-5'
+          ? 'ng-glass p-4 sm:p-5'
           : 'ng-glass p-4 sm:p-5'
       }
     >
@@ -169,7 +169,7 @@ export function HelpItemCard({
       )}
 
       {isOwner && itemResponses.length > 0 && (
-        <div className="mt-4 border-t border-border pt-3">
+        <div className="mt-4 pt-1">
           <h3 className="text-sm font-semibold text-foreground">
             {itemResponses.length} {itemResponses.length === 1 ? 'offer' : 'offers'} to help
           </h3>

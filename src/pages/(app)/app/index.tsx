@@ -54,7 +54,7 @@ export default function AppHomePage() {
         <Link
           to="/app/help/new"
           viewTransition
-          className="ng-press mt-4 inline-flex min-h-13 w-full items-center justify-center rounded-[14px] bg-primary px-5 text-base font-semibold text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)] transition-[transform,background-color] duration-150 hover:bg-primary-ink"
+          className="ng-press mt-4 inline-flex min-h-13 w-full items-center justify-center rounded-[14px] bg-primary px-5 text-base font-semibold text-primary-foreground shadow-none transition-[transform,background-color] duration-150 hover:bg-primary-ink"
         >
           Ask for help
         </Link>
@@ -69,7 +69,7 @@ export default function AppHomePage() {
           <Link
             to="/app/beacon/new"
             viewTransition
-            className="ng-press inline-flex min-h-11 items-center justify-center rounded-[14px] bg-beacon/12 text-sm font-semibold text-beacon transition-[transform,background-color] duration-150 hover:bg-beacon/18"
+            className="ng-press inline-flex min-h-11 items-center justify-center rounded-[14px] bg-beacon/12 text-sm font-semibold text-beacon-ink transition-[transform,background-color] duration-150 hover:bg-beacon/18"
           >
             Help Beacon
           </Link>

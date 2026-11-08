@@ -129,7 +129,12 @@ export function useHelpNetwork() {
     },
     async createBeacon(input: CreateBeaconInput) {
       if (!live) return helpDemoActions.createBeacon(input)?.id
-      return callHelpAction('createHelpBeacon', input)
+      const reach = input.reach ?? 'nearby'
+      return callHelpAction('createHelpBeacon', {
+        ...input,
+        reach,
+        targetCommunityIds: reach === 'nearby' ? input.targetCommunityIds.slice(0, 2) : [],
+      })
     },
     async respond(helpItemId: string, note: string) {
       if (!live) return helpDemoActions.respond(helpItemId, note)?.id

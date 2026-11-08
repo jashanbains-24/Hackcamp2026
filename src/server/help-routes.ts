@@ -5,6 +5,7 @@ import { resolveBrowserAuth } from './http-routes.js'
 
 const requestSchema = z.object({
   draft: z.string().trim().min(12).max(1000),
+  kind: z.enum(['request', 'offer', 'beacon']).default('request'),
 })
 
 const claritySchema = z.object({
@@ -40,7 +41,7 @@ export function registerHelpRoutes(app: Hono<AppContext>): void {
     const auth = await resolveBrowserAuth(c.req.raw, c.env)
     if (!auth) {
       return c.json(
-        { error: 'Sign in before using Request Clarity Assistant.', code: 'unauthorized' },
+        { error: 'Sign in before using the writing assistant.', code: 'unauthorized' },
         401,
       )
     }
@@ -57,7 +58,7 @@ export function registerHelpRoutes(app: Hono<AppContext>): void {
     if (!env.GEMINI_API_KEY) {
       return c.json(
         {
-          error: 'Gemini is not configured yet. The manual request form still works.',
+          error: 'Gemini is not configured yet. The manual form still works.',
           code: 'configuration_missing',
         },
         503,
@@ -66,7 +67,11 @@ export function registerHelpRoutes(app: Hono<AppContext>): void {
 
     const model = env.GEMINI_MODEL || 'gemini-3.5-flash-lite'
     const prompt = [
-      'You help a user rewrite an ordinary neighbourhood resource request.',
+      parsedRequest.data.kind === 'offer'
+        ? 'You help a user rewrite an ordinary neighbourhood offer of something they can lend or share. Keep it as an offer from the neighbour. Do not turn it into a request.'
+        : parsedRequest.data.kind === 'beacon'
+          ? 'You help a user rewrite a short public neighbourhood beacon. Keep it as a practical ask for neighbours, and keep the summary under 280 characters. Do not turn it into an emergency alert.'
+          : 'You help a user rewrite an ordinary neighbourhood resource request.',
       'Return only the requested JSON fields.',
       'Do not assess emergency severity, medical urgency, danger, or whether volunteers will respond.',
       'Do not invent facts, addresses, contact details, quantities, or timing.',
