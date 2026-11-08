@@ -6,6 +6,9 @@ emergency service or official alert system.
 
 ## Current status
 
+`main` is at/after `1b1ce8d` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2 +
+authenticated lifecycle PR #5), and Communities (PR #4) merged. Developer A is the final
+integration and presentation lead. **No new product features** in this pass.
 **Live app:** [hackcamp2026.app.space](https://hackcamp2026.app.space)
 
 `main` is at `1b1ce8d` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2),
@@ -17,9 +20,11 @@ Communities (PR #4), and the authenticated two-user Help regression (PR #5) merg
 | --- | --- | --- |
 | Platform / home / official updates | Merged (`feat/home-alerts`) | Developer A |
 | Communities / posts / comments | Merged (`feat/communities`) | Developer B |
-| Help / beacon / Gemini / n8n | Help lifecycle merged; Gemini/n8n deferred | Developer C |
+| Help / beacon / Gemini / n8n | Help lifecycle + authenticated realtime merged; Gemini/n8n deferred | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
+fallback. The live two-user DeepSpace lifecycle **passed**. Remaining owner actions: Figma share
+URL, deploy URL, optional Gemini/n8n later (see `PROJECT_STATUS.md` and `docs/DEMO_SCRIPT.md`).
 fallback. The live two-user DeepSpace lifecycle has passed. Production landing, demo home,
 Communities, and the real BC Hydro Surrey feed have been verified. Figma, Gemini, and n8n remain
 pending (see `PROJECT_STATUS.md`); no application secrets were deployed.
@@ -117,8 +122,8 @@ import {
 Do not put real values in `.env`, `.env.example`, client code, `VITE_*`, chat, or commits. Do not
 manually edit `.dev.vars`; DeepSpace regenerates it from the encrypted app store.
 
-The Gemini endpoint is implemented. The owner can enable it by running these commands locally from
-the repository:
+The Gemini endpoint is implemented. **Do not configure it for the presentation pass** unless the
+owner explicitly resumes it. When ready, run locally from the repository:
 
 ```bash
 read -s GEMINI_API_KEY
@@ -134,6 +139,21 @@ Success means `GEMINI_API_KEY` appears by name in the masked list. Restart
 When the n8n account and server workflow are ready, use the same pattern with
 `N8N_WEBHOOK_URL`. Keep the webhook server-side and send only anonymized, replay-safe demo events.
 
+## Deploy (owner)
+
+Exact steps live in [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md). Summary:
+
+```bash
+git switch main && git pull origin main
+npm install
+npm run type-check && npm run lint && npm run test:unit && npm run build
+npx deepspace auth login   # if needed
+npx deepspace deploy
+```
+
+Record the live `*.space` URL in this README and `PROJECT_STATUS.md`. Do not upload Gemini/n8n
+secrets as part of this deploy.
+
 ## Demo and safety notes
 
 - `/demo` redirects to `/app?demo=1`.
@@ -145,6 +165,8 @@ When the n8n account and server workflow are ready, use the same pattern with
 - Demo beacons remain browser-local and contact nobody. Authenticated live beacons create only an
   in-app DeepSpace record; they do not contact emergency services or external broadcasters.
 - No precise location, phone number, or sensitive personal information is collected.
+- Pitch script + backup checklist: [`docs/DEMO_SCRIPT.md`](./docs/DEMO_SCRIPT.md).
+- Devpost screenshots: [`docs/presentation/`](./docs/presentation/).
 
 ## Project map
 
@@ -163,23 +185,26 @@ When the n8n account and server workflow are ready, use the same pattern with
 
 ## Team workflow
 
+Feature lanes A/B/C are merged. Prefer small integration PRs on branches like
+`chore/final-integration` rather than editing `main` directly.
+
 ```bash
 git switch main
 git pull origin main
 npm install
 npm run build
-
-git switch -c feat/home-alerts       # A
-# or: git switch -c feat/communities # B
-# or: git switch -c feat/help-beacon # C
+git switch -c chore/final-integration
 ```
 
-Do not silently rename shared interfaces or edit another lane’s owned routes. Coordinate shared
-schema/auth changes through Person A. Every coding agent must read `AGENTS.md` and update
-`PROJECT_STATUS.md` before handing work to another agent.
+Do not silently rename shared interfaces. Coordinate shared schema/auth changes through Person A.
+Every coding agent must read `AGENTS.md` and update `PROJECT_STATUS.md` before handing work to
+another agent.
 
 ## Design file
 
-Implementation system of record: [`DESIGN.md`](./DESIGN.md). Developer A/UI lead also owns the shared Figma file.
+Implementation system of record: [`DESIGN.md`](./DESIGN.md). Developer A/UI lead also owns the
+shared Figma file. Frame inventory and create/share steps:
+[`docs/FIGMA_HANDOFF.md`](./docs/FIGMA_HANDOFF.md).
 
-**Figma:** Pending share URL.
+**Figma:** Pending share URL — create `NeighbourGrid — HackCamp 2026`, turn on link sharing, paste
+here and in `PROJECT_STATUS.md`.

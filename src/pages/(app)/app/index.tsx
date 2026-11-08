@@ -232,8 +232,15 @@ export default function AppHomePage() {
         {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
           aggregates.latestPosts.length === 0 && (
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              No posts in {session.homeCommunity.name} yet. Community posting lands in Developer B’s
-              lane.
+              No posts in {session.homeCommunity.name} yet.{' '}
+              <Link
+                to={`/app/communities/${session.homeCommunity.slug}`}
+                viewTransition
+                className="font-medium text-primary-ink hover:underline"
+              >
+                Start a conversation
+              </Link>{' '}
+              in your community.
             </p>
           )}
 
