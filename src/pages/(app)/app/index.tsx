@@ -200,11 +200,20 @@ export default function AppHomePage() {
           <ErrorPanel title="Could not load activity" description={aggregates.error ?? 'Try again shortly.'} />
         )}
 
-        {ready && aggregates.latestPosts.length === 0 && (
-          <Pane className="p-4">
-            <p className="text-sm text-muted-foreground">No posts in {session.homeCommunity.name} yet.</p>
-          </Pane>
-        )}
+        {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
+          aggregates.latestPosts.length === 0 && (
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              No posts in {session.homeCommunity.name} yet.{' '}
+              <Link
+                to={`/app/communities/${session.homeCommunity.slug}`}
+                viewTransition
+                className="font-medium text-primary-ink hover:underline"
+              >
+                Start a conversation
+              </Link>{' '}
+              in your community.
+            </p>
+          )}
 
         {ready && aggregates.latestPosts.length > 0 && (
           <Pane className="ng-pane-in ng-pane-in-delay-2 ng-row-divide overflow-hidden">

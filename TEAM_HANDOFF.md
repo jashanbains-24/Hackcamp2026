@@ -3,6 +3,10 @@
 Read `AGENTS.md` and `PROJECT_STATUS.md` first. `PROJECT_STATUS.md` is the live operational record;
 this file defines stable ownership and acceptance criteria.
 
+**Status (2026-11-07):** A/B/C feature PRs are merged into `main` at/after `1b1ce8d`. Authenticated
+Help realtime passed. Developer A owns final integration, Figma URL, deploy steps, and presentation
+materials — not new product features.
+
 ## Gate 1 — Developer A UI overhaul before parallel work
 
 Developer A is the UI lead. A pulls the registered Phase 0 baseline, creates
