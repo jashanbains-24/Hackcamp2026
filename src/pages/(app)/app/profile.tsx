@@ -1,37 +1,33 @@
-import { MapPin, ShieldCheck } from 'lucide-react'
-import { Badge } from '@/components/ui'
-import { Card } from '@/components/neighbourgrid'
+import { PageIntro } from '@/components/neighbourgrid'
 import { demoUser, homeCommunity } from '@/shared/demo-data'
 
 export default function ProfilePage() {
   return (
-    <div className="mx-auto max-w-[680px] px-4 py-8 sm:px-6">
-      <p className="text-xs font-bold uppercase tracking-wider text-primary">Demo profile</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight">Your neighbourhood profile</h1>
-      <Card className="mt-7 p-6 sm:p-8">
+    <div className="mx-auto max-w-[640px] px-4 py-5 sm:px-6 sm:py-7">
+      <PageIntro title="Profile" description="Account controls arrive in the platform workstream." />
+      <div className="border-t border-border pt-6">
         <div className="flex items-center gap-4">
-          <span className="grid size-16 place-items-center rounded-full bg-secondary text-xl font-bold text-primary">M</span>
+          <span className="grid size-14 place-items-center rounded-full bg-secondary text-lg font-semibold text-foreground">
+            M
+          </span>
           <div>
-            <h2 className="text-xl font-bold">{demoUser.displayName}</h2>
-            <Badge className="mt-2 bg-primary/10 text-primary">Fictional demo user</Badge>
+            <h2 className="ng-type-title-sm text-foreground">{demoUser.displayName}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Demo account</p>
           </div>
         </div>
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-2xl border border-border p-4">
-            <MapPin className="size-5 text-primary" />
-            <p className="mt-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Home community</p>
-            <p className="mt-1 font-bold">{homeCommunity.name}, {homeCommunity.municipality}</p>
+        <dl className="mt-7 grid gap-5 sm:grid-cols-2">
+          <div>
+            <dt className="ng-type-meta text-muted-foreground">Home community</dt>
+            <dd className="mt-1 font-semibold text-foreground">
+              {homeCommunity.name}, {homeCommunity.municipality}
+            </dd>
           </div>
-          <div className="rounded-2xl border border-border p-4">
-            <ShieldCheck className="size-5 text-primary" />
-            <p className="mt-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">Privacy</p>
-            <p className="mt-1 font-bold">Approximate area only</p>
+          <div>
+            <dt className="ng-type-meta text-muted-foreground">Privacy</dt>
+            <dd className="mt-1 font-semibold text-foreground">Approximate area only</dd>
           </div>
-        </div>
-        <p className="mt-6 text-sm leading-6 text-muted-foreground">
-          Account controls and persisted home-community selection arrive in Person A’s platform workstream.
-        </p>
-      </Card>
+        </dl>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,16 @@
+---
+description: Do not use browser tools against local dev servers
+alwaysApply: true
+---
+
+# No localhost browser automation
+
+Never navigate to, screenshot, lock, or automate `localhost` / `127.0.0.1` (including ports like `:8780`) with browser MCP or similar tools.
+
+For UI verification, use:
+
+- Source inspection and design tokens
+- `impeccable detect` and project test/lint/type-check commands
+- Owner visual review in their own running app
+
+Do not retry localhost browser navigation after failures.

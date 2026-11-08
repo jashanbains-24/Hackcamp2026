@@ -19,8 +19,8 @@ This repository currently contains **Phase 0 only**:
 Persistent records, authentication UX, community posting, help matching, realtime updates, the BC
 Hydro feed, Gemini, and n8n are intentionally not implemented yet.
 
-The DeepSpace app is registered. The next gate is Developer A’s shared Figma/design-system and UI
-overhaul; parallel A/B/C feature branches start only after that work is merged into `main`.
+The DeepSpace app is registered. Developer A’s UI overhaul lives on `feat/ui-overhaul` (pending
+review/commit). Parallel A/B/C feature branches start only after that work is merged into `main`.
 
 ## Local setup
 
@@ -153,6 +153,6 @@ schema/auth changes through Person A. Every coding agent must read `AGENTS.md` a
 
 ## Design file
 
-Developer A/UI lead owns the shared Figma file. Add its share URL here after creation:
+Implementation system of record: [`DESIGN.md`](./DESIGN.md). Developer A/UI lead also owns the shared Figma file.
 
-**Figma:** Pending Developer A UI-overhaul gate.
+**Figma:** Pending share URL.

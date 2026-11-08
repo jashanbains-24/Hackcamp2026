@@ -27,7 +27,7 @@ declare const __DEEPSPACE_SITE_ORIGIN__: string | undefined
 export const seo = {
   title: `${APP_NAME} | Neighbours helping neighbours`,
   description:
-    'A calm, local hub for community conversations, trusted information, and opt-in neighbour-to-neighbour help.',
+    'A mobile-first neighbourhood hub for BC residents to share local context, check official updates, and coordinate opt-in help during outages.',
   /** Public origin for canonical URLs, og:url, and the sitemap — no trailing
    *  slash. Replace with the custom domain once one is attached, e.g.
    *  'https://www.example.com'. */
