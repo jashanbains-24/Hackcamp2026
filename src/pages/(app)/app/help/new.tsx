@@ -2,13 +2,10 @@ import { useState, type FormEvent } from 'react'
 import { ArrowLeft, ShieldCheck, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Textarea, useToast } from '@/components/ui'
-import { BackLink, Footnote, Pane } from '@/components/neighbourgrid'
+import { BackLink, Pane } from '@/components/neighbourgrid'
 import { useHelpNetwork } from '@/features/help/help-network'
 import { helpCategoryLabels } from '@/features/help/help-store'
-import {
-  clarifyHelpRequest,
-  type RequestClaritySuggestion,
-} from '@/features/help/request-clarity'
+import { clarifyHelpRequest } from '@/features/help/request-clarity'
 import type { HelpCategory } from '@/shared/types'
 
 const contactPattern =
@@ -24,7 +21,6 @@ export default function NewHelpPage() {
   const [roughDraft, setRoughDraft] = useState('')
   const [clarifying, setClarifying] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [suggestion, setSuggestion] = useState<RequestClaritySuggestion | null>(null)
   const help = useHelpNetwork()
 
   async function improveDraft() {
@@ -35,11 +31,10 @@ export default function NewHelpPage() {
     setClarifying(true)
     try {
       const next = await clarifyHelpRequest(roughDraft.trim())
-      setSuggestion(next)
       setTitle(next.title)
       setDescription(next.summary)
       setCategory(next.category)
-      success('Suggestion ready', 'Review and edit every field before posting.')
+      success('Added to your post')
     } catch (cause) {
       error(
         'Assistant unavailable',
@@ -123,15 +118,18 @@ export default function NewHelpPage() {
       </div>
 
       {kind === 'request' && (
-        <Pane className="ng-pane-in mt-5 p-4 sm:p-5" aria-labelledby="clarity-title">
-          <div className="flex items-center justify-between gap-3">
-            <h2 id="clarity-title" className="inline-flex items-center gap-2 text-base font-semibold text-foreground">
-              <Sparkles className="size-4 text-primary" aria-hidden />
-              Clearer wording
+        <section className="mt-6 px-1" aria-labelledby="clarity-title">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 id="clarity-title" className="text-base font-semibold text-foreground">
+              Let AI help you write your post
             </h2>
-            <span className="text-xs font-medium text-muted-foreground">Gemini · you edit, you post</span>
+            <span className="inline-flex items-center rounded-full bg-primary/15 px-2.5 py-1 text-xs font-semibold text-primary-ink">
+              Gemini
+            </span>
           </div>
-          <label htmlFor="rough-help-draft" className="sr-only">Rough request draft</label>
+          <label htmlFor="rough-help-draft" className="sr-only">
+            Rough idea for your post
+          </label>
           <Textarea
             id="rough-help-draft"
             className="mt-3"
@@ -139,7 +137,7 @@ export default function NewHelpPage() {
             onChange={(event) => setRoughDraft(event.target.value)}
             maxLength={1000}
             rows={2}
-            placeholder="My block is out and I need somewhere to charge my phone."
+            placeholder="Jot a rough idea"
           />
           <Button
             type="button"
@@ -149,18 +147,13 @@ export default function NewHelpPage() {
             onClick={improveDraft}
           >
             <Sparkles aria-hidden />
-            Improve draft
+            Help me write
           </Button>
-          {suggestion && (
-            <p className="mt-3 text-sm text-muted-foreground">
-              {suggestion.suggestedTags.map((tag) => `#${tag}`).join(' ')}
-              {suggestion.safetyNote ? ` · ${suggestion.safetyNote}` : ''}
-            </p>
-          )}
-        </Pane>
+        </section>
       )}
 
-      <form className="mt-5" onSubmit={submit}>
+      <form className="mt-6" onSubmit={submit}>
+        <h2 className="mb-2 px-1 text-base font-semibold text-foreground">Your post</h2>
         <Pane className="ng-pane-in ng-pane-in-delay-1 space-y-4 p-4 sm:p-5">
           <div>
             <label htmlFor="help-category" className="text-sm font-semibold text-foreground">
@@ -222,9 +215,6 @@ export default function NewHelpPage() {
         <Button type="submit" size="lg" className="mt-4 w-full" loading={submitting}>
           {kind === 'request' ? 'Post request' : 'Post offer'}
         </Button>
-        <Footnote className="mt-3">
-          {help.source === 'live' ? 'LIVE · synced via DeepSpace' : 'DEMO · saved in this browser'}
-        </Footnote>
       </form>
     </div>
   )

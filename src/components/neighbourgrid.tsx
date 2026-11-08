@@ -262,25 +262,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      {/* Mobile: floating glass top bar */}
-      <header className="sticky top-0 z-40 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] lg:hidden">
-        <div className="ng-glass-pill mx-auto flex h-13 max-w-[720px] items-center justify-between pl-3 pr-1.5">
-          <Link to="/app" viewTransition aria-label="NeighbourGrid home" className="rounded-full">
-            <span className="ng-vt-brand inline-flex">
-              <BrandMark />
-            </span>
-          </Link>
-          <Link
-            to="/app/profile"
-            viewTransition
-            className="grid size-10 place-items-center rounded-full bg-foreground/8 text-sm font-bold text-foreground"
-            aria-label={`Open ${session.displayName}'s profile`}
-          >
-            {initial}
-          </Link>
-        </div>
-      </header>
-
       <div className="flex min-h-dvh w-full">
         {/* Desktop: floating glass rail */}
         <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 p-4 lg:block">
@@ -337,7 +318,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </aside>
 
-        <main id="main-content" className="min-w-0 flex-1 pb-28 lg:pb-8">
+        <main
+          id="main-content"
+          className="min-w-0 flex-1 pb-28 pt-[max(1.25rem,env(safe-area-inset-top))] lg:pb-8 lg:pt-0"
+        >
           {children}
         </main>
       </div>

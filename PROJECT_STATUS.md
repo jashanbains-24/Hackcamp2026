@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-08, 12:00 a.m. Vancouver time
-**Current stage:** Guide and n8n merged; production redeploy pending
-**Shared branch:** `main` at `7b79a56` (PR #11)
-**Active lane in this checkout:** Developer C on clean `main`
+**Last updated:** 2026-11-08, 1:24 a.m. Vancouver time
+**Current stage:** Page polish and post photos are on `polish/home-quiet`; production redeploy still waiting
+**Shared branch:** `main` at `c3ec84e` (PR #11 plus the n8n status commit)
+**Active lane in this checkout:** Developer C on `polish/home-quiet`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -47,7 +47,7 @@
 
 - **Developer A:** UI/presentation work merged; Figma share URL remains an owner action.
 - **Developer B:** Communities and home sync merged; no further feature work expected.
-- **Developer C:** Help/Beacon, Neighbourhood Guide, and n8n event are merged. Redeploy is next.
+- **Developer C:** Help/Beacon, Neighbourhood Guide, and n8n event are merged. Home, communities, help polish, and post photos are on `polish/home-quiet`. Redeploy waits until that branch is accepted.
 
 **Figma URL:** Pending owner create/share — follow [`docs/FIGMA_HANDOFF.md`](./docs/FIGMA_HANDOFF.md).
 Paste the share link here and in `README.md` when ready.
@@ -111,8 +111,9 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 
 ## Next safe handoff
 
-PR #11 is merged and this checkout is on clean `main`. Redeploy before treating the live site as
-having the Guide or n8n event. A local `WIP dark pastel palette` stash remains on purpose.
+Home polish is on `polish/home-quiet`. Open a PR when the page polish is ready, then redeploy.
+The live site still does not have the Guide or n8n event. A local `WIP dark pastel palette` stash
+remains on purpose.
 
 ## Session log template
 
@@ -127,6 +128,55 @@ having the Guide or n8n event. A local `WIP dark pastel palette` stash remains o
 ```
 
 ## Session history
+
+### 2026-11-08 01:12 — Developer C (`polish/home-quiet`)
+
+- Community posts can include up to 5 photos from the new-post form. The limit is only mentioned there, and only if you try to add more.
+- The feed and the post page show one photo at a time. Swipe or use the dots to move between them.
+- Pictures are resized and saved with the demo post in this browser. They are not a live DeepSpace upload.
+- Tests run before this save: type-check, lint, unit tests (26), production build, and Playwright smoke, communities, and help (13) all passed. A two-photo Newton post was published locally and the second photo was selected.
+- Saved on `polish/home-quiet` and pushed. Not merged to `main`. Production is unchanged.
+
+### 2026-11-08 00:58 — Developer C (`polish/home-quiet`)
+
+- Restyled help cards like the community posts: kind and status pills, large title, description, then person, time, place, and category.
+- Removed the live “Signed in as … synced via DeepSpace” line. The demo viewer switch stays for the fictional board.
+- Simplified the new-request page: Gemini is a short “let AI help you write” step, and the editable post is the main form. Hashtags and the sync footnote are gone.
+- Tests run: type-check and eslint on the help files passed. Checked `/app/help?demo=1` at 393px and opened the offer form.
+- Next: owner visual review. Not committed.
+
+### 2026-11-08 00:44 — Developer C (`polish/home-quiet`)
+
+- Restyled community post cards: type pill, large title, body, then author, date, and comment count.
+- Rewrote the Newton discussion so it is a neighbour check-in about the wind and flickering lights. The saved demo copy refreshes on reload.
+- The comment send arrow now sits inside the field. Posting a comment still works.
+- Discussion is teal, resource offers are green, and local updates are blue. The label text stays, so color is not the only cue.
+- Tests run: type-check and eslint on `PostCard.tsx` passed. Checked Newton at 393px and opened a discussion post.
+- Next: owner visual review. Not committed.
+
+### 2026-11-08 00:36 — Developer C (`polish/home-quiet`)
+
+- Added Vancouver neighbourhoods and a few communities in nearby cities. Member counts stay fictional.
+- The list is grouped by city. Inside each city, open communities come first and request-to-join communities follow in their own group.
+- A magnifying-glass search filters by neighbourhood or city. It has no placeholder or button label.
+- Tests run: `npm run type-check`, eslint on the touched files, and `src/services/communities.test.ts` passed. Checked `/app/communities?demo=1` at 393px, including searches for Kitsilano and Delta.
+- Next: owner visual review. Not committed. Redeploy still waits.
+
+### 2026-11-08 00:26 — Developer C (`polish/home-quiet`)
+
+- Removed the mobile NeighbourGrid bar on every page. The desktop sidebar stays.
+- Communities list keeps the city under each name, drops Open / Request to join from that line, and puts Request on the button when a community is request-to-join.
+- Removed the approximate-area footnote. Added fictional demo member counts as a person icon and a number.
+- Tests run: `npm run type-check` and eslint on the touched files passed. Checked `/app/communities?demo=1` at 393px and requested to join Guildford, which switched to Request pending.
+- Next: owner visual review, then the following page. Redeploy after the polish is accepted.
+
+### 2026-11-08 00:15 — Developer C (`polish/home-quiet`)
+
+- Quieted the home page only. The mobile NeighbourGrid bar is hidden on `/app`; other pages keep it.
+- The greeting is the first line. Newton, Surrey is plain text under it. Changing home community stays on Profile.
+- Neighbourhood Guide is a title plus one chat field with an arrow send button. Starter prompts, the Gemini badge, the search toggle, and the AI disclaimer are gone.
+- Tests run: `npm run type-check` and `npm run lint` passed. Checked `/app?demo=1` at 390px and 1280px.
+- Next: quiet the Communities list, then open a PR. Redeploy after the polish is accepted.
 
 ### 2026-11-08 00:00 — Developer C (`main`)
 

@@ -5,7 +5,6 @@ import { Button } from '@/components/ui'
 import {
   EmptyPanel,
   ErrorPanel,
-  Footnote,
   LoadingSkeleton,
   PageIntro,
   Pane,
@@ -30,7 +29,7 @@ export default function HelpBoardPage() {
   )
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
+    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8" data-help-source={help.source}>
       <PageIntro
         title="Help"
         action={
@@ -76,12 +75,7 @@ export default function HelpBoardPage() {
             </Button>
           </div>
         </Pane>
-      ) : (
-        <Footnote className="text-left">
-          <StatusLabel tone="success" className="mr-2">LIVE</StatusLabel>
-          Signed in as {help.session.displayName} · synced via DeepSpace
-        </Footnote>
-      )}
+      ) : null}
 
       <div className="ng-segment mt-4 max-w-full overflow-x-auto" role="group" aria-label="Filter help board">
         {([

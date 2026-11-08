@@ -1,7 +1,7 @@
 import { Check, Home, UserRoundPlus } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { StatusLabel } from '@/components/neighbourgrid'
-import { useMembership } from '@/services/communities'
+import { getCommunityById, useMembership } from '@/services/communities'
 
 export function CommunityMembership({
   communityId,
@@ -17,13 +17,16 @@ export function CommunityMembership({
   size?: 'sm' | 'default'
 }) {
   const { membership, join, selectHome, isApproved } = useMembership(communityId)
+  const requestsJoin = getCommunityById(communityId)?.visibility === 'request_to_join'
+  const actionLabel = requestsJoin ? 'Request to join' : 'Join community'
+  const shortLabel = requestsJoin ? 'Request' : 'Join'
 
   if (!membership) {
     return (
       <Button variant="outline" size={size} onClick={join}>
         <UserRoundPlus className="size-4" aria-hidden />
-        {compact ? <span className="sr-only">Join community</span> : 'Join community'}
-        {compact && <span aria-hidden>Join</span>}
+        {compact ? <span className="sr-only">{actionLabel}</span> : actionLabel}
+        {compact && <span aria-hidden>{shortLabel}</span>}
       </Button>
     )
   }

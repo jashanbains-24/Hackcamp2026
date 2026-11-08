@@ -17,7 +17,7 @@ test('authenticated neighbours complete the help lifecycle without refresh', asy
   ])
 
   for (const participant of [requester, responder]) {
-    await expect(participant.page.getByText(/Signed in as/)).toBeVisible({
+    await expect(participant.page.locator('[data-help-source="live"]')).toBeVisible({
       timeout: 15_000,
     })
   }

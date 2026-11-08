@@ -32,8 +32,8 @@ test.describe('Communities', () => {
 
   test('request-to-join communities keep publishing disabled while pending', async ({ page }) => {
     await page.goto('/app/communities/guildford')
-    await expect(page.getByRole('button', { name: 'Join community' })).toBeVisible()
-    await page.getByRole('button', { name: 'Join community' }).click()
+    await expect(page.getByRole('button', { name: 'Request to join' })).toBeVisible()
+    await page.getByRole('button', { name: 'Request to join' }).click()
     await expect(page.getByText('Request pending')).toBeVisible()
     await expect(page.getByRole('button', { name: 'New post' })).toBeDisabled()
   })
