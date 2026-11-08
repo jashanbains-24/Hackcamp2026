@@ -11,8 +11,8 @@ import {
   getMembership,
   useCommunityFeed,
   useCommunityState,
-  useHomeCommunity,
 } from '@/services/communities'
+import { useNeighbourGridSession } from '@/neighbourgrid/exports'
 import type { PostKind } from '@/shared/types'
 import { CommunityPostPage } from './[slug]/posts/[id]'
 
@@ -20,7 +20,7 @@ export default function CommunityPage() {
   const { slug } = useParams()
   const { pathname } = useLocation()
   const community = communityCatalog.find((item) => item.slug === slug)
-  const { homeCommunityId } = useHomeCommunity()
+  const session = useNeighbourGridSession()
   const { state } = useCommunityState()
   const { posts, commentsFor, createPost } = useCommunityFeed(community?.id)
   const [isComposing, setIsComposing] = useState(false)
@@ -61,7 +61,7 @@ export default function CommunityPage() {
       <PageIntro
         title={community.name}
         description={`${community.municipality} · ${community.description}`}
-        action={<CommunityMembership communityId={community.id} isHome={homeCommunityId === community.id} />}
+        action={<CommunityMembership communityId={community.id} isHome={session.homeCommunityId === community.id} />}
       />
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-y border-border py-3">
         <div>

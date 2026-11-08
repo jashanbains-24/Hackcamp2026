@@ -200,6 +200,30 @@ service setups.
 - Next task / handoff: push C’s integration update; Developer A reviews the help schema/action
   boundary and deploys; owner runs the two-user rehearsal and secure Gemini setup.
 
+### 2026-11-07 19:35 — Developer B, branch `fix/community-home-sync`
+
+- Completed: Community “Set as home” now calls the shared
+  `useNeighbourGridSession().setHomeCommunityId` contract. Communities reads the same session
+  home community as Home and Profile, including the curated Cloverdale, City Centre, Ladner,
+  North Delta, and Burnaby Metrotown demo seeds.
+- Notable files: `src/services/communities.ts`, community index/detail routes,
+  `src/components/communities/CommunityMembership.tsx`, and the shared curated
+  `src/shared/demo-data.ts`.
+- Tests run: focused community browser tests passed (3/3); `npm run type-check` passed;
+  `npm run lint` passed; `npm run test:unit` passed (15 tests); `npm run build` passed.
+- Service/schema/config changes: removed the separate `neighbourgrid.home-community` dependency.
+  Demo home selection now uses A’s session persistence (`ng-home-community-id` for browser-local
+  demo fallback, or the authenticated profile record through DeepSpace). Community posts,
+  memberships, and comments remain browser-local demo data and are still labelled as such; they
+  are not yet persisted in DeepSpace.
+- Blockers or user action: A’s live authenticated community record wiring remains a follow-up;
+  this pass intentionally does not rewrite the community adapter or add realtime persistence.
+  DeepSpace smoke output still reports the expected missing local `AUTH_WORKER_URL` when using
+  the mock Vite server; focused community assertions pass.
+- Next task / handoff: review and merge this small home-sync fix, then use the Communities demo
+  segment and screenshots in the presentation. Present Communities as demo-local and Help as the
+  verified live DeepSpace workflow.
+
 ### 2026-11-07 18:44 — Developer C, branch `feat/help-beacon`
 
 - Completed: Ordinary request/offer creation; participant demo switcher; offer, accept, matched,
