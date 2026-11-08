@@ -115,10 +115,11 @@ Help roots.
 5. Editable Gemini request suggestions plus the authenticated, read-only Neighbourhood Guide.
    The Guide uses bounded visible app context, BC Hydro, and optional source-linked Google Search;
    never auto-publish, mutate records, expose private data, or infer emergency severity.
-6. Only then, an anonymized replay-safe n8n event/workflow and aggregate hooks for A.
+6. Anonymized replay-safe n8n event after a verified help request. The event uses the help-record
+   id and public community labels only.
 
-The user already has the Gemini API key. Ask them to follow the secure setup in `README.md` only
-when the server endpoint is ready. The n8n account is pending and does not block steps 1–4.
+The user already has the Gemini API key and an n8n webhook. Ask them to follow the secure setup in
+`README.md` only when a secret is missing. Never ask them to paste a key or webhook into chat.
 
 Do not add unrestricted generic chat, exact geolocation, public contact details, medical triage,
 mass notifications, or automatic external broadcasting. Do not claim direct X access without a
@@ -132,9 +133,9 @@ The collection schemas are read-only to normal members so clients cannot forge t
 The browser-local adapter remains only for the labelled fictional demo. Two authenticated
 DeepSpace test users have now completed create → respond → accept → resolve in separate browser
 contexts without refresh. That rehearsal exposed and fixed the profile bootstrap sending a
-server-owned `userBound` field. `feat/neighbourhood-guide` now adds the bounded Home assistant;
-the secret and a live authenticated Gemini call still require owner verification. n8n remains
-deferred.
+server-owned `userBound` field. The Home Guide is merged. `feat/n8n-help-event` sends the
+anonymous help-request webhook after the record is saved. Confirm one live execution in n8n
+before claiming that sponsor track.
 
 ## Integration and agent protocol
 

@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ActionTools } from 'deepspace/worker'
 import type { Env } from '../../worker'
 import {
   acceptHelpResponseAction,
   createHelpBeaconAction,
+  createHelpItemAction,
   respondToHelpItemAction,
 } from './help-actions'
 
@@ -73,17 +74,105 @@ function context(
   tools: ActionTools,
   userId: string,
   params: Record<string, unknown>,
+  env: Partial<Env> = {},
 ) {
   return {
     tools,
     userId,
     params,
-    env: {} as Env,
+    env: env as Env,
     callerJwt: 'test-token',
   }
 }
 
 describe('help server actions', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('does not notify n8n when a help request is rejected', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const { tools } = makeTools({
+      profiles: [{
+        recordId: 'profile-1',
+        data: { userId: 'maya', homeCommunityId: 'newton' },
+      }],
+      communities: [{
+        recordId: 'newton',
+        data: { name: 'Newton', municipality: 'Surrey', adjacentCommunityIds: [] },
+      }],
+    })
+
+    const result = await createHelpItemAction(context(
+      tools,
+      'maya',
+      {
+        title: 'Need a phone charger',
+        description: 'Maya can be reached at maya@example.com if this leaked.',
+        category: 'power_charging',
+        communityId: 'newton',
+        kind: 'request',
+      },
+      {
+        N8N_WEBHOOK_URL: 'https://example.test/webhook/neighbourgrid-help',
+        N8N_WEBHOOK_TOKEN: 'test-token',
+      },
+    ))
+
+    expect(result).toMatchObject({ success: false })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('sends an anonymous event only after a valid help request is stored', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+    const { tools } = makeTools({
+      profiles: [{
+        recordId: 'profile-1',
+        data: { userId: 'maya', homeCommunityId: 'newton' },
+      }],
+      communities: [{
+        recordId: 'newton',
+        data: { name: 'Newton', municipality: 'Surrey', adjacentCommunityIds: [] },
+      }],
+    })
+    const env = {
+      N8N_WEBHOOK_URL: 'https://example.test/webhook/neighbourgrid-help',
+      N8N_WEBHOOK_TOKEN: 'test-token',
+    }
+
+    const request = await createHelpItemAction(context(tools, 'maya', {
+      title: 'Need a phone charger',
+      description: 'Looking for a charger at the library tonight.',
+      category: 'power_charging',
+      communityId: 'newton',
+      kind: 'request',
+    }, env))
+    const offer = await createHelpItemAction(context(tools, 'maya', {
+      title: 'Offering a spare charger',
+      description: 'I can lend a charger at the library tonight.',
+      category: 'power_charging',
+      communityId: 'newton',
+      kind: 'offer',
+    }, env))
+
+    expect(request).toMatchObject({ success: true })
+    expect(offer).toMatchObject({ success: true })
+    expect(fetchMock).toHaveBeenCalledOnce()
+    const body = JSON.parse(String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body))
+    expect(body).toMatchObject({
+      eventId: 'created-1',
+      eventType: 'help_request_created',
+      category: 'power_charging',
+      communityName: 'Newton',
+      municipality: 'Surrey',
+    })
+    expect(body).not.toHaveProperty('description')
+    expect(body).not.toHaveProperty('title')
+    expect(body).not.toHaveProperty('authorId')
+  })
+
   it('creates one response and advances the request to offered', async () => {
     const { records, tools } = makeTools({
       help_items: [{
