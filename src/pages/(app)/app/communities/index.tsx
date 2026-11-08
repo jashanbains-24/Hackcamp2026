@@ -1,38 +1,47 @@
+import { MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { PageIntro } from '@/components/neighbourgrid'
-import { communities } from '@/shared/demo-data'
+import { PageIntro, StatusLabel } from '@/components/neighbourgrid'
+import { CommunityMembership } from '@/components/communities/CommunityMembership'
+import { communityCatalog, useHomeCommunity } from '@/services/communities'
 
 export default function CommunitiesPage() {
+  const { homeCommunityId } = useHomeCommunity()
+
   return (
     <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
       <PageIntro
         title="Communities"
-        description="Browse nearby groups. Joining and home switching come next."
+        description="Find your local space, join the conversation, and choose a home community."
       />
+      <p className="mb-5 text-sm text-muted-foreground">
+        Curated BC communities use approximate neighbourhood boundaries. They are not precise GIS areas.
+      </p>
       <ul className="divide-y divide-border border-t border-border">
-        {communities.map((community) => (
-          <li key={community.id}>
-            <Link
-              to={`/app/communities/${community.slug}`}
-              viewTransition
-              className="block py-4 transition hover:bg-muted/40 focus-visible:outline-none sm:-mx-2 sm:rounded-lg sm:px-2"
-            >
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="ng-type-title-sm text-foreground">{community.name}</h2>
-                <span className="ng-type-meta text-muted-foreground">
-                  {community.slug === 'newton'
-                    ? 'Home'
-                    : community.visibility === 'request_to_join'
-                      ? 'Request to join'
-                      : 'Open'}
-                </span>
+        {communityCatalog.map((community) => (
+          <li key={community.id} className="py-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Link
+                    to={`/app/communities/${community.slug}`}
+                    viewTransition
+                    className="ng-type-title-sm rounded text-foreground hover:text-primary-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {community.name}
+                  </Link>
+                  {homeCommunityId === community.id && <StatusLabel tone="success">Home</StatusLabel>}
+                </div>
+                <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
+                  <MapPin className="size-3.5" aria-hidden />
+                  {community.municipality}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{community.description}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {community.visibility === 'public' ? 'Open to join' : 'Request to join'}
+                </p>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {community.municipality}
-                {' · '}
-                {community.description}
-              </p>
-            </Link>
+              <CommunityMembership communityId={community.id} isHome={homeCommunityId === community.id} />
+            </div>
           </li>
         ))}
       </ul>
