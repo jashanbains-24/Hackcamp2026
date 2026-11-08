@@ -6,8 +6,12 @@ emergency service or official alert system.
 
 ## Current status
 
-`main` is at `e7c5d67` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2), and
-Communities (PR #4) merged. Developer A is the integration/deployment lead on this baseline.
+**Live app:** [hackcamp2026.app.space](https://hackcamp2026.app.space)
+
+`main` is at `1b1ce8d` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2),
+Communities (PR #4), and the authenticated two-user Help regression (PR #5) merged. The clean
+`main` baseline is deployed through DeepSpace from the claimed GitHub source
+`jashanbains-24/hackcamp2026`.
 
 | Lane | Status | Owner |
 | --- | --- | --- |
@@ -16,8 +20,9 @@ Communities (PR #4) merged. Developer A is the integration/deployment lead on th
 | Help / beacon / Gemini / n8n | Help lifecycle merged; Gemini/n8n deferred | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
-fallback. The live two-user DeepSpace lifecycle has passed. Deploy URL, Figma URL, and Gemini
-secret setup are still outstanding (see `PROJECT_STATUS.md`).
+fallback. The live two-user DeepSpace lifecycle has passed. Production landing, demo home,
+Communities, and the real BC Hydro Surrey feed have been verified. Figma, Gemini, and n8n remain
+pending (see `PROJECT_STATUS.md`); no application secrets were deployed.
 
 ## Local setup
 

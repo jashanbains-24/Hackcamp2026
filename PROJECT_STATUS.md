@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 7:25 p.m. Vancouver time
-**Current stage:** A/B/C features merged; final verification and deployment
-**Shared branch:** `main` at `e7c5d67` (A integration docs after Communities PR #4)
-**Active lane in this checkout:** Developer C verification on `test/help-live-rehearsal`
+**Last updated:** 2026-11-07, 7:37 p.m. Vancouver time
+**Current stage:** A/B/C features merged and deployed; final visual QA, sponsor setup, and presentation
+**Shared branch:** `main` at `1b1ce8d` (authenticated Help regression merged via PR #5)
+**Active lane in this checkout:** Owner deployment handoff on `chore/record-deployment`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -20,13 +20,20 @@
   collections, with server-enforced lifecycle actions and the local demo adapter as fallback.
 - Two authenticated DeepSpace test users completed create → respond → accept → resolve, with both
   browser sessions updating without refresh.
+- Clean `main` deployed successfully to
+  [`https://hackcamp2026.app.space`](https://hackcamp2026.app.space). Landing, demo home,
+  Communities, and the production official-updates endpoint were verified.
+- Production `GET /api/official-updates` returned current BC Hydro Surrey municipality data with
+  source links, timestamps, and the required location-precision disclaimer.
+- DeepSpace app ID is `app_01M6W88X9P8TJ7F9MCBK7WBFRP`; deployment source is permanently claimed
+  as GitHub repository `jashanbains-24/hackcamp2026`.
 - The Gemini endpoint is implemented but the secret and live authenticated call are not verified.
 - Developer B Communities is also on `main` (A did not edit B-owned files during this review).
-- n8n remains intentionally deferred.
+- No application secrets were deployed; Gemini and n8n remain intentionally deferred.
 
 ## Current parallel lanes
 
-- **Developer A:** final integration, deployment URL, and Figma.
+- **Developer A:** final visual QA, Figma, presentation assets, and submission docs.
 - **Developer B:** `feat/communities` merged via PR #4.
 - **Developer C:** Help/Beacon merged; live DeepSpace lifecycle verified; Gemini intentionally deferred.
 
@@ -80,7 +87,7 @@ actions. Developer A should review this schema adjustment during integration.
 
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
 - **Gemini API:** endpoint is implemented; key setup is intentionally deferred by the owner.
-- **n8n:** account setup pending; does not block A/B/C core lanes.
+- **n8n:** owner account exists; no workflow or webhook is configured. Integration remains deferred.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
 
@@ -93,14 +100,16 @@ actions. Developer A should review this schema adjustment during integration.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
 2. **Gemini key:** intentionally deferred for now. When the owner resumes it, use the secure
    commands in `README.md`; never paste the key into source or chat.
-3. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
-4. **n8n account:** remains optional and deferred until after deployment.
+3. **n8n workflow:** optional and deferred. Do not add it until the owner supplies a server-side
+   webhook through DeepSpace secrets and the event is minimal, anonymized, and replay-safe.
 
 ## Next safe handoff
 
-Developer C should merge the profile-bootstrap fix and authenticated lifecycle regression test.
-Developer A then pulls `main`, runs final integrated A/B/C checks, deploys, and records the live
-URL. Gemini and n8n remain deferred by current owner priority.
+Merge this deployment-record PR, then have every developer pull `main`. Developer A can finish
+Figma, visual QA, presentation assets, and submission docs. Developer B may make only the small
+home-community storage sync fix if still needed, then move to presentation work. Developer C can
+resume secure Gemini verification and optional n8n only when the owner explicitly starts those
+service setups.
 
 ## Session log template
 
@@ -115,6 +124,21 @@ URL. Gemini and n8n remain deferred by current owner priority.
 ```
 
 ## Session history
+
+### 2026-11-07 19:37 — Owner deployment handoff, branch `chore/record-deployment`
+
+- Completed: deployed clean `main` through DeepSpace and verified the production landing page,
+  demo dashboard, Communities page, and live BC Hydro Surrey official-updates response.
+- Notable files: `README.md`, `PROJECT_STATUS.md`.
+- Tests run: production URL checks at `/`, `/app?demo=1`, `/app/communities?demo=1`, and
+  `/api/official-updates`; the immediately preceding `main` verification passed type-check, lint,
+  15 unit tests, and production build.
+- Service/schema/config changes: DeepSpace deployment created at
+  `https://hackcamp2026.app.space`; app source claimed as GitHub
+  `jashanbains-24/hackcamp2026`; no application secrets uploaded.
+- Blockers or user action: Figma URL, Gemini secret/live call, and n8n workflow remain pending.
+- Next task / handoff: merge this docs-only PR; all developers pull `main`; A completes final
+  visual/submission work while owner chooses whether to resume Gemini and n8n.
 
 ### 2026-11-07 19:25 — Developer C, branch `test/help-live-rehearsal`
 
