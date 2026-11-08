@@ -113,9 +113,9 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 
 ## Next safe handoff
 
-Owner securely uploads the Gemini key and verifies one authenticated, source-linked answer. Then
-commit/push `feat/neighbourhood-guide`, open a PR, merge it, and redeploy clean `main`. Do not add
-X or n8n until the Guide path is verified.
+Branch `feat/neighbourhood-guide` is pushed at `7815c51`. Owner securely uploads the Gemini key
+and verifies one authenticated, source-linked answer. Then open/merge the PR and redeploy clean
+`main`. Do not add X or n8n until the Guide path is verified.
 
 ## Session log template
 
@@ -151,8 +151,9 @@ X or n8n until the Guide path is verified.
   - `npm run build` ✅ (Wrangler log-write warning in the sandbox only)
   - `SMOKE_STATIC=1 npm run test:smoke` ✅ outside the sandbox (6 tests)
   - live Gemini call ⏳ blocked only on owner secret upload; no key was read or committed
+- Commit/push: `7815c51 feat: add source-grounded neighbourhood guide`.
 - Next: owner uploads `GEMINI_API_KEY` using the README commands, verifies one signed-in,
-  source-linked answer, then this branch can be pushed/merged and `main` redeployed.
+  source-linked answer, then the branch can be merged and `main` redeployed.
 
 ### 2026-11-07 21:05 — Developer A / UI lead, branch `polish/ui-animation` (uncommitted)
 
