@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "ui-animation-polish": {
+      "source": "hasanify/ui-animation-polish",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "abe8bc624ca9e38281943402596551380599c9cb8ca8cc106e4bf695275b9a3c"
+    }
+  }
+}

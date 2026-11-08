@@ -1,5 +1,9 @@
 # NeighbourGrid project status
 
+**Last updated:** 2026-11-07, 7:55 p.m. Vancouver time
+**Current stage:** A/B/C features merged and deployed; motion polish + presentation
+**Shared branch:** `main` (deployed); active work on `polish/ui-animation`
+**Active lane in this checkout:** Developer A — ui-animation-polish pass
 **Last updated:** 2026-11-07, 7:45 p.m. Vancouver time
 **Current stage:** Final integration / presentation prep (no new product features)
 **Shared branch:** `main` at `1b1ce8d` (Help live-rehearsal merge); active work on `chore/final-integration`
@@ -154,6 +158,53 @@ service setups.
 ```
 
 ## Session history
+
+### 2026-11-07 21:05 — Developer A / UI lead, branch `polish/ui-animation` (uncommitted)
+
+- Completed: "Ambient Glass" minimal redesign via `$impeccable` (user-pinned Apple-style
+  minimalism + liquid glass; confirmed choices: follow-device light/dark, keep Fraunces + Manrope,
+  aggressive copy cut). Fixed `body::before` ambient field, translucent `ng-glass` panes with a
+  specular rim and three depth tiers, glass pill top bar / tab bar with sliding indicator,
+  Settings-style grouped rows, single `Footnote` per screen, 14px controls / 22px panes / pills
+  only for floating controls and chips. Dark scheme is neutral near-black (`#0D1014`).
+  Applied the finish reviewer's eight material fixes (one serif per screen, one footnote, dark
+  ground, control radius, glass alpha + rim, two-tier depth, centered mobile wordmark, labels out
+  of eyebrow position) and a `polish` pass (status chips into meta lines, Activity status labels,
+  community header hierarchy, reduced-motion hero grid as static SVG, brand-reveal tracking match,
+  one-off pill overrides removed). `DESIGN.md` rewritten for the new world (motion section from
+  the earlier polish session preserved) and `.impeccable/design.json` sidecar written.
+- Notable files: `src/styles.css`, `src/themes.css`, `index.html`, `src/components/neighbourgrid.tsx`,
+  `src/components/ui/{Button,Input,Textarea}.tsx`, `src/components/NeighbourhoodGridCanvas.tsx`,
+  `src/components/communities/{PostCard,CommunityMembership}.tsx`, `src/features/help/HelpItemCard.tsx`,
+  `src/neighbourgrid/home-data.ts`, every page under `src/pages/(app)/app/`, `src/pages/index.tsx`,
+  `DESIGN.md`, `.impeccable/{design.json,surfaces/,review/}`.
+- Tests run: type-check pass; lint pass; unit 15/15; build pass; `impeccable detect` clean;
+  Playwright `smoke + communities + help` 12/13 — the one failure is pre-existing: "mobile dashboard"
+  asserts zero console errors and `/api/auth/get-session` returns 500 under plain Vite because
+  `AUTH_WORKER_URL` is only written by `deepspace dev start`. Every UI assertion in that test passes.
+  Screenshots at 390×844 @2x and 1440×900 @2x (light + dark) in `.impeccable/review/`.
+- Service/schema/config changes: none. No secrets touched.
+- Blockers or user action: none for this lane. Process disclosures: `concept-seed` ran degraded
+  (no challengers / quality-bar boards); decisions were taken through the structured question tool;
+  the finish reviewer and documenter roles ran as a general subagent / inline substitute.
+- Next task / handoff: review the diff, then commit this lane (`git add -A src index.html DESIGN.md
+  PROJECT_STATUS.md .impeccable && git commit`), open a PR into `main`, and have B/C pull before
+  further UI work. Optional follow-ups: remove unused pre-existing `ng-stack-*`, `ng-surface`,
+  `ng-settle`, `ng-drift` CSS once the motion-polish work is merged; add a DeepSpace-runtime smoke
+  run so the `get-session` 500 is not part of the plain-Vite baseline.
+
+### 2026-11-07 19:55 — Developer A, branch `polish/ui-animation`
+
+- Completed: Applied `ui-animation-polish` across shared tokens, overlays, buttons, switch,
+  landing/home CTAs, help/communities list stagger, view transitions, and DESIGN.md. Audit now
+  **0 warnings** (5 intentional notes: landing wash/drift atmosphere + skeleton shimmer loops).
+- Notable files: `src/styles.css`, `src/components/ui/{Button,Switch,Dialog,Popover,Select,DropdownMenu,Tooltip,Toast}.tsx`,
+  `src/components/neighbourgrid.tsx`, landing/home/help/communities pages, `DESIGN.md`.
+- Tests run: type-check pass; lint pass; unit 15/15; build pass; `audit-motion.mjs` 0 errors / 0 warnings.
+- Service/schema/config changes: none.
+- Blockers or user action: commit/PR on request; Figma URL still owner action.
+- Next task / handoff: merge motion polish when ready; hard-refresh `/` and press primary CTAs /
+  open a dialog to feel the updated timing.
 
 ### 2026-11-07 19:45 — Developer A, branch `chore/final-integration`
 

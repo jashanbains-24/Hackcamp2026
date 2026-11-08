@@ -100,18 +100,15 @@ export function HelpItemCard({
     <article
       className={
         item.kind === 'beacon'
-          ? 'rounded-xl border border-beacon/35 bg-beacon/5 p-4 sm:p-5'
-          : 'border-b border-border py-5 last:border-b-0'
+          ? 'ng-glass border-beacon/30 p-4 sm:p-5'
+          : 'ng-glass p-4 sm:p-5'
       }
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <StatusLabel tone={item.kind === 'beacon' ? 'help' : 'neutral'}>
-          {item.kind === 'request'
-            ? 'Need help'
-            : item.kind === 'offer'
-              ? 'Can offer'
-              : 'Community assistance request'}
-        </StatusLabel>
+      <h2 className="ng-type-title-sm text-foreground">{item.title}</h2>
+      <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{item.description}</p>
+
+      {/* Status chips lead the meta line: the title keeps the full width and nothing sits above it. */}
+      <p className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-xs font-medium text-muted-foreground">
         <StatusLabel
           tone={
             item.status === 'resolved'
@@ -126,47 +123,42 @@ export function HelpItemCard({
           {statusLabels[item.status]}
         </StatusLabel>
         {item.demo && <StatusLabel tone="demo">DEMO</StatusLabel>}
-      </div>
-
-      <h2 className="ng-type-title-sm mt-3 text-foreground">{item.title}</h2>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
-
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-muted-foreground">
+        <span className={item.kind === 'beacon' ? 'ml-1 inline-flex items-center gap-1 text-beacon' : 'ml-1'}>
+          {item.kind === 'beacon' && <Radio className="size-3" aria-hidden />}
+          {item.kind === 'offer' ? 'Offer' : item.kind === 'beacon' ? 'Beacon' : 'Need'}
+        </span>
+        <span aria-hidden>·</span>
         <span>{helpCategoryLabels[item.category]}</span>
+        <span aria-hidden>·</span>
         <span className="inline-flex items-center gap-1">
-          <MapPin className="size-3.5" aria-hidden />
-          {communityName}
+          <MapPin className="size-3" aria-hidden />
+          {item.kind === 'beacon'
+            ? `${item.targetCommunityIds.length} ${item.targetCommunityIds.length === 1 ? 'community' : 'communities'}`
+            : communityName}
         </span>
+        <span aria-hidden>·</span>
         <span>
-          {actorName(item.authorId)} · {formatCreatedAt(item.createdAt)}
+          {actorName(item.authorId)}, {formatCreatedAt(item.createdAt)}
         </span>
-      </div>
-
-      {item.kind === 'beacon' && (
-        <p className="mt-3 flex items-center gap-2 text-xs font-semibold text-beacon">
-          <Radio className="size-3.5" aria-hidden />
-          Shared with {item.targetCommunityIds.length} demo{' '}
-          {item.targetCommunityIds.length === 1 ? 'community' : 'communities'}
-        </p>
-      )}
+      </p>
 
       {activeUserResponse && (
-        <div className="mt-4 rounded-lg bg-secondary px-3 py-3 text-sm leading-6 text-foreground">
+        <div className="mt-4 rounded-[14px] bg-primary/10 px-3 py-2.5 text-sm leading-6 text-foreground">
           <p className="font-semibold">
             {activeUserResponse.acceptedByRequester ? 'Your offer was accepted' : 'Your offer is pending'}
           </p>
-          <p className="mt-1 text-muted-foreground">{activeUserResponse.note}</p>
+          <p className="text-muted-foreground">{activeUserResponse.note}</p>
         </div>
       )}
 
       {isOwner && itemResponses.length > 0 && (
-        <div className="mt-4 border-t border-border pt-4">
+        <div className="mt-4 border-t border-border pt-3">
           <h3 className="text-sm font-semibold text-foreground">
             {itemResponses.length} {itemResponses.length === 1 ? 'offer' : 'offers'} to help
           </h3>
           <ul className="mt-2 space-y-2">
             {itemResponses.map((response) => (
-              <li key={response.id} className="rounded-lg bg-muted/65 p-3">
+              <li key={response.id} className="rounded-[14px] bg-foreground/5 p-3">
                 <p className="text-sm font-semibold text-foreground">
                   {actorName(response.responderId)}
                 </p>
@@ -196,9 +188,8 @@ export function HelpItemCard({
       )}
 
       {acceptedResponse && item.status === 'matched' && (
-        <p className="mt-4 rounded-lg bg-success/10 px-3 py-2.5 text-sm font-medium text-foreground">
-          Matched with {actorName(acceptedResponse.responderId)}. Agree on a safe public handoff
-          without posting contact details here.
+        <p className="mt-4 rounded-[14px] bg-success/12 px-3 py-2.5 text-sm font-medium text-foreground">
+          Matched with {actorName(acceptedResponse.responderId)}. Arrange a safe public handoff.
         </p>
       )}
 
@@ -219,11 +210,9 @@ export function HelpItemCard({
             onChange={(event) => setNote(event.target.value)}
             maxLength={240}
             rows={3}
-            placeholder="I can lend a charger and meet at a public place nearby."
+            placeholder="I can lend a charger and meet somewhere public."
           />
-          <p className="text-xs leading-5 text-muted-foreground">
-            Keep phone numbers, addresses, and private details out of this note.
-          </p>
+          <p className="text-xs leading-5 text-muted-foreground">No phone numbers or addresses.</p>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" loading={busy}>Send offer</Button>
             <Button type="button" variant="ghost" onClick={() => setShowResponse(false)}>

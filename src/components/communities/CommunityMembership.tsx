@@ -6,17 +6,24 @@ import { useMembership } from '@/services/communities'
 export function CommunityMembership({
   communityId,
   isHome,
+  compact = false,
+  size = compact ? 'sm' : 'default',
 }: {
   communityId: string
   isHome: boolean
+  /** Icon-forward sizing for list rows; accessible names stay identical. */
+  compact?: boolean
+  /** Button size; defaults from `compact`. */
+  size?: 'sm' | 'default'
 }) {
   const { membership, join, selectHome, isApproved } = useMembership(communityId)
 
   if (!membership) {
     return (
-      <Button variant="outline" onClick={join}>
+      <Button variant="outline" size={size} onClick={join}>
         <UserRoundPlus className="size-4" aria-hidden />
-        Join community
+        {compact ? <span className="sr-only">Join community</span> : 'Join community'}
+        {compact && <span aria-hidden>Join</span>}
       </Button>
     )
   }
@@ -25,20 +32,24 @@ export function CommunityMembership({
     return <StatusLabel tone="warning">Request pending</StatusLabel>
   }
 
+  // List rows already mark the home community beside its name.
+  if (compact && isHome) return null
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {isHome ? (
         <StatusLabel tone="success">
-          <Check className="mr-1 size-3.5" aria-hidden />
+          <Check className="mr-1 size-3" aria-hidden />
           Home community
         </StatusLabel>
       ) : (
-        <Button variant="outline" onClick={() => void selectHome()}>
+        <Button variant="outline" size={size} onClick={() => void selectHome()}>
           <Home className="size-4" aria-hidden />
-          Make home community
+          {compact ? <span className="sr-only">Make home community</span> : 'Make home community'}
+          {compact && <span aria-hidden>Set home</span>}
         </Button>
       )}
-      {!isHome && isApproved && <StatusLabel>Member</StatusLabel>}
+      {!isHome && isApproved && !compact && <StatusLabel>Member</StatusLabel>}
     </div>
   )
 }

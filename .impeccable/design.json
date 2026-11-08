@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T04:02:00Z",
+  "title": "Design System: NeighbourGrid",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Teal",
+        "canonical": "#0A6560",
+        "tonalRamp": ["#04201e", "#063a36", "#084f4b", "#0a6560", "#2f8b84", "#6db5ae", "#a9d8d3", "#e3f3f0"]
+      },
+      "primary-dark": {
+        "role": "primary",
+        "displayName": "Lagoon (dark scheme)",
+        "canonical": "#3FB3A9",
+        "tonalRamp": ["#0b2d2a", "#15514c", "#227a72", "#3fb3a9", "#5fc3ba", "#8fdcd3", "#bfece7", "#e8f8f6"]
+      },
+      "beacon": {
+        "role": "tertiary",
+        "displayName": "Beacon Coral",
+        "canonical": "#C85A45",
+        "tonalRamp": ["#3a160f", "#6a2a1e", "#9a412f", "#c85a45", "#d87b68", "#e6a294", "#f2cbc3", "#fbece8"]
+      },
+      "field-light": {
+        "role": "neutral",
+        "displayName": "Mint Field",
+        "canonical": "#F2F6F5",
+        "tonalRamp": ["#10243a", "#2a3a4c", "#4d5d6b", "#8a9aa6", "#bfcac9", "#dde5e3", "#eaf0ee", "#f2f6f5"]
+      },
+      "field-dark": {
+        "role": "neutral",
+        "displayName": "Graphite Field",
+        "canonical": "#0D1014",
+        "tonalRamp": ["#0d1014", "#16191e", "#1c2026", "#2a2f36", "#4a5058", "#7a818a", "#a7afb6", "#eef1f3"]
+      },
+      "ambient-teal": {
+        "role": "neutral",
+        "displayName": "Ambient Teal",
+        "canonical": "#9FE0D6",
+        "tonalRamp": ["#0f3833", "#1f8f86", "#3fb3a9", "#6fcbc2", "#9fe0d6", "#bfebe4", "#dcf4f0", "#f0faf8"]
+      },
+      "ambient-sky": {
+        "role": "neutral",
+        "displayName": "Ambient Sky",
+        "canonical": "#B4D2F2",
+        "tonalRamp": ["#13284a", "#2e5fa8", "#4f80c4", "#7fa8dd", "#b4d2f2", "#cadff6", "#e0ecfa", "#f1f6fd"]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Glass",
+        "canonical": "rgba(255, 255, 255, 0.46)",
+        "tonalRamp": ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.2)", "rgba(255,255,255,0.3)", "rgba(255,255,255,0.46)", "rgba(255,255,255,0.64)", "rgba(255,255,255,0.78)", "rgba(255,255,255,0.9)", "#ffffff"]
+      }
+    },
+    "typographyMeta": {
+      "brand": { "displayName": "Brand", "purpose": "The landing wordmark only. Centered under 640px; fluid at 12.4vw so it fills a 350px column." },
+      "display": { "displayName": "Display", "purpose": "The single page h1 on each app screen. The one Fraunces setting in the app." },
+      "headline": { "displayName": "Headline", "purpose": "Landing message line under the wordmark." },
+      "title": { "displayName": "Title", "purpose": "Pane titles (Manrope, not Fraunces)." },
+      "title-sm": { "displayName": "Title Small", "purpose": "Section heads, help and post card titles." },
+      "lead": { "displayName": "Lead", "purpose": "Landing lead sentence, 34–48ch." },
+      "body": { "displayName": "Body", "purpose": "In-pane prose, ≤ 75ch." },
+      "meta": { "displayName": "Meta", "purpose": "Row second lines, footnotes, timestamps." },
+      "label": { "displayName": "Label", "purpose": "StatusLabel pills; tab captions use 10.5px of the same style." }
+    },
+    "shadows": [
+      { "name": "inset-only", "value": "inset 0 1px 0 0 var(--color-glass-highlight)", "purpose": "Grouped-list panes; they sit in the field." },
+      { "name": "glass", "value": "inset 0 1px 0 0 var(--color-glass-highlight), 0 1px 1px rgba(16,36,58,0.04), 0 10px 30px -14px rgba(16,36,58,0.22)", "purpose": "Resting panes and glass buttons." },
+      { "name": "glass-float", "value": "inset 0 1px 0 0 var(--color-glass-highlight), 0 2px 4px rgba(16,36,58,0.06), 0 18px 44px -18px rgba(16,36,58,0.32)", "purpose": "Top bar, tab bar, rail, Home help pane." },
+      { "name": "glass-dark", "value": "0 1px 1px rgba(0,0,0,0.2), 0 12px 32px -14px rgba(0,0,0,0.6)", "purpose": "Dark-scheme replacement for glass." },
+      { "name": "glass-float-dark", "value": "0 2px 4px rgba(0,0,0,0.25), 0 20px 48px -18px rgba(0,0,0,0.7)", "purpose": "Dark-scheme replacement for glass-float." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Default exponential ease-out for entrances and the tab indicator." },
+      { "name": "ease-in-out", "value": "cubic-bezier(0.77, 0, 0.175, 1)", "purpose": "Tab caption colour/transform." },
+      { "name": "dur-fast", "value": "150ms", "purpose": "Button colour and press." },
+      { "name": "dur-base", "value": "200ms", "purpose": "Overlay enter." },
+      { "name": "dur-slow", "value": "250ms", "purpose": "Rise entrances." },
+      { "name": "dur-page", "value": "450ms", "purpose": "Brand reveal (page-level exception)." },
+      { "name": "ambient-drift", "value": "28s ease-in-out infinite alternate", "purpose": "body::before ambient blobs; off under reduced motion." },
+      { "name": "pane-in", "value": "blur(8px)→blur(0), 3 delay steps", "purpose": "Pane entrance; off under reduced motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ],
+    "material": {
+      "glass": "backdrop-filter: blur(24px) saturate(1.6); 1px glass border; inset top highlight; 1px specular rim via ::before (135° highlight gradient masked to the border)",
+      "glass-strong": "backdrop-filter: blur(28px) saturate(1.7)",
+      "glass-pill": "backdrop-filter: blur(28px) saturate(1.8); border-radius 9999px",
+      "ambient": "body::before, position: fixed, inset: -20%, five radial gradients from ambient-teal / ambient-sky, filter: blur(32px); light mixes 100/100/70 %, dark 45/40/22 %"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled teal action, 14px radius, 44px tall; the only pill buttons are compact chips and icon buttons.",
+      "html": "<button class=\"ds-btn-primary\">Ask for help</button>",
+      "css": ".ds-btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:8px 16px; border:0; border-radius:14px; background:var(--color-primary, #0a6560); color:#fff; font:600 14px/1 Manrope, system-ui, sans-serif; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.28); cursor:pointer; transition: background-color 150ms cubic-bezier(0.23,1,0.32,1), transform 150ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-primary:hover { background:var(--color-primary-ink, #084f4b); } .ds-btn-primary:active { transform:scale(0.97); } .ds-btn-primary:focus-visible { outline:none; box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.28), 0 0 0 3px rgba(10,101,96,0.5); }"
+    },
+    {
+      "name": "Glass Button",
+      "kind": "button",
+      "refersTo": "button-glass",
+      "description": "Outline variant on glass-strong with the specular rim.",
+      "html": "<button class=\"ds-btn-glass\">Preview demo</button>",
+      "css": ".ds-btn-glass { position:relative; display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:8px 16px; border:1px solid var(--color-glass-border, rgba(16,36,58,0.09)); border-radius:14px; background:var(--color-glass-strong, rgba(255,255,255,0.64)); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8); color:var(--color-foreground, #10243a); font:600 14px/1 Manrope, system-ui, sans-serif; box-shadow: inset 0 1px 0 0 var(--color-glass-highlight, rgba(255,255,255,0.85)), 0 1px 1px rgba(16,36,58,0.04), 0 10px 30px -14px rgba(16,36,58,0.22); cursor:pointer; transition: background-color 150ms cubic-bezier(0.23,1,0.32,1), transform 150ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-glass:hover { background: rgba(255,255,255,0.8); } .ds-btn-glass:active { transform:scale(0.97); } .ds-btn-glass:focus-visible { outline:none; box-shadow: 0 0 0 3px rgba(10,101,96,0.5); }"
+    },
+    {
+      "name": "Status Label",
+      "kind": "chip",
+      "refersTo": "status-label",
+      "description": "24px pill carrying a readable status word; sits beside a title or in the meta line, never above a heading.",
+      "html": "<span class=\"ds-label ds-label-official\">Official</span> <span class=\"ds-label\">DEMO</span>",
+      "css": ".ds-label { display:inline-flex; align-items:center; min-height:24px; padding:0 8px; border-radius:9999px; background: rgba(16,36,58,0.08); color:var(--color-foreground, #10243a); font:600 11px/1 Manrope, system-ui, sans-serif; letter-spacing:0.01em; } .ds-label-official { background: rgba(10,101,96,0.12); color: var(--color-primary-ink, #084f4b); }"
+    },
+    {
+      "name": "Glass Pane",
+      "kind": "card",
+      "refersTo": "pane",
+      "description": "Resting translucent pane with blur, hairline, inset highlight, soft offset shadow, and specular rim.",
+      "html": "<section class=\"ds-pane\"><h2 class=\"ds-pane-title\">Need something nearby?</h2><p class=\"ds-pane-body\">Official updates, local talk, and opt-in help.</p></section>",
+      "css": ".ds-pane { position:relative; padding:16px; border:1px solid var(--color-glass-border, rgba(16,36,58,0.09)); border-radius:22px; background:var(--color-glass, rgba(255,255,255,0.46)); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); box-shadow: inset 0 1px 0 0 var(--color-glass-highlight, rgba(255,255,255,0.85)), 0 1px 1px rgba(16,36,58,0.04), 0 10px 30px -14px rgba(16,36,58,0.22); color: var(--color-foreground, #10243a); } .ds-pane::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:1px; background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.13) 45%, transparent); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events:none; } .ds-pane-title { margin:0; font:600 22px/1.2 Manrope, system-ui, sans-serif; letter-spacing:-0.02em; } .ds-pane-body { margin:6px 0 0; font:400 14px/1.5 Manrope, system-ui, sans-serif; color: var(--color-muted-foreground, #4d5d6b); }"
+    },
+    {
+      "name": "Grouped Rows",
+      "kind": "card",
+      "refersTo": "pane",
+      "description": "Settings-style list inside a pane: hairline dividers, 56px rows, trailing chevron, no offset shadow.",
+      "html": "<div class=\"ds-rows\"><a class=\"ds-row\" href=\"#\"><span class=\"ds-row-text\"><span class=\"ds-row-title\">Build an emergency plan</span><span class=\"ds-row-meta\">PreparedBC</span></span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m9 18 6-6-6-6\"/></svg></a><a class=\"ds-row\" href=\"#\"><span class=\"ds-row-text\"><span class=\"ds-row-title\">Understand power outages</span><span class=\"ds-row-meta\">BC Hydro</span></span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m9 18 6-6-6-6\"/></svg></a></div>",
+      "css": ".ds-rows { overflow:hidden; border:1px solid var(--color-glass-border, rgba(16,36,58,0.09)); border-radius:22px; background:var(--color-glass, rgba(255,255,255,0.46)); -webkit-backdrop-filter: blur(24px) saturate(1.6); backdrop-filter: blur(24px) saturate(1.6); box-shadow: inset 0 1px 0 0 var(--color-glass-highlight, rgba(255,255,255,0.85)); } .ds-row { display:flex; align-items:center; gap:12px; min-height:56px; padding:12px 16px; color: var(--color-foreground, #10243a); text-decoration:none; transition: background-color 150ms; } .ds-row + .ds-row { border-top:1px solid var(--color-border, rgba(16,36,58,0.1)); } .ds-row:hover, .ds-row:focus-visible { background: rgba(16,36,58,0.05); outline:none; } .ds-row-text { flex:1; min-width:0; display:grid; } .ds-row-title { font:600 16px/1.3 Manrope, system-ui, sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ds-row-meta { font:500 14px/1.4 Manrope, system-ui, sans-serif; color: var(--color-muted-foreground, #4d5d6b); } .ds-row svg { flex:none; color: var(--color-muted-foreground, #4d5d6b); }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "12px field on 70% card fill; 16px text; 3px ring on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Borrow a portable charger\" />",
+      "css": ".ds-input { width:100%; min-height:44px; padding:0 14px; border:1px solid var(--color-input, rgba(16,36,58,0.16)); border-radius:12px; background: rgba(255,255,255,0.7); color: var(--color-foreground, #10243a); font:400 16px/1.4 Manrope, system-ui, sans-serif; transition: box-shadow 150ms, border-color 150ms; } .ds-input::placeholder { color: var(--color-muted-foreground, #4d5d6b); } .ds-input:focus-visible { outline:none; border-color: var(--color-primary, #0a6560); box-shadow: 0 0 0 3px rgba(10,101,96,0.35); }"
+    },
+    {
+      "name": "Glass Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "Floating glass pill with a sliding indicator; five 44px targets inside 64px.",
+      "html": "<nav class=\"ds-tabs\"><span class=\"ds-tabs-indicator\"></span><a class=\"ds-tab ds-tab-active\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8\"/><path d=\"M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/></svg>Home</a><a class=\"ds-tab\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/></svg>Communities</a><a class=\"ds-tab\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\"/><path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\"/></svg>Activity</a></nav>",
+      "css": ".ds-tabs { position:relative; display:grid; grid-template-columns: repeat(3, 1fr); height:64px; padding:6px; border:1px solid var(--color-glass-border, rgba(16,36,58,0.09)); border-radius:9999px; background: var(--color-glass-strong, rgba(255,255,255,0.64)); -webkit-backdrop-filter: blur(28px) saturate(1.8); backdrop-filter: blur(28px) saturate(1.8); box-shadow: inset 0 1px 0 0 var(--color-glass-highlight, rgba(255,255,255,0.85)), 0 2px 4px rgba(16,36,58,0.06), 0 18px 44px -18px rgba(16,36,58,0.32); } .ds-tabs-indicator { position:absolute; top:6px; bottom:6px; left:6px; width: calc((100% - 12px) / 3); border-radius:9999px; background: rgba(16,36,58,0.08); box-shadow: inset 0 1px 0 0 var(--color-glass-highlight, rgba(255,255,255,0.85)); transition: transform 300ms cubic-bezier(0.23,1,0.32,1); } .ds-tab { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-height:44px; border-radius:9999px; color: var(--color-muted-foreground, #4d5d6b); font:600 10.5px/1 Manrope, system-ui, sans-serif; text-decoration:none; transition: color 200ms cubic-bezier(0.77,0,0.175,1); } .ds-tab-active { color: var(--color-foreground, #10243a); } .ds-tab-active svg { color: var(--color-primary, #0a6560); } .ds-tab:focus-visible { outline:none; box-shadow: 0 0 0 3px rgba(10,101,96,0.5); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Ambient Glass",
+    "overview": "NeighbourGrid is a quiet place to check on your block when the power is uncertain. The whole product sits on one near-white (or, following the device, near-black) field with two slow teal and sky ambient blobs drifting behind it. Every piece of interface is a translucent glass pane that lets that field through: blurred, saturated, rimmed with a specular hairline, and softly lifted. The field is atmosphere; the glass is structure; the copy is the content. Nothing else competes.\n\nDensity is low and the text is cut hard: one short line per section, details behind a tap, disclaimers folded into a single footnote per screen. Fraunces appears exactly once per screen, on the brand or the one display headline; everything else is Manrope. Teal is the only accent and does only one job, action. Coral exists for the Community Help Beacon and nowhere else. The old navy full-bleed hero, divider-only lists, and amber badge stacks are the anti-reference this world replaced.",
+    "keyCharacteristics": [
+      "One ambient field (fixed, blurred, drifting) under every surface; only `html` paints the ground.",
+      "Glass panes at three depths: grouped lists sit in the field, panes rest on it, controls float over it.",
+      "Settings-style grouped rows with hairline dividers and chevrons, never card grids.",
+      "Pill geometry for floating controls (top bar, tab bar, chips); 14px controls and 22px panes for everything else.",
+      "Light and dark follow `prefers-color-scheme`; dark is neutral near-black with the accents as glow.",
+      "Required labels (Official / Community-reported / DEMO) and the beacon's 911 sentence are never designed away."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Teal is the only colour that means \"act\". Coral means \"beacon\" and nothing else. Status is carried by a text label, never by colour alone.", "section": "colors" },
+      { "name": "The Field Shows Through Rule", "body": "No element between `html` and a glass pane may paint an opaque background. If a pane reads as a white card, the glass alpha is too high or something underneath is opaque.", "section": "colors" },
+      { "name": "The One Serif Rule", "body": "Beyond the wordmark in the top bar, Fraunces appears exactly once per screen: the brand on the landing, the `h1` in the app. Pane titles, card titles, avatars, and section heads are Manrope.", "section": "typography" },
+      { "name": "The No Eyebrow Rule", "body": "Nothing sits above a heading. Kind and status labels live beside the title or in the meta line beneath it.", "section": "typography" },
+      { "name": "The Three Tiers Rule", "body": "Lists sit in the field, panes rest on it, controls float over it. A surface that needs a fourth level is a modal, and modals are rare.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do paint the ground only on `html` and keep `body`, `#root`, and layout wrappers transparent.",
+      "Do put every status word in a `StatusLabel` and every disclaimer in the screen's single `Footnote`.",
+      "Do use grouped rows (`Pane` + `ng-row-divide`) for lists; same-size card grids are not this world.",
+      "Do keep the beacon sentence verbatim: \"Community volunteers may not respond. For immediate danger, call 911. This is not an emergency service.\"",
+      "Do gate all motion behind `prefers-reduced-motion: no-preference` and keep defaults fully visible."
+    ],
+    "donts": [
+      "Don't place a label, kicker, or chip above a heading.",
+      "Don't set more than one Fraunces element per screen besides the wordmark.",
+      "Don't use a pill radius on a primary or full-width action; pills are for floating controls and chips.",
+      "Don't tint the dark ground toward navy; it is neutral near-black and the colour comes from the ambient glow.",
+      "Don't convey status by colour alone, nest panes, or invent live outage or response-time claims."
+    ]
+  }
+}

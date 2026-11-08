@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
+import { ChevronRight } from 'lucide-react'
 import {
   EmptyPanel,
   ErrorPanel,
   LoadingSkeleton,
   PageIntro,
+  Pane,
   StatusLabel,
   placeholderIcons,
 } from '@/components/neighbourgrid'
@@ -11,90 +13,78 @@ import { formatTimestamp } from '@/neighbourgrid/format'
 import { useHomeAggregates } from '@/neighbourgrid/home-data'
 import { useNeighbourGridSession } from '@/neighbourgrid/session'
 
+function shortWhen(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return formatTimestamp(value)
+  return new Intl.DateTimeFormat('en-CA', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(date)
+}
+
 export default function ActivityPage() {
   const session = useNeighbourGridSession()
   const aggregates = useHomeAggregates(session)
+  const ready = aggregates.status === 'ready' || aggregates.status === 'demo'
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
+    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
       <PageIntro
         title="Activity"
-        description={
-          session.isDemo
-            ? 'Demo activity from fictional Newton posts and help items.'
-            : `Recent posts and help activity for ${session.homeCommunity.name}.`
-        }
-        action={
-          session.isDemo ? <StatusLabel tone="demo">DEMO</StatusLabel> : undefined
-        }
+        description={session.homeCommunity.name}
+        action={session.isDemo ? <StatusLabel tone="demo">DEMO</StatusLabel> : undefined}
       />
 
       {aggregates.status === 'loading' && (
-        <div className="space-y-3 border-t border-border pt-5">
-          <LoadingSkeleton className="h-16" />
-          <LoadingSkeleton className="h-16" />
-          <LoadingSkeleton className="h-16" />
+        <div className="space-y-2">
+          <LoadingSkeleton className="h-14" />
+          <LoadingSkeleton className="h-14" />
+          <LoadingSkeleton className="h-14" />
         </div>
       )}
 
       {aggregates.status === 'error' && (
-        <div className="border-t border-border pt-5">
-          <ErrorPanel
-            title="Activity could not load"
-            description={aggregates.error ?? 'Please try again after refreshing.'}
-          />
-        </div>
+        <ErrorPanel title="Activity could not load" description={aggregates.error ?? 'Try refreshing.'} />
       )}
 
-      {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
-        aggregates.activity.length === 0 && (
-          <div className="border-t border-border pt-5">
-            <EmptyPanel
-              icon={placeholderIcons.activity}
-              title="No activity yet"
-              description="When neighbours post or share help in your home community, it will show up here."
-              action={
-                <Link
-                  to="/app"
-                  viewTransition
-                  className="inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
-                >
-                  Back to home
-                </Link>
-              }
-            />
-          </div>
-        )}
+      {ready && aggregates.activity.length === 0 && (
+        <EmptyPanel
+          icon={placeholderIcons.activity}
+          title="Nothing yet"
+          description="Posts and help from your community will appear here."
+          action={
+            <Link
+              to="/app"
+              viewTransition
+              className="inline-flex min-h-11 items-center justify-center rounded-[14px] bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:bg-primary-ink"
+            >
+              Home
+            </Link>
+          }
+        />
+      )}
 
-      {(aggregates.status === 'ready' || aggregates.status === 'demo') &&
-        aggregates.activity.length > 0 && (
-          <ul className="divide-y divide-border border-t border-border">
-            {aggregates.activity.map((item) => (
-              <li key={item.id}>
-                <Link
-                  to={item.href}
-                  viewTransition
-                  className="block py-4 transition hover:bg-muted/40 focus-visible:outline-none sm:-mx-2 sm:rounded-lg sm:px-2"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusLabel
-                      tone={
-                        item.tone === 'help' ? 'help' : item.tone === 'demo' ? 'demo' : 'neutral'
-                      }
-                    >
-                      {item.tone === 'help' ? 'Help' : item.tone === 'demo' ? 'DEMO' : 'Community'}
-                    </StatusLabel>
-                    <span className="ng-type-meta text-muted-foreground">
-                      {formatTimestamp(item.at)}
-                    </span>
-                  </div>
-                  <h2 className="mt-1.5 text-base font-semibold text-foreground">{item.title}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+      {ready && aggregates.activity.length > 0 && (
+        <Pane className="ng-pane-in ng-row-divide overflow-hidden">
+          {aggregates.activity.map((item) => (
+            <Link
+              key={item.id}
+              to={item.href}
+              viewTransition
+              className="ng-row min-h-14 py-3 transition hover:bg-foreground/5 focus-visible:bg-foreground/5 focus-visible:outline-none"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-2">
+                  <span className="truncate text-base font-semibold text-foreground">{item.title}</span>
+                  {/* Only the required DEMO label; the kind already leads the detail line. */}
+                  {item.tone === 'demo' && <StatusLabel tone="demo">DEMO</StatusLabel>}
+                </span>
+                <span className="block truncate text-sm text-muted-foreground">
+                  {item.detail} · {shortWhen(item.at)}
+                </span>
+              </span>
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            </Link>
+          ))}
+        </Pane>
+      )}
     </div>
   )
 }

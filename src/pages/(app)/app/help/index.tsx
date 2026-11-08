@@ -5,8 +5,10 @@ import { Button } from '@/components/ui'
 import {
   EmptyPanel,
   ErrorPanel,
+  Footnote,
   LoadingSkeleton,
   PageIntro,
+  Pane,
   StatusLabel,
 } from '@/components/neighbourgrid'
 import { HelpItemCard } from '@/features/help/HelpItemCard'
@@ -28,15 +30,14 @@ export default function HelpBoardPage() {
   )
 
   return (
-    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
+    <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-8">
       <PageIntro
-        title="Help board"
-        description="Ask for practical support, offer what you can, and close the loop together."
+        title="Help"
         action={
           <Link
             to="/app/help/new"
             viewTransition
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+            className="ng-press inline-flex min-h-11 items-center gap-1.5 rounded-[14px] bg-primary pl-3.5 pr-4 text-sm font-semibold text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.28)] transition-[transform,background-color] duration-150 hover:bg-primary-ink"
           >
             <Plus className="size-4" aria-hidden /> New
           </Link>
@@ -44,53 +45,45 @@ export default function HelpBoardPage() {
       />
 
       {help.source === 'demo' ? (
-        <section className="mb-5 rounded-xl border border-border bg-card p-4" aria-labelledby="demo-role-heading">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <StatusLabel tone="demo">DEMO</StatusLabel>
-                <h2 id="demo-role-heading" className="text-sm font-semibold text-foreground">
-                  Participant view
-                </h2>
-              </div>
-              <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                Switch fictional residents to rehearse offer, accept, and resolve states.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="sr-only" htmlFor="demo-help-user">View help board as</label>
-              <select
-                id="demo-help-user"
-                value={help.activeUserId}
-                onChange={(event) => help.setActiveUser(event.target.value)}
-                className="min-h-11 rounded-lg border border-input bg-background px-3 text-sm font-semibold text-foreground"
-              >
-                {demoActors.map((actor) => (
-                  <option key={actor.id} value={actor.id}>{actor.displayName}</option>
-                ))}
-              </select>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Reset help demo"
-                title="Reset help demo"
-                onClick={help.resetDemo}
-              >
-                <RotateCcw aria-hidden />
-              </Button>
-            </div>
+        <Pane className="ng-pane-in ng-row min-h-13 justify-between py-1.5 pr-1.5">
+          <div className="flex min-w-0 items-center gap-2">
+            <StatusLabel tone="demo">DEMO</StatusLabel>
+            <span className="truncate text-sm text-muted-foreground" aria-hidden>
+              Viewing as
+            </span>
           </div>
-        </section>
+          <div className="flex items-center gap-1">
+            <select
+              id="demo-help-user"
+              aria-label="View help board as"
+              value={help.activeUserId}
+              onChange={(event) => help.setActiveUser(event.target.value)}
+              className="ng-field min-h-10 w-auto bg-transparent pr-2 text-sm font-semibold"
+            >
+              {demoActors.map((actor) => (
+                <option key={actor.id} value={actor.id}>{actor.displayName}</option>
+              ))}
+            </select>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              aria-label="Reset help demo"
+              title="Reset help demo"
+              onClick={help.resetDemo}
+            >
+              <RotateCcw aria-hidden />
+            </Button>
+          </div>
+        </Pane>
       ) : (
-        <div className="mb-5 flex items-center gap-2 rounded-xl border border-success/25 bg-success/8 p-4">
-          <StatusLabel tone="success">LIVE</StatusLabel>
-          <p className="text-sm text-foreground">
-            Signed in as {help.session.displayName}. Updates synchronize through DeepSpace.
-          </p>
-        </div>
+        <Footnote className="text-left">
+          <StatusLabel tone="success" className="mr-2">LIVE</StatusLabel>
+          Signed in as {help.session.displayName} · synced via DeepSpace
+        </Footnote>
       )}
 
-      <div className="flex gap-1 overflow-x-auto border-b border-border pb-2" aria-label="Filter help board">
+      <div className="ng-segment mt-4 max-w-full overflow-x-auto" role="group" aria-label="Filter help board">
         {([
           ['all', 'All'],
           ['request', 'Needs'],
@@ -102,59 +95,57 @@ export default function HelpBoardPage() {
             type="button"
             onClick={() => setFilter(value)}
             aria-pressed={filter === value}
-            className={
-              filter === value
-                ? 'min-h-11 shrink-0 rounded-lg bg-muted px-3 text-sm font-semibold text-foreground'
-                : 'min-h-11 shrink-0 rounded-lg px-3 text-sm font-semibold text-muted-foreground hover:bg-muted/60 hover:text-foreground'
-            }
+            className="ng-press shrink-0"
           >
             {label}
           </button>
         ))}
       </div>
 
-      {help.status === 'loading' ? (
-        <div className="space-y-3 py-5" aria-label="Loading help board">
-          <LoadingSkeleton />
-          <LoadingSkeleton />
-        </div>
-      ) : help.status === 'error' ? (
-        <ErrorPanel
-          title="Help board unavailable"
-          description={help.error || 'Try again after the realtime connection recovers.'}
-        />
-      ) : visibleItems.length > 0 ? (
-        <div>
-          {visibleItems.map((item) => (
-            <HelpItemCard
-              key={item.id}
-              item={item}
-              responses={help.responses}
-              activeUserId={help.activeUserId}
-              communityName={help.session.homeCommunity.name}
-              actorName={help.actorName}
-              onRespond={help.respond}
-              onAccept={help.acceptResponse}
-              onResolve={help.resolve}
-              onCancel={help.cancel}
-            />
-          ))}
-        </div>
-      ) : (
-        <EmptyPanel
-          icon={Radio}
-          title="Nothing in this view"
-          description="Try another filter or create a new help item."
-          action={
-            <Link
-              to="/app/help/new"
-              className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground"
-            >
-              Create help item
-            </Link>
-          }
-        />
-      )}
+      <div className="mt-4">
+        {help.status === 'loading' ? (
+          <div className="space-y-3" aria-label="Loading help board">
+            <LoadingSkeleton className="h-28" />
+            <LoadingSkeleton className="h-28" />
+          </div>
+        ) : help.status === 'error' ? (
+          <ErrorPanel
+            title="Help board unavailable"
+            description={help.error || 'Try again once the connection recovers.'}
+          />
+        ) : visibleItems.length > 0 ? (
+          <div className="ng-stagger space-y-3">
+            {visibleItems.map((item) => (
+              <HelpItemCard
+                key={item.id}
+                item={item}
+                responses={help.responses}
+                activeUserId={help.activeUserId}
+                communityName={help.session.homeCommunity.name}
+                actorName={help.actorName}
+                onRespond={help.respond}
+                onAccept={help.acceptResponse}
+                onResolve={help.resolve}
+                onCancel={help.cancel}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyPanel
+            icon={Radio}
+            title="Nothing here yet"
+            description="Try another filter or post something."
+            action={
+              <Link
+                to="/app/help/new"
+                className="inline-flex min-h-11 items-center rounded-[14px] bg-primary px-5 text-sm font-semibold text-primary-foreground"
+              >
+                New help item
+              </Link>
+            }
+          />
+        )}
+      </div>
     </div>
   )
 }
