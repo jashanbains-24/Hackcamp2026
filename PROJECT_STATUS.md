@@ -96,6 +96,27 @@ UI implementation is ready for human visual review on `feat/ui-overhaul`. Do **n
 - Blockers or user action: uncommitted; Figma URL pending; owner visual review before commit.
 - Next task / handoff: commit/push `feat/ui-overhaul` on request, then merge gate.
 
+### 2026-11-07 18:15 — Developer B / Communities, branch `feat/communities`
+
+- Completed: community discovery for curated BC communities, public join and request-to-join
+  pending states, browser-local home-community selection adapter, Newton feed, community post
+  composer, post detail, one-level comments, author-only edit/delete, approved-member write
+  gating, and truthful community-reported/demo labels.
+- Notable files: `src/services/communities.ts`, `src/components/communities/`,
+  `src/pages/(app)/app/communities/`, and `tests/communities.spec.ts`.
+- Tests run: `npm run type-check` passed; `npm run lint` passed; `npm run test:unit` passed
+  (7 tests); `npm run build` passed; focused community smoke tests passed (3/3).
+  The existing full `tests/smoke.spec.ts` has one pre-existing strict-text failure on the merged
+  UI's duplicate `DEMO` text; the other five baseline smoke tests pass.
+- Service/schema/config changes: no shared schemas, auth, provider, or dependency manifests
+  changed. The feature currently uses a small browser-local adapter around existing TypeScript
+  contracts until A's DeepSpace exports are ready.
+- Blockers or user action: A should provide stable membership persistence, home-community
+  selection, current-user identity, and community feed/post/comment record exports before
+  replacing the adapter. No secrets or configuration are needed for the demo adapter.
+- Next task / handoff: review the communities lane, then wire the adapter methods to A's
+  approved DeepSpace service contract without changing shared interfaces.
+
 ### 2026-11-07 18:27 — Developer A / UI lead, branch `feat/ui-overhaul`
 
 - Completed: `impeccable overdrive` all three directions — (1) scroll-driven landing motif/steps
