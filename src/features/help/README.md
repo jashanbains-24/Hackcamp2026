@@ -59,7 +59,9 @@ emergency severity.
 
 ## n8n
 
-The authenticated rehearsal now works, but n8n remains deferred until final A/B/C integration and
-deployment. If resumed, emit a minimal server-side event after verified help-item creation; include
-an event ID for replay safety and no description, identity, address, contact information, or
-medical information.
+A verified help request sends one server-side event to `N8N_WEBHOOK_URL` with header
+`x-neighbourgrid-token`. The body contains `eventId`, `eventType`, `category`, `communityName`,
+`municipality`, and `createdAt`. It repeats the help-record id as `eventId`, so a repeated delivery
+is the same event. It never includes the title, description, user id, address, contact details, or
+medical information. Offers, beacons, and the labelled demo do not send the event. A webhook
+failure does not undo the saved help request.

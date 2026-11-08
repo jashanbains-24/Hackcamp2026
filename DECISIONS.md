@@ -50,8 +50,9 @@ the UI gate.
   add Auth0 or a parallel database.
 - Gemini is reserved for an editable Request Clarity Assistant in Person C’s flow. A generic
   chatbot is intentionally rejected as less relevant to the core product.
-- n8n is optional and follows, rather than precedes, a working two-user help lifecycle. Its event
-  must be server-side, anonymized, minimal, and safe to replay.
+- n8n follows the working two-user help lifecycle. A verified help request sends one server-side
+  event with the record id, category, public community labels, and time. The same record id makes
+  a repeated delivery the same event. The event omits request text and personal details.
 - Other sponsor products are not added solely for prize eligibility.
 
 ## 2026-11-07 — Source-grounded Neighbourhood Guide

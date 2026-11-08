@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:31 p.m. Vancouver time
-**Current stage:** Neighbourhood Guide merged; production redeploy pending
-**Shared branch:** `main` at `07ff10c` (PR #10)
-**Active lane in this checkout:** Developer C on clean `main`
+**Last updated:** 2026-11-07, 11:57 p.m. Vancouver time
+**Current stage:** n8n help-request event verified locally
+**Shared branch:** `main` includes PR #10; active work is `feat/n8n-help-event`
+**Active lane in this checkout:** Developer C on `feat/n8n-help-event`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -20,7 +20,9 @@
 - The owner verified a signed-in local answer on the free Gemini plan. Live Google Search is not
   included without billing, so the Guide falls back to visible community activity and BC Hydro.
 - Production does not have the Guide until `main` is redeployed.
-- n8n remains intentionally deferred.
+- `feat/n8n-help-event` sends one anonymous event after a verified help request. The owner
+  confirmed one successful n8n execution at 11:56 p.m. on November 7. Production still needs the
+  merge and a redeploy.
 - UI overhaul is merged into `main`. Landing, shell, home, and placeholders use the NeighbourGrid
   design system.
 - DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
@@ -92,7 +94,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
 - **Gemini API:** request clarity and the Home Guide are merged. The free model passed locally
   without web-search quota. Production still needs a redeploy.
-- **n8n:** owner account exists; no workflow or webhook is configured. Integration remains deferred.
+- **n8n:** workflow `NeighbourGrid help event` is published. One local signed-in help request
+  produced a successful execution. The branch still needs to be merged and deployed.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
 
@@ -106,13 +109,14 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
    4. Paste the URL into **Figma URL** above and `README.md` → Design file.
 2. **Redeploy:** from clean `main`, run `npx deepspace deploy`, then ask the signed-in Guide one
    question on the live URL. The Gemini secret is already uploaded.
-3. **n8n:** remains optional and deferred.
+3. **Merge and redeploy:** merge `feat/n8n-help-event`, pull `main`, then run
+   `npx deepspace deploy`. Create one signed-in help request on the live URL and confirm a new
+   n8n execution.
 
 ## Next safe handoff
 
-PR #10 is merged and this checkout is on clean `main`. Redeploy before treating the live site as
-having the Guide. Do not add X or n8n until that live check passes. A local `WIP dark pastel
-palette` stash remains on purpose.
+The local n8n path is verified. Merge `feat/n8n-help-event`, pull `main`, and redeploy before
+claiming the live automation. A local `WIP dark pastel palette` stash remains on purpose.
 
 ## Session log template
 
@@ -127,6 +131,22 @@ palette` stash remains on purpose.
 ```
 
 ## Session history
+
+### 2026-11-07 23:57 — Developer C (`feat/n8n-help-event`)
+
+- Owner confirmed the published n8n workflow execution succeeded in 67ms at 11:56 p.m.
+- The local signed-in help-request path is verified. Production does not have it until merge and
+  redeploy.
+- Next: merge the branch, pull `main`, redeploy, and repeat one live help request.
+
+### 2026-11-07 23:52 — Developer C (`feat/n8n-help-event`)
+
+- Connected the published n8n webhook to verified help-request creation.
+- The event uses the help-record id, category, public community name, municipality, and time.
+- It omits title, description, user identity, contact details, and location details. Offers,
+  beacons, demo mode, and webhook failures do not change the saved help record.
+- Next: restart DeepSpace locally, create one signed-in help request, and confirm the n8n
+  execution.
 
 ### 2026-11-07 23:31 — Developer C (`main`)
 

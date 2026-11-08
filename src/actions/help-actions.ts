@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import type { ActionHandler, ActionResult } from 'deepspace/worker'
 import type { Env } from '../../worker'
+import { buildHelpRequestEvent, notifyHelpRequestCreated } from '../server/n8n-events'
 import type { HelpItem, HelpResponse } from '../shared/types'
 
 const BEACON_COOLDOWN_MS = 5 * 60 * 1000
@@ -61,6 +62,8 @@ type MembershipRow = {
 }
 
 type CommunityRow = {
+  name?: string
+  municipality?: string
   adjacentCommunityIds: string[]
 }
 
@@ -113,6 +116,7 @@ export const createHelpItemAction: ActionHandler<Env> = async ({
   params,
   tools,
   userId,
+  env,
 }) => {
   const parsed = createHelpSchema.safeParse(params)
   if (!parsed.success) return fail('Enter a valid title, description, category, and community.')
@@ -124,7 +128,7 @@ export const createHelpItemAction: ActionHandler<Env> = async ({
   }
 
   const timestamp = new Date().toISOString()
-  return tools.create('help_items', {
+  const created = await tools.create('help_items', {
     ...parsed.data,
     authorId: userId,
     status: 'open',
@@ -133,6 +137,20 @@ export const createHelpItemAction: ActionHandler<Env> = async ({
     createdAt: timestamp,
     updatedAt: timestamp,
   } satisfies HelpItemRow)
+  if (created.success && parsed.data.kind === 'request') {
+    const communityResult = await tools.get('communities', parsed.data.communityId)
+    const community = communityResult.success
+      ? asEnvelope<CommunityRow>(communityResult.data.record)
+      : null
+    await notifyHelpRequestCreated(env, buildHelpRequestEvent({
+      eventId: created.data.recordId,
+      category: parsed.data.category,
+      communityName: community?.data.name,
+      municipality: community?.data.municipality,
+      createdAt: timestamp,
+    }))
+  }
+  return created
 }
 
 export const createHelpBeaconAction: ActionHandler<Env> = async ({

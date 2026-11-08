@@ -17,7 +17,7 @@ needs a redeploy before the live site shows the Guide.
 | --- | --- | --- |
 | Platform / home / official updates | Merged (`feat/home-alerts`) | Developer A |
 | Communities / posts / comments | Merged (`feat/communities`) | Developer B |
-| Help / beacon / Gemini / n8n | Help and Home Guide merged; production redeploy pending; n8n deferred | Developer C |
+| Help / beacon / Gemini / n8n | Help, Home Guide, and anonymous n8n event implemented; live n8n execution pending | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
 fallback. The live two-user DeepSpace lifecycle passed. Production landing, demo home,
@@ -155,8 +155,21 @@ reads only `env.GEMINI_API_KEY`.
 There is no direct X integration. Google Search may surface a public X page, but NeighbourGrid
 must not claim complete or real-time X access without a separate authorized X API integration.
 
-When the n8n account and server workflow are ready, use the same pattern with
-`N8N_WEBHOOK_URL`. Keep the webhook server-side and send only anonymized, replay-safe demo events.
+n8n receives one anonymous event after a verified help request is saved. Store both secrets the
+same way, without pasting them into chat:
+
+```bash
+read -s N8N_WEBHOOK_URL
+printf 'N8N_WEBHOOK_URL=%s\n' "$N8N_WEBHOOK_URL" | npx deepspace secrets upload -
+unset N8N_WEBHOOK_URL
+read -s N8N_WEBHOOK_TOKEN
+printf 'N8N_WEBHOOK_TOKEN=%s\n' "$N8N_WEBHOOK_TOKEN" | npx deepspace secrets upload -
+unset N8N_WEBHOOK_TOKEN
+npx deepspace secrets list
+```
+
+Use the n8n **Production URL** and the Header Auth value. Restart `npm run dev:deepspace` after
+uploading. Server code reads only `env.N8N_WEBHOOK_URL` and `env.N8N_WEBHOOK_TOKEN`.
 
 ## Deploy (owner)
 

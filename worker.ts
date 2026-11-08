@@ -115,6 +115,9 @@ export interface Env extends DOBindings<typeof __DO_MANIFEST__> {
   /** Server-only Gemini credential and optional model override. */
   GEMINI_API_KEY?: string
   GEMINI_MODEL?: string
+  /** Server-only n8n webhook for anonymous help-request events. */
+  N8N_WEBHOOK_URL?: string
+  N8N_WEBHOOK_TOKEN?: string
   /**
    * Long-lived owner JWT used for developer-billed server calls. User-billed
    * calls always forward the signed-in caller's JWT instead.
