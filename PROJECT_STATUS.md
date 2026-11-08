@@ -1,9 +1,9 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:28 p.m. Vancouver time
-**Current stage:** Neighbourhood Guide checkpoint, ready to merge
-**Shared branch:** `main` at `48b7fd1`; Guide work is pushed on `feat/neighbourhood-guide`
-**Active lane in this checkout:** Developer C / owner AI integration on `feat/neighbourhood-guide`
+**Last updated:** 2026-11-07, 11:31 p.m. Vancouver time
+**Current stage:** Neighbourhood Guide merged; production redeploy pending
+**Shared branch:** `main` at `07ff10c` (PR #10)
+**Active lane in this checkout:** Developer C on clean `main`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
 **UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 **Help/beacon merge:** `387828d Merge pull request #2 from jashanbains-24/feat/help-beacon`
@@ -16,11 +16,10 @@
   are **merged into `main`** (at/after `1b1ce8d`).
 - Authenticated two-user DeepSpace Help realtime (create → respond → accept → resolve, both
   sessions without refresh) **passed** and is merged.
-- Gemini request clarity is merged. `feat/neighbourhood-guide` adds an authenticated Home
-  assistant with bounded visible-app context, BC Hydro context, and source links.
+- Gemini request clarity and the Home Neighbourhood Guide are merged through PR #10 (`07ff10c`).
 - The owner verified a signed-in local answer on the free Gemini plan. Live Google Search is not
   included without billing, so the Guide falls back to visible community activity and BC Hydro.
-- The production app does not have this Guide until the branch is merged and redeployed.
+- Production does not have the Guide until `main` is redeployed.
 - n8n remains intentionally deferred.
 - UI overhaul is merged into `main`. Landing, shell, home, and placeholders use the NeighbourGrid
   design system.
@@ -38,8 +37,8 @@
   source links, timestamps, and the required location-precision disclaimer.
 - DeepSpace app ID is `app_01M6W88X9P8TJ7F9MCBK7WBFRP`; deployment source is permanently claimed
   as GitHub repository `jashanbains-24/hackcamp2026`.
-- The Gemini key is stored in DeepSpace secrets. The local signed-in Guide call passed; production
-  still serves `main` until this branch is merged and redeployed.
+- The Gemini key is stored in DeepSpace secrets. The local signed-in Guide call passed. Production
+  still serves the previous deployment until `npx deepspace deploy` runs from this `main`.
 - Developer B Communities is also on `main` (A did not edit B-owned files during this review).
 - No application secrets were deployed; Gemini and n8n remain intentionally deferred.
 
@@ -47,7 +46,7 @@
 
 - **Developer A:** UI/presentation work merged; Figma share URL remains an owner action.
 - **Developer B:** Communities and home sync merged; no further feature work expected.
-- **Developer C:** Help/Beacon merged; implementing and verifying Gemini Neighbourhood Guide.
+- **Developer C:** Help/Beacon and Neighbourhood Guide merged. Production redeploy is the next step.
 
 **Figma URL:** Pending owner create/share — follow [`docs/FIGMA_HANDOFF.md`](./docs/FIGMA_HANDOFF.md).
 Paste the share link here and in `README.md` when ready.
@@ -91,9 +90,8 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
 ## Sponsor/integration plan
 
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
-- **Gemini API:** request clarity is merged. The Home Guide is verified locally on
-  `feat/neighbourhood-guide` with the free model and no web-search quota. Production still needs
-  the merge and a redeploy.
+- **Gemini API:** request clarity and the Home Guide are merged. The free model passed locally
+  without web-search quota. Production still needs a redeploy.
 - **n8n:** owner account exists; no workflow or webhook is configured. Integration remains deferred.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
@@ -106,17 +104,15 @@ Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
       `docs/presentation/` screenshots onto frames).
    3. Enable link sharing (view).
    4. Paste the URL into **Figma URL** above and `README.md` → Design file.
-2. **Merge the Guide:** open and merge the `feat/neighbourhood-guide` pull request, then
-   `git switch main && git pull origin main`.
-3. **Redeploy after merge:** `npx deepspace deploy`, then ask the signed-in Guide one question on
-   the live URL. The Gemini secret is already uploaded for local DeepSpace.
-4. **n8n:** remains optional and deferred.
+2. **Redeploy:** from clean `main`, run `npx deepspace deploy`, then ask the signed-in Guide one
+   question on the live URL. The Gemini secret is already uploaded.
+3. **n8n:** remains optional and deferred.
 
 ## Next safe handoff
 
-`feat/neighbourhood-guide` is the only unmerged branch. Merge it, pull `main`, and redeploy.
-Do not add X or n8n until that live check passes. A local `WIP dark pastel palette` stash remains
-on purpose; it is not part of this checkpoint.
+PR #10 is merged and this checkout is on clean `main`. Redeploy before treating the live site as
+having the Guide. Do not add X or n8n until that live check passes. A local `WIP dark pastel
+palette` stash remains on purpose.
 
 ## Session log template
 
@@ -131,6 +127,12 @@ on purpose; it is not part of this checkpoint.
 ```
 
 ## Session history
+
+### 2026-11-07 23:31 — Developer C (`main`)
+
+- Merged PR #10 (`07ff10c`) and fast-forwarded this checkout to `main`.
+- Removed the merged feature branch after the pull. The dark-pastel stash remains.
+- Next: redeploy `main` and ask the signed-in Guide one question on the live URL.
 
 ### 2026-11-07 23:28 — Developer C (`feat/neighbourhood-guide`)
 
