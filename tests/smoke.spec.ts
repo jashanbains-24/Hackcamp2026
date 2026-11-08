@@ -50,6 +50,8 @@ test.describe('Smoke tests', () => {
     await expect(page.getByText('Newton, Surrey').first()).toBeVisible()
     // Scope to the simulated-scenario notice so "Demo mode" chrome cannot match.
     await expect(page.getByTestId('demo-scenario-notice')).toContainText('DEMO')
+    await expect(page.getByRole('heading', { name: 'Neighbourhood Guide' })).toBeVisible()
+    await expect(page.getByText('Sign in to ask the guide')).toBeVisible()
     await expect(page.getByRole('navigation', { name: 'Mobile navigation' })).toBeVisible()
 
     await page.getByRole('link', { name: 'Communities' }).last().click()

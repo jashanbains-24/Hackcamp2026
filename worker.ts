@@ -26,6 +26,7 @@ import { tasks as cronTasks, runTask as runCronTask } from './src/cron.js'
 import { runJob } from './src/jobs.js'
 import { schemas } from './src/schemas.js'
 import { registerActionRoutes } from './src/server/action-routes.js'
+import { registerAssistantRoutes } from './src/server/assistant-routes.js'
 import { registerHelpRoutes } from './src/server/help-routes.js'
 import {
   registerAuthAndIntegrationRoutes,
@@ -110,6 +111,9 @@ export interface Env extends DOBindings<typeof __DO_MANIFEST__> {
   /** Immutable record-scope and platform identity. */
   DEEPSPACE_APP_ID: string
   OWNER_USER_ID: string
+  /** Server-only Gemini credential and optional model override. */
+  GEMINI_API_KEY?: string
+  GEMINI_MODEL?: string
   /**
    * Long-lived owner JWT used for developer-billed server calls. User-billed
    * calls always forward the signed-in caller's JWT instead.
@@ -141,6 +145,7 @@ registerOfficialUpdatesRoutes(app)
 registerRealtimeRoutes(app)
 registerActionRoutes(app, resolveAuth)
 registerHelpRoutes(app)
+registerAssistantRoutes(app)
 // Every scaffold exposes selected tools through HTTP, MCP and browser tools.
 // Only copilot owns the collections needed for the in-app chat UI.
 registerAgent(app, {

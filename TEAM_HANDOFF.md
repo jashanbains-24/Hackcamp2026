@@ -103,7 +103,7 @@ Help roots.
 - `/app/help/new`
 - `/app/beacon/new`
 - help cards/forms, responses, lifecycle, realtime behavior
-- Gemini Request Clarity Assistant
+- Gemini Request Clarity Assistant and source-grounded Home Neighbourhood Guide
 - optional n8n workflow after the core lifecycle works
 
 **Deliver in this order:**
@@ -112,15 +112,17 @@ Help roots.
 2. “I can help,” requester acceptance, and owner-only resolve/cancel.
 3. Beacon confirmation, 911 disclaimer, allowed targets, cooldown, and demo isolation.
 4. Reliable two-browser/two-user realtime synchronization.
-5. Editable Gemini suggestions for title/category/summary/tags/privacy note; never auto-publish or
-   infer emergency severity.
+5. Editable Gemini request suggestions plus the authenticated, read-only Neighbourhood Guide.
+   The Guide uses bounded visible app context, BC Hydro, and optional source-linked Google Search;
+   never auto-publish, mutate records, expose private data, or infer emergency severity.
 6. Only then, an anonymized replay-safe n8n event/workflow and aggregate hooks for A.
 
 The user already has the Gemini API key. Ask them to follow the secure setup in `README.md` only
 when the server endpoint is ready. The n8n account is pending and does not block steps 1–4.
 
-Do not add generic chat, exact geolocation, public contact details, medical triage, mass
-notifications, or automatic external broadcasting.
+Do not add unrestricted generic chat, exact geolocation, public contact details, medical triage,
+mass notifications, or automatic external broadcasting. Do not claim direct X access without a
+separate authorized X API integration.
 
 **Current C integration status:** Help/Beacon is merged into `main` via PR #2 and uses the shared
 authenticated session plus `help_items` and `help_responses` realtime queries.
@@ -130,8 +132,9 @@ The collection schemas are read-only to normal members so clients cannot forge t
 The browser-local adapter remains only for the labelled fictional demo. Two authenticated
 DeepSpace test users have now completed create → respond → accept → resolve in separate browser
 contexts without refresh. That rehearsal exposed and fixed the profile bootstrap sending a
-server-owned `userBound` field. Gemini is intentionally deferred by the owner; n8n remains
-deferred until deployment.
+server-owned `userBound` field. `feat/neighbourhood-guide` now adds the bounded Home assistant;
+the secret and a live authenticated Gemini call still require owner verification. n8n remains
+deferred.
 
 ## Integration and agent protocol
 
