@@ -33,6 +33,7 @@ import {
   registerPlatformProxyRoutes,
   registerStaticRoutes,
   resolveAuth,
+  resolveBrowserAuth,
 } from './src/server/http-routes.js'
 import { registerOfficialUpdatesRoutes } from './src/server/official-updates-routes.js'
 import { registerRealtimeRoutes } from './src/server/realtime-routes.js'
@@ -145,7 +146,7 @@ registerOfficialUpdatesRoutes(app)
 registerRealtimeRoutes(app)
 registerActionRoutes(app, resolveAuth)
 registerHelpRoutes(app)
-registerAssistantRoutes(app)
+registerAssistantRoutes(app, resolveBrowserAuth)
 // Every scaffold exposes selected tools through HTTP, MCP and browser tools.
 // Only copilot owns the collections needed for the in-app chat UI.
 registerAgent(app, {

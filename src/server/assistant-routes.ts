@@ -1,5 +1,4 @@
 import type { Hono } from 'hono'
-import { resolveSessionReadAuth } from 'deepspace/worker'
 import { z } from 'zod'
 import type { AppContext, Env } from '../../worker.js'
 import { getOfficialUpdates } from './official-updates.js'
@@ -144,9 +143,12 @@ export function buildAssistantSystemPrompt(input: {
   ].join('\n')
 }
 
-export function registerAssistantRoutes(app: Hono<AppContext>): void {
+export function registerAssistantRoutes(
+  app: Hono<AppContext>,
+  resolveAuth: (request: Request, env: Env) => Promise<{ userId: string } | null>,
+): void {
   app.post('/api/assistant/ask', async (c) => {
-    const auth = await resolveSessionReadAuth(c.req.raw, c.env)
+    const auth = await resolveAuth(c.req.raw, c.env)
     if (!auth) {
       return c.json(
         { error: 'Sign in before using Neighbourhood Guide.', code: 'unauthorized' },

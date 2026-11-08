@@ -1,7 +1,7 @@
 import type { Hono } from 'hono'
 import { z } from 'zod'
-import { resolveSessionReadAuth } from 'deepspace/worker'
 import type { AppContext, Env } from '../../worker.js'
+import { resolveBrowserAuth } from './http-routes.js'
 
 const requestSchema = z.object({
   draft: z.string().trim().min(12).max(1000),
@@ -37,7 +37,7 @@ interface GeminiResponse {
 
 export function registerHelpRoutes(app: Hono<AppContext>): void {
   app.post('/api/help/clarify', async (c) => {
-    const auth = await resolveSessionReadAuth(c.req.raw, c.env)
+    const auth = await resolveBrowserAuth(c.req.raw, c.env)
     if (!auth) {
       return c.json(
         { error: 'Sign in before using Request Clarity Assistant.', code: 'unauthorized' },
