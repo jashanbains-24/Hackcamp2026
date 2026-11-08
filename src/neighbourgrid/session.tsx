@@ -152,7 +152,8 @@ function useDeepSpaceSession(): NeighbourGridSession {
     orderDir: 'asc',
     limit: 50,
   })
-  const { createConfirmed, putConfirmed, ready } = useMutations<ProfileRow>('profiles')
+  const { createConfirmed, putConfirmed, ready } =
+    useMutations<Omit<ProfileRow, 'userId'>>('profiles')
 
   const catalog = useMemo(() => {
     if (communityRecords.length === 0) return communities
@@ -187,7 +188,6 @@ function useDeepSpaceSession(): NeighbourGridSession {
     if (demoMode || !isSignedIn || !userId || !ready || status !== 'ready') return
     if (profileRecord) return
     void createConfirmed({
-      userId,
       displayName: authName,
       homeCommunityId: readStoredHomeCommunityId() ?? defaultHomeCommunity.id,
       createdAt: new Date().toISOString(),

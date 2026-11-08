@@ -6,7 +6,7 @@ emergency service or official alert system.
 
 ## Current status
 
-`main` is at `c212d00` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2), and
+`main` is at `e7c5d67` with UI overhaul, Developer A platform/home, Help/Beacon (PR #2), and
 Communities (PR #4) merged. Developer A is the integration/deployment lead on this baseline.
 
 | Lane | Status | Owner |
@@ -16,8 +16,8 @@ Communities (PR #4) merged. Developer A is the integration/deployment lead on th
 | Help / beacon / Gemini / n8n | Help lifecycle merged; Gemini/n8n deferred | Developer C |
 
 Authenticated Help writes use server-checked lifecycle actions with a labelled local demo
-fallback. Live two-user DeepSpace rehearsal, deploy URL, Figma URL, and Gemini secret setup are
-still outstanding (see `PROJECT_STATUS.md`).
+fallback. The live two-user DeepSpace lifecycle has passed. Deploy URL, Figma URL, and Gemini
+secret setup are still outstanding (see `PROJECT_STATUS.md`).
 
 ## Local setup
 
@@ -82,6 +82,7 @@ npm run lint
 npm run type-check
 npm run test:unit
 npm run test:smoke      # Playwright UI smoke (needs Chrome + Vite/worker)
+npm run test:e2e        # Authenticated multi-user tests; needs 2 local DeepSpace test accounts
 SMOKE_STATIC=1 npm run test:smoke  # UI smoke against dist/client after build
 npm run build
 npx deepspace deploy
