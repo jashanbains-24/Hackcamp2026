@@ -4,9 +4,7 @@ import { Button, Textarea, useToast } from '@/components/ui'
 import { StatusLabel } from '@/components/neighbourgrid'
 import type { HelpItem, HelpResponse } from '@/shared/types'
 import {
-  getActorName,
   helpCategoryLabels,
-  helpDemoActions,
 } from './help-store'
 
 const statusLabels = {
@@ -30,14 +28,27 @@ export function HelpItemCard({
   item,
   responses,
   activeUserId,
+  communityName,
+  actorName,
+  onRespond,
+  onAccept,
+  onResolve,
+  onCancel,
 }: {
   item: HelpItem
   responses: HelpResponse[]
   activeUserId: string
+  communityName: string
+  actorName: (userId: string) => string
+  onRespond: (helpItemId: string, note: string) => Promise<string | undefined>
+  onAccept: (responseId: string) => Promise<boolean>
+  onResolve: (itemId: string) => Promise<boolean>
+  onCancel: (itemId: string) => Promise<boolean>
 }) {
-  const { success, warning } = useToast()
+  const { success, warning, error } = useToast()
   const [showResponse, setShowResponse] = useState(false)
   const [note, setNote] = useState('')
+  const [busy, setBusy] = useState(false)
   const isOwner = item.authorId === activeUserId
   const itemResponses = responses.filter((response) => response.helpItemId === item.id)
   const activeUserResponse = itemResponses.find(
@@ -50,21 +61,39 @@ export function HelpItemCard({
     ['open', 'offered'].includes(item.status) &&
     !activeUserResponse
 
-  function submitResponse(event: FormEvent) {
+  async function runAction(action: () => Promise<boolean>, onSuccess: () => void) {
+    setBusy(true)
+    try {
+      if (await action()) onSuccess()
+    } catch (cause) {
+      error('Could not update help item', cause instanceof Error ? cause.message : 'Try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function submitResponse(event: FormEvent) {
     event.preventDefault()
     const trimmed = note.trim()
     if (trimmed.length < 3) {
       warning('Add a short note', 'Say what kind of help you can offer.')
       return
     }
-    const response = helpDemoActions.respond(item.id, trimmed)
-    if (!response) {
-      warning('Could not send the offer', 'This request may no longer be available.')
-      return
+    setBusy(true)
+    try {
+      const responseId = await onRespond(item.id, trimmed)
+      if (!responseId) {
+        warning('Could not send the offer', 'This request may no longer be available.')
+        return
+      }
+      setNote('')
+      setShowResponse(false)
+      success('Offer shared', 'The requester can now review your note.')
+    } catch (cause) {
+      error('Could not send the offer', cause instanceof Error ? cause.message : 'Try again.')
+    } finally {
+      setBusy(false)
     }
-    setNote('')
-    setShowResponse(false)
-    success('Offer shared', 'The requester can now review your note.')
   }
 
   return (
@@ -106,10 +135,10 @@ export function HelpItemCard({
         <span>{helpCategoryLabels[item.category]}</span>
         <span className="inline-flex items-center gap-1">
           <MapPin className="size-3.5" aria-hidden />
-          Newton
+          {communityName}
         </span>
         <span>
-          {getActorName(item.authorId)} · {formatCreatedAt(item.createdAt)}
+          {actorName(item.authorId)} · {formatCreatedAt(item.createdAt)}
         </span>
       </div>
 
@@ -139,18 +168,20 @@ export function HelpItemCard({
             {itemResponses.map((response) => (
               <li key={response.id} className="rounded-lg bg-muted/65 p-3">
                 <p className="text-sm font-semibold text-foreground">
-                  {getActorName(response.responderId)}
+                  {actorName(response.responderId)}
                 </p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">{response.note}</p>
                 {item.status === 'offered' && (
                   <Button
                     size="sm"
                     className="mt-3"
-                    onClick={() => {
-                      if (helpDemoActions.acceptResponse(response.id)) {
-                        success('Neighbour matched', 'Both participants now see the matched status.')
-                      }
-                    }}
+                    disabled={busy}
+                    onClick={() =>
+                      runAction(
+                        () => onAccept(response.id),
+                        () => success('Neighbour matched', 'Both participants now see the matched status.'),
+                      )
+                    }
                   >
                     <Check aria-hidden /> Accept offer
                   </Button>
@@ -166,7 +197,7 @@ export function HelpItemCard({
 
       {acceptedResponse && item.status === 'matched' && (
         <p className="mt-4 rounded-lg bg-success/10 px-3 py-2.5 text-sm font-medium text-foreground">
-          Matched with {getActorName(acceptedResponse.responderId)}. Agree on a safe public handoff
+          Matched with {actorName(acceptedResponse.responderId)}. Agree on a safe public handoff
           without posting contact details here.
         </p>
       )}
@@ -194,7 +225,7 @@ export function HelpItemCard({
             Keep phone numbers, addresses, and private details out of this note.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Button type="submit">Send offer</Button>
+            <Button type="submit" loading={busy}>Send offer</Button>
             <Button type="button" variant="ghost" onClick={() => setShowResponse(false)}>
               Cancel
             </Button>
@@ -205,11 +236,13 @@ export function HelpItemCard({
       {isOwner && item.status === 'matched' && (
         <Button
           className="mt-4"
-          onClick={() => {
-            if (helpDemoActions.resolve(item.id)) {
-              success('Marked resolved', 'Thanks for closing the loop.')
-            }
-          }}
+          disabled={busy}
+          onClick={() =>
+            runAction(
+              () => onResolve(item.id),
+              () => success('Marked resolved', 'Thanks for closing the loop.'),
+            )
+          }
         >
           <Check aria-hidden /> Mark resolved
         </Button>
@@ -219,11 +252,13 @@ export function HelpItemCard({
         <Button
           variant="ghost"
           className="mt-4 text-muted-foreground"
-          onClick={() => {
-            if (helpDemoActions.cancel(item.id)) {
-              warning('Request cancelled', 'It is no longer accepting help offers.')
-            }
-          }}
+          disabled={busy}
+          onClick={() =>
+            runAction(
+              () => onCancel(item.id),
+              () => warning('Request cancelled', 'It is no longer accepting help offers.'),
+            )
+          }
         >
           <X aria-hidden /> Cancel
         </Button>

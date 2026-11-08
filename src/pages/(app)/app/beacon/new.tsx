@@ -3,12 +3,8 @@ import { ArrowLeft, Radio, ShieldAlert } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Textarea, useToast } from '@/components/ui'
 import { BackLink, StatusLabel } from '@/components/neighbourgrid'
-import {
-  getBeaconCooldown,
-  helpCategoryLabels,
-  helpDemoActions,
-  useHelpDemoStore,
-} from '@/features/help/help-store'
+import { useHelpNetwork } from '@/features/help/help-network'
+import { helpCategoryLabels } from '@/features/help/help-store'
 import type { HelpCategory } from '@/shared/types'
 
 const categoryTitles: Record<HelpCategory, string> = {
@@ -22,14 +18,20 @@ const categoryTitles: Record<HelpCategory, string> = {
 
 export default function BeaconPage() {
   const navigate = useNavigate()
-  const state = useHelpDemoStore()
-  const { success, warning } = useToast()
+  const help = useHelpNetwork()
+  const { success, warning, error } = useToast()
   const [category, setCategory] = useState<HelpCategory>('power_charging')
   const [description, setDescription] = useState('')
-  const [includeFleetwood, setIncludeFleetwood] = useState(false)
+  const [targetCommunityIds, setTargetCommunityIds] = useState<string[]>([])
   const [confirming, setConfirming] = useState(false)
-  const cooldown = getBeaconCooldown(state.activeUserId, state)
+  const [sending, setSending] = useState(false)
+  const cooldown = help.beaconCooldown
   const remainingMinutes = Math.max(1, Math.ceil(cooldown.remainingMs / 60_000))
+  const adjacentCommunities = help.session.communitiesCatalog
+    .filter((community) =>
+      help.session.homeCommunity.adjacentCommunityIds.includes(community.id),
+    )
+    .slice(0, 2)
 
   function review(event: FormEvent) {
     event.preventDefault()
@@ -49,25 +51,38 @@ export default function BeaconPage() {
     setConfirming(true)
   }
 
-  function sendBeacon() {
-    if (!getBeaconCooldown(state.activeUserId, state).available) {
-      warning('Beacon cooldown active', 'This demo beacon was not sent again.')
+  async function sendBeacon() {
+    if (!help.beaconCooldown.available) {
+      warning('Beacon cooldown active', 'This beacon was not sent again.')
       return
     }
-    const beacon = helpDemoActions.createBeacon({
-      title: categoryTitles[category],
-      description,
-      category,
-      communityId: 'community-newton',
-      targetCommunityIds: includeFleetwood ? ['community-fleetwood'] : [],
-    })
-    if (!beacon) {
-      warning('Beacon cooldown active', 'This demo beacon was not sent again.')
-      setConfirming(false)
-      return
+    setSending(true)
+    try {
+      const beaconId = await help.createBeacon({
+        title: categoryTitles[category],
+        description,
+        category,
+        communityId: help.session.homeCommunityId,
+        targetCommunityIds,
+      })
+      if (!beaconId) {
+        warning('Beacon cooldown active', 'This beacon was not sent again.')
+        setConfirming(false)
+        return
+      }
+      success(
+        help.source === 'live' ? 'Beacon sent to the community' : 'Demo beacon sent to the community',
+        'It is now visible on the help board.',
+      )
+      navigate('/app/help')
+    } catch (cause) {
+      error(
+        'Could not send beacon',
+        cause instanceof Error ? cause.message : 'Try again after the connection recovers.',
+      )
+    } finally {
+      setSending(false)
     }
-    success('Demo beacon sent to the community', 'It is now visible on the help board.')
-    navigate('/app/help')
   }
 
   return (
@@ -78,13 +93,13 @@ export default function BeaconPage() {
 
       <div className="mt-4 border-t border-border pt-6">
         <div className="flex flex-wrap items-center gap-2">
-          <StatusLabel tone="help">DEMO</StatusLabel>
+          <StatusLabel tone="help">{help.source === 'live' ? 'LIVE' : 'DEMO'}</StatusLabel>
           <StatusLabel tone="warning">High visibility</StatusLabel>
         </div>
         <h1 className="ng-type-display mt-3 text-foreground">Community Help Beacon</h1>
         <p className="ng-type-body mt-3 max-w-[46ch] text-muted-foreground">
-          Ask opted-in neighbours for timely practical help in Newton and an eligible nearby
-          community.
+          Ask opted-in neighbours for timely practical help in {help.session.homeCommunity.name}
+          {' '}and an eligible nearby community.
         </p>
 
         <div className="mt-6 flex flex-col gap-4">
@@ -143,24 +158,39 @@ export default function BeaconPage() {
                 <label className="flex min-h-12 items-center gap-3 rounded-lg border border-border bg-card px-3">
                   <input type="checkbox" checked disabled className="size-4 accent-primary" />
                   <span>
-                    <span className="block text-sm font-semibold text-foreground">Newton</span>
+                    <span className="block text-sm font-semibold text-foreground">
+                      {help.session.homeCommunity.name}
+                    </span>
                     <span className="block text-xs text-muted-foreground">Home community</span>
                   </span>
                 </label>
-                <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-card px-3">
-                  <input
-                    type="checkbox"
-                    checked={includeFleetwood}
-                    onChange={(event) => setIncludeFleetwood(event.target.checked)}
-                    className="size-4 accent-primary"
-                  />
-                  <span>
-                    <span className="block text-sm font-semibold text-foreground">Fleetwood</span>
-                    <span className="block text-xs text-muted-foreground">
-                      Accepting external demo beacons
+                {adjacentCommunities.map((community) => (
+                  <label
+                    key={community.id}
+                    className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-card px-3"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={targetCommunityIds.includes(community.id)}
+                      onChange={(event) =>
+                        setTargetCommunityIds((current) =>
+                          event.target.checked
+                            ? [...current, community.id].slice(0, 2)
+                            : current.filter((id) => id !== community.id),
+                        )
+                      }
+                      className="size-4 accent-primary"
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-foreground">
+                        {community.name}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        Eligible adjacent community
+                      </span>
                     </span>
-                  </span>
-                </label>
+                  </label>
+                ))}
               </div>
             </fieldset>
 
@@ -196,7 +226,10 @@ export default function BeaconPage() {
               <div className="flex justify-between gap-3">
                 <dt className="text-muted-foreground">Communities</dt>
                 <dd className="text-right font-semibold text-foreground">
-                  Newton{includeFleetwood ? ' + Fleetwood' : ''}
+                  {[help.session.homeCommunity.name, ...adjacentCommunities
+                    .filter((community) => targetCommunityIds.includes(community.id))
+                    .map((community) => community.name)]
+                    .join(' + ')}
                 </dd>
               </div>
             </dl>
@@ -208,6 +241,7 @@ export default function BeaconPage() {
               <Button
                 className="h-12 flex-1 bg-beacon text-beacon-foreground hover:bg-beacon/90"
                 onClick={sendBeacon}
+                loading={sending}
               >
                 Send to community
               </Button>
@@ -216,7 +250,9 @@ export default function BeaconPage() {
               </Button>
             </div>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              DEMO only · No external service or real user is contacted.
+              {help.source === 'live'
+                ? 'In-app only · No emergency service or external broadcaster is contacted.'
+                : 'DEMO only · No external service or real user is contacted.'}
             </p>
           </section>
         )}

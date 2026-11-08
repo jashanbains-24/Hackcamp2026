@@ -1,24 +1,29 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 6:44 p.m. Vancouver time
-**Current stage:** UI overhaul merged; Developers A/B/C may work in parallel
-**Shared branch:** `main` at UI merge `ed5c7ba`
+**Last updated:** 2026-11-07, 7:20 p.m. Vancouver time
+**Current stage:** Parallel lanes integrating on the Developer A platform baseline
+**Shared branch:** `main` at `ea4574c` (Developer A home/platform PR merged)
 **Active lane in this checkout:** Developer C on `feat/help-beacon`
 **Phase 0 commit:** `77745fc feat: scaffold neighbourgrid mobile app shell`
+**UI overhaul merge:** `ed5c7ba Merge pull request #1 from jashanbains-24/feat/ui-overhaul`
 
 ## Verified baseline
 
-- Public landing, responsive app shell, Newton demo dashboard, placeholder feature routes, shared
-  types, and centralized demo data are implemented.
-- DeepSpace app registration is complete and `wrangler.toml` now carries the server-minted app ID.
-- No persistent records, product auth flow, realtime feature, RSS integration, Gemini call, or n8n
-  workflow is implemented yet.
+- UI overhaul is merged into `main`. Landing, shell, home, and placeholders use the NeighbourGrid
+  design system.
+- DeepSpace app registration is complete (`wrangler.toml` carries the server-minted app ID).
+- Developer A schemas, session/demo fence, home aggregates, Activity/Profile, and BC Hydro Surrey
+  official-updates API are merged into `main`.
+- Developer C’s branch now uses A’s authenticated session and `help_items`/`help_responses`
+  collections, with server-enforced lifecycle actions and the local demo adapter as fallback.
+- The Gemini endpoint is implemented but the secret and live authenticated call are not verified.
+- n8n remains intentionally deferred.
 
 ## Current parallel lanes
 
-- **Developer A:** `feat/home-alerts` — platform, schemas/auth, home, official updates, deploy.
+- **Developer A:** platform/home baseline merged; next owns deployment, Figma, and integration review.
 - **Developer B:** `feat/communities` — bounded community membership/post/comment work.
-- **Developer C:** `feat/help-beacon` — help lifecycle, beacon, Gemini, realtime handoff.
+- **Developer C:** `feat/help-beacon` — DeepSpace help lifecycle, beacon, Gemini verification.
 
 **Figma URL:** Not created yet — Developer A owns this action.
 
@@ -31,21 +36,46 @@ git switch main
 git pull origin main
 npm install
 npm run build
+git switch -c feat/home-alerts       # A
+# or: git switch -c feat/communities # B
+# or: git switch -c feat/help-beacon # C
 ```
 
-Then branch:
+## B/C import contract (stable)
 
-```bash
-git switch -c feat/home-alerts   # A
-git switch -c feat/communities  # B
-git switch -c feat/help-beacon  # C
+```ts
+import {
+  useNeighbourGridSession,
+  useHomeAggregates,
+  useOfficialUpdates,
+  neighbourgridCollectionNames,
+  NeighbourGridSessionProvider,
+} from '@/neighbourgrid/exports'
 ```
+
+| Collection | Name | Notes |
+| --- | --- | --- |
+| UserProfile | `profiles` | `userId` userBound; `UserProfile.id` === auth user id |
+| Community | `communities` | Admin write; public read |
+| Membership | `memberships` | uniqueOn user+community; userBound |
+| Post | `posts` | `authorId` userBound; author own update/delete |
+| Comment | `comments` | `authorId` userBound |
+| HelpItem | `help_items` | `authorId` userBound |
+| HelpResponse | `help_responses` | `responderId` userBound |
+| OfficialUpdate | `official_updates` | Admin write; live path prefers API |
+
+Live official feed: `GET /api/official-updates`
+Verified Surrey RSS: `https://www.bchydro.com/rss/outages/surrey.xml`
+(from official index `.../outages_rss.html`)
+
+Developer C hardened the two help collections so writes occur only through authenticated server
+actions. Developer A should review this schema adjustment during integration.
 
 ## Sponsor/integration plan
 
 - **DeepSpace:** primary auth, records, permissions, realtime, secrets, and deployment platform.
 - **Gemini API:** deferred until Person C has the server endpoint.
-- **n8n:** account setup pending; does not block UI gate.
+- **n8n:** account setup pending; does not block A/B/C core lanes.
 - **Best Design:** Figma share link still required before claiming that track.
 - **Auth0 and unrelated sponsor services:** intentionally excluded.
 
@@ -56,19 +86,18 @@ git switch -c feat/help-beacon  # C
    2. Add frames for: tokens/components, landing mobile+desktop, home mobile+desktop, communities, help, beacon confirmation, focus/error/empty states.
    3. Turn on link sharing for the team.
    4. Paste the URL into `PROJECT_STATUS.md` (**Figma URL**) and `README.md` (**Design file**).
-2. **Gemini key:** Developer C’s server endpoint is ready. The owner may now follow the secure
-   upload commands in `README.md`; the endpoint also requires Developer A’s authenticated session
-   flow before the UI button can succeed.
-3. **Developer A schema exports:** C’s persisted cross-device realtime adapter waits for A’s
-   approved `help_items`/`help_responses` schemas and permission hooks.
-4. **n8n account:** remains optional and is intentionally deferred until persisted help matching
-   works.
+2. **Gemini key:** upload it through the secure commands in `README.md`, restart the DeepSpace
+   runtime, and verify one authenticated Request Clarity call.
+3. **DeepSpace live rehearsal:** use two authenticated users on separate browser/device sessions
+   to verify create → offer → accept → resolve without refresh.
+4. **Deploy verification:** Developer A deploys and records the live `*.space` URL.
+5. **n8n account:** remains optional and deferred until the persisted rehearsal passes.
 
 ## Next safe handoff
 
-Developer C should replace the local demo adapter with A’s stable DeepSpace exports when available,
-then verify cross-device realtime and add n8n only if time remains. The local adapter already
-supports the full lifecycle and no-refresh synchronization between two open demo sessions.
+Developer C should complete the authenticated two-user rehearsal and live Gemini check, then push
+the integration commit for review. Developer A reviews the help schema/action boundary and deploys
+the integrated app. Add n8n only if the persisted lifecycle is verified and time remains.
 
 ## Session log template
 
@@ -83,6 +112,24 @@ supports the full lifecycle and no-refresh synchronization between two open demo
 ```
 
 ## Session history
+
+### 2026-11-07 19:05 — Developer C, branch `feat/help-beacon`
+
+- Completed: Merged Developer A’s platform baseline; connected Help/Beacon to authenticated
+  DeepSpace queries and session identity; added server actions for create/respond/accept/
+  resolve/cancel; enforced community eligibility, response uniqueness, owner transitions, beacon
+  target checks, and cooldown; retained the labelled browser-local demo fallback.
+- Notable files: `src/actions/help-actions.ts`, `src/features/help/help-network.ts`,
+  `src/schemas/neighbourgrid-schema.ts`, Help/Beacon routes, and integration documentation.
+- Tests run: type-check passed; lint passed; 11 unit tests passed; production build passed;
+  6/6 static smoke tests passed; 4/4 help demo browser tests passed.
+- Service/schema/config changes: normal members can read but cannot directly mutate help
+  collections; authenticated server actions own all help writes; response user/item pairs are
+  unique. No secret values were added.
+- Blockers or user action: authenticated two-user DeepSpace rehearsal and Gemini secret/live call
+  remain unverified; deployment URL and Figma URL remain Developer A actions; n8n stays deferred.
+- Next task / handoff: push C’s integration update; Developer A reviews the help schema/action
+  boundary and deploys; owner runs the two-user rehearsal and secure Gemini setup.
 
 ### 2026-11-07 18:44 — Developer C, branch `feat/help-beacon`
 
@@ -100,140 +147,35 @@ supports the full lifecycle and no-refresh synchronization between two open demo
   DeepSpace help schemas for real cross-device persistence/realtime; n8n account/workflow deferred.
 - Next task / handoff: integrate A’s schema exports, verify on two devices, then consider n8n.
 
+### 2026-11-07 18:55 — Developer A, branch `feat/home-alerts`
+
+- Completed:
+  - Documented UI overhaul merge in README/PROJECT_STATUS.
+  - Narrowed always-applied no-localhost browser rule (local visual QA allowed).
+  - Fixed ambiguous mobile smoke DEMO assertion (`data-testid="demo-scenario-notice"`).
+  - Implemented product schemas with server-side identity (`userBound`) + RBAC.
+  - Published `@/neighbourgrid/exports` for B/C.
+  - DeepSpace auth + fenced Maya demo session; persisted home community.
+  - Wired home counts/latest posts/help; useful Activity + Profile pages.
+  - Verified BC Hydro Surrey RSS from official index; Worker fetch/parse/~15m cache;
+    honest empty/failure; municipality note (no Newton invention).
+- Notable files: `src/schemas/neighbourgrid-schema.ts`, `src/neighbourgrid/*`,
+  `src/server/official-updates*.ts`, `src/pages/(app)/app/{index,activity,profile}.tsx`,
+  `src/components/neighbourgrid.tsx`, `tests/smoke.spec.ts`, `tests/static-smoke-server.mjs`.
+- Tests run: `type-check` pass; `lint` pass; `test:unit` 5/5 pass; `build` pass.
+  Browser smoke blocked in agent sandbox (Chrome framework dlopen + Cloudflare EMFILE).
+  Static smoke server starts; Chrome launch requires unsandboxed host — owner should run
+  `npm run test:smoke` locally.
+- Service/schema/config changes: registered NeighbourGrid collections in `src/schemas.ts`;
+  added `GET /api/official-updates`.
+- Deployment URL: not verified (DeepSpace CLI not authenticated in agent environment).
+- Git: committed locally as `bd1b438` on `feat/home-alerts`. Push from agent failed
+  (sandbox blocked GitHub credentials); owner must push.
+- Blockers or user action: push branch; review; local smoke; deploy; Figma URL.
+- Next task / handoff: team review of `feat/home-alerts`; B/C may begin after pull of `main`
+  and can depend on A’s exports once this branch merges.
+
 ### 2026-11-07 18:30 — Developer A / UI lead, branch `feat/ui-overhaul`
 
-- Completed: `impeccable polish` — caret/underline browser chrome; shared `BackLink`; removed
-  ErrorPanel eyebrow; aligned title roles on communities/profile/empty; View Transitions +
-  hover states on remaining dashboard links; documented intentional scrollbar radius.
-- Notable files: `src/styles.css`, `src/components/neighbourgrid.tsx`, dashboard pages under
-  `src/pages/(app)/app/`, `DESIGN.md`.
-- Tests run: type-check, lint, unit 3/3; detect only advisory scrollbar radius (documented).
-- Blockers or user action: uncommitted; Figma URL pending; owner visual review before commit.
-- Next task / handoff: commit/push `feat/ui-overhaul` on request, then merge gate.
-
-### 2026-11-07 18:27 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: `impeccable overdrive` all three directions — (1) scroll-driven landing motif/steps
-  via `animation-timeline: view()`, (2) React Router `viewTransition` on shell/landing/home
-  links + shared brand VT name, (3) pointer-reactive `NeighbourhoodGridCanvas` with reduced-
-  motion SVG fallback. Documented in `DESIGN.md`.
-- Notable files: `src/components/NeighbourhoodGridCanvas.tsx`, `src/pages/index.tsx`,
-  `src/components/neighbourgrid.tsx`, `src/styles.css`, `src/pages/(app)/app/index.tsx`.
-- Tests run: type-check, lint, unit 3/3. No localhost browser QA (owner preference).
-- Next task / handoff: hard-refresh `/`, move pointer on hero, scroll the loop section, then
-  tap nav between `/app` routes to feel View Transitions.
-
-### 2026-11-07 18:23 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: `impeccable distill` across all `/app` dashboard pages. Removed repeated demo
-  chrome, dead “Preview only” buttons, count strip, post body on home, and eyebrow labels.
-  Home now has one primary CTA + text links; shorter intros on communities/help/beacon/
-  activity/profile. Updated smoke assertions for new headings.
-- Notable files: `src/pages/(app)/app/**`, `src/components/neighbourgrid.tsx`,
-  `tests/smoke.spec.ts`.
-- Tests run: type-check, lint, unit 3/3. Smoke not re-run in this pass (assertions updated).
-- Removed intentionally: per-page demo banners (shell keeps one), home demo counts, help
-  disabled buttons, ComingSoon “Next build” kicker, redundant safety/meta lines.
-- Next task / handoff: owner reviews distilled dashboard; optional `$impeccable polish`.
-
-### 2026-11-07 18:18 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: Fixed desktop app shell — removed centered `mx-auto max-w-[1280px]` wrapper
-  so the sidebar sits flush left; main content still uses its own page max-width.
-- Notable files: `src/components/neighbourgrid.tsx`, `DESIGN.md`.
-- Tests run: type-check, lint.
-- Next task / handoff: owner confirms sidebar alignment on desktop `/app`.
-
-### 2026-11-07 18:16 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: `impeccable animate` — landing brand clip-path/blur reveal (`ng-brand-reveal`),
-  stronger staggered copy, hero wash drift, CTA arrow nudge; home help `ng-settle`; beacon
-  one-shot `ng-attend`. Motion gated under `prefers-reduced-motion: no-preference` with
-  visible defaults.
-- Notable files: `src/styles.css`, `src/pages/index.tsx`, `src/pages/(app)/app/index.tsx`,
-  `src/pages/(app)/app/beacon/new.tsx`, `DESIGN.md`.
-- Tests run: type-check, lint; compiled CSS includes new motion classes. No localhost
-  browser QA (owner preference).
-- Blockers or user action: hard-refresh `/` to see brand reveal once; uncommitted; Figma pending.
-- Next task / handoff: optional `$impeccable polish`, then commit/push on request.
-
-### 2026-11-07 18:14 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: `impeccable layout` on landing, home, and beacon. Added stack spacing roles
-  (`ng-stack-tight` / `copy` / `section`); tightened hero CTA↔disclaimer proximity; folded
-  demo counts into the neighbours header; help stays the home peak; beacon warning+confirm
-  grouped as one action stack. Updated `DESIGN.md` spacing tokens.
-- Notable files: `src/pages/index.tsx`, `src/pages/(app)/app/index.tsx`,
-  `src/pages/(app)/app/beacon/new.tsx`, `src/styles.css`, `DESIGN.md`.
-- Tests run: type-check, lint, unit; `impeccable detect --scope layout` clean. No localhost
-  browser QA (owner preference).
-- Service/schema/config changes: none.
-- Blockers or user action: uncommitted; Figma URL pending; owner visual review.
-- Next task / handoff: optional `$impeccable polish`, then commit/push on request.
-
-### 2026-11-07 18:10 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: `impeccable bolder` on landing hero, landing loop section, app home, and
-  beacon preview (coral beacon CTA, larger Fraunces peaks, grid motif). Then
-  `impeccable typeset`: documented type role ramp (`ng-type-*`), body floor `1rem`,
-  Fraunces 600/700 + Manrope 400–700 loads, `text-wrap: balance` on headings; aligned
-  landing/home/beacon/shared intros to the ramp; updated `DESIGN.md`.
-- Notable files: `src/styles.css`, `src/pages/index.tsx`, `src/pages/(app)/app/index.tsx`,
-  `src/pages/(app)/app/beacon/new.tsx`, `src/components/neighbourgrid.tsx`, `index.html`,
-  `DESIGN.md`, `.cursor/rules/no-localhost-browser.mdc`.
-- Tests run: type-check passed; lint clean; unit 3/3 passed; `impeccable detect --scope type`
-  on touched surfaces returned `[]`. No localhost browser QA (owner preference).
-- Service/schema/config changes: none.
-- Blockers or user action: still uncommitted; Figma URL still pending; owner visual review
-  in their own local app.
-- Next task / handoff: owner reviews UI, then commit/push `feat/ui-overhaul` on request.
-  Optional next: `$impeccable polish`.
-
-### 2026-11-07 18:02 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: Ran audit remediation chain (quieter landing, adapt contrast/targets,
-  distill placeholders, extract tokens, document, polish). Added `DESIGN.md`. Live
-  `impeccable detect` on `/` and `/app` now returns no findings.
-- Notable files: `DESIGN.md`, `src/styles.css`, `src/themes.css`, `src/pages/index.tsx`,
-  `src/pages/(app)/app/*`, `src/components/neighbourgrid.tsx`, `src/components/ui/Button.tsx`.
-- Tests run: type-check, lint, unit 3/3 passed; detect `/` and `/app` clean.
-- Service/schema/config changes: none.
-- Blockers or user action: still uncommitted; Figma URL still pending; owner visual review.
-- Next task / handoff: review UI, then commit/push `feat/ui-overhaul` on request.
-
-### 2026-11-07 17:47 — Developer A / UI lead, branch `feat/ui-overhaul`
-
-- Completed: Mobile-first design-system overhaul — Manrope + Fraunces, NeighbourGrid theme tokens,
-  brand-first landing, desktop side-rail + mobile bottom nav shell, home hierarchy polish,
-  StatusLabel / EmptyPanel / ErrorPanel / PageIntro primitives, and refreshed placeholder
-  presentation. Routes, shared interfaces, mock data, safety language, official/demo labels, and
-  CTAs preserved. No B/C feature logic.
-- Notable files: `src/styles.css`, `src/themes.css`, `src/themes.ts`, `index.html`,
-  `src/components/neighbourgrid.tsx`, `src/pages/index.tsx`, `src/pages/(app)/app/index.tsx`,
-  placeholder app pages under `src/pages/(app)/app/`.
-- Tests run: `type-check` passed; `lint` passed; `test:unit` 3/3 passed; `build` passed;
-  `test:smoke` 5/6 passed. Mobile smoke UI assertions passed; the suite failed only on a console
-  `500` for `/api/auth/get-session` (`AUTH_WORKER_URL` unset under plain Vite). Desktop primary
-  nav + Ask for help CTA passed. Automated browser screenshot QA was abandoned (tool loop on
-  localhost); owner should visually confirm at 390px and desktop locally.
-- Service/schema/config changes: none (theme id `neighbourgrid` in `index.html` only).
-- Blockers or user action: no commit/push yet; Figma URL still needed; owner visual review
-  requested before commit.
-- Next task / handoff: after owner approval, commit and push `feat/ui-overhaul` (do not merge
-  until team review). Then merge to `main` and unlock parallel A/B/C lanes.
-
-### 2026-11-07 17:24 — Initializer, branch `main`
-
-- Completed: Recorded successful DeepSpace registration; established the serial Developer A UI
-  gate; documented Figma ownership, secure Gemini setup, delayed n8n integration, collaborator
-  access, branch ownership, and the mandatory agent progress protocol.
-- Notable files: `wrangler.toml`, `AGENTS.md`, `CLAUDE.md`, `README.md`, `DECISIONS.md`,
-  `TEAM_HANDOFF.md`, `PROJECT_STATUS.md`, `.env.example`.
-- Tests run: type-check passed; lint passed; 3 unit tests passed; registered production build
-  passed; 6 browser smoke tests passed on mobile/desktop.
-- Service/schema/config changes: DeepSpace app ID is registered; no product schema or secret was
-  added.
-- Blockers or user action: owner must push `main`; n8n account remains optional/pending; Gemini
-  key setup waits for Person C’s server endpoint.
-- Next task / handoff: Developer A pulls `main`, creates `feat/ui-overhaul`, creates the shared
-  Figma file, and completes the UI gate before B/C branch.
+- Completed: UI overhaul polish (later merged via PR #1 at `ed5c7ba`).
+- See git history on `main` for prior UI-gate sessions.

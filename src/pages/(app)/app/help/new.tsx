@@ -3,10 +3,8 @@ import { ArrowLeft, ShieldCheck, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input, Textarea, useToast } from '@/components/ui'
 import { BackLink } from '@/components/neighbourgrid'
-import {
-  helpCategoryLabels,
-  helpDemoActions,
-} from '@/features/help/help-store'
+import { useHelpNetwork } from '@/features/help/help-network'
+import { helpCategoryLabels } from '@/features/help/help-store'
 import {
   clarifyHelpRequest,
   type RequestClaritySuggestion,
@@ -25,7 +23,9 @@ export default function NewHelpPage() {
   const [category, setCategory] = useState<HelpCategory>('power_charging')
   const [roughDraft, setRoughDraft] = useState('')
   const [clarifying, setClarifying] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [suggestion, setSuggestion] = useState<RequestClaritySuggestion | null>(null)
+  const help = useHelpNetwork()
 
   async function improveDraft() {
     if (roughDraft.trim().length < 12) {
@@ -52,7 +52,7 @@ export default function NewHelpPage() {
     }
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault()
     const cleanTitle = title.trim()
     const cleanDescription = description.trim()
@@ -69,15 +69,30 @@ export default function NewHelpPage() {
       return
     }
 
-    helpDemoActions.createHelp({
-      kind,
-      title: cleanTitle,
-      description: cleanDescription,
-      category,
-      communityId: 'community-newton',
-    })
-    success(kind === 'request' ? 'Request posted' : 'Offer posted', 'The demo help board updated.')
-    navigate('/app/help')
+    setSubmitting(true)
+    try {
+      await help.createHelp({
+        kind,
+        title: cleanTitle,
+        description: cleanDescription,
+        category,
+        communityId: help.session.homeCommunityId,
+      })
+      success(
+        kind === 'request' ? 'Request posted' : 'Offer posted',
+        help.source === 'live'
+          ? 'The live help board updated.'
+          : 'The demo help board updated.',
+      )
+      navigate('/app/help')
+    } catch (cause) {
+      error(
+        'Could not post help item',
+        cause instanceof Error ? cause.message : 'Try again after the connection recovers.',
+      )
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -229,11 +244,13 @@ export default function NewHelpPage() {
             </p>
           </div>
 
-          <Button type="submit" className="h-12 w-full">
+          <Button type="submit" className="h-12 w-full" loading={submitting}>
             {kind === 'request' ? 'Post request' : 'Post offer'}
           </Button>
           <p className="text-center text-xs leading-5 text-muted-foreground">
-            DEMO · Saved in this browser and synchronized across open local tabs.
+            {help.source === 'live'
+              ? 'LIVE · Saved through DeepSpace and synchronized across signed-in sessions.'
+              : 'DEMO · Saved in this browser and synchronized across open local tabs.'}
           </p>
         </form>
       </div>

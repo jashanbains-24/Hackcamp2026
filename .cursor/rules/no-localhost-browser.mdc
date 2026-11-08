@@ -1,16 +1,16 @@
 ---
-description: Do not use browser tools against local dev servers
-alwaysApply: true
+description: Prefer careful localhost browser checks; avoid stuck automation loops
+alwaysApply: false
 ---
 
-# No localhost browser automation
+# Localhost browser verification
 
-Never navigate to, screenshot, lock, or automate `localhost` / `127.0.0.1` (including ports like `:8780`) with browser MCP or similar tools.
+Local visual verification of `localhost` / `127.0.0.1` (including `:8780`) is allowed for
+NeighbourGrid UI work. Prefer:
 
-For UI verification, use:
+1. Owner or agent opens the running app and checks 390px + desktop.
+2. Project commands: `npm run test:smoke`, type-check, lint, unit tests.
+3. Short, intentional browser MCP checks when useful.
 
-- Source inspection and design tokens
-- `impeccable detect` and project test/lint/type-check commands
-- Owner visual review in their own running app
-
-Do not retry localhost browser navigation after failures.
+Do not enter long retry loops against localhost. If navigation or screenshots fail twice with
+the same error, stop, report the failure, and fall back to source inspection plus smoke tests.

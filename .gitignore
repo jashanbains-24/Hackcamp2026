@@ -12,6 +12,7 @@ dist
 *.tgz
 test-results/
 playwright-report/
+.tmp-home/
 src/router.ts
 src/modals.tsx
 .claude/launch.json

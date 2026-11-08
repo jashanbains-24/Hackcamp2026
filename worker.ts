@@ -33,6 +33,7 @@ import {
   registerStaticRoutes,
   resolveAuth,
 } from './src/server/http-routes.js'
+import { registerOfficialUpdatesRoutes } from './src/server/official-updates-routes.js'
 import { registerRealtimeRoutes } from './src/server/realtime-routes.js'
 
 // Dynamic deploy reads this manifest to create the app's DO bindings.
@@ -136,6 +137,7 @@ app.use('*', async (c, next) => {
 // Registration order is part of the worker contract. The wildcard auth route
 // follows its special cases, AI precedes platform proxies, and static is last.
 registerAuthAndIntegrationRoutes(app)
+registerOfficialUpdatesRoutes(app)
 registerRealtimeRoutes(app)
 registerActionRoutes(app, resolveAuth)
 registerHelpRoutes(app)
