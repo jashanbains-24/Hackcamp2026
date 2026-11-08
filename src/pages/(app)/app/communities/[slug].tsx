@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ArrowLeft, PenLine } from 'lucide-react'
+import { useRef, useState, type ChangeEvent } from 'react'
+import { ArrowLeft, ImagePlus, PenLine, X } from 'lucide-react'
 import { useLocation, useParams } from 'react-router-dom'
 import { BackLink, EmptyPanel, Footnote, PageIntro, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Textarea } from '@/components/ui'
@@ -12,6 +12,7 @@ import {
   useCommunityFeed,
   useCommunityState,
 } from '@/services/communities'
+import { appendPostImages, compressPostImage } from '@/features/communities/post-images'
 import { useNeighbourGridSession } from '@/neighbourgrid/exports'
 import type { PostKind } from '@/shared/types'
 import { CommunityPostPage } from './[slug]/posts/[id]'
@@ -26,12 +27,37 @@ export default function CommunityPage() {
   const [isComposing, setIsComposing] = useState(false)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
+  const [images, setImages] = useState<string[]>([])
+  const [imageNote, setImageNote] = useState('')
   const [kind, setKind] = useState<PostKind>('discussion')
   const [error, setError] = useState('')
+  const photoInput = useRef<HTMLInputElement>(null)
 
   if (pathname.includes('/posts/')) return <CommunityPostPage />
   if (!community) {
     return <EmptyPanel icon={PenLine} title="Community not found" description="This community is not in the curated directory." />
+  }
+
+  async function addPhotos(event: ChangeEvent<HTMLInputElement>) {
+    const files = [...(event.target.files ?? [])]
+    event.target.value = ''
+    if (files.length === 0) return
+    const encoded: string[] = []
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue
+      try {
+        encoded.push(await compressPostImage(file))
+      } catch {
+        setError('One picture could not be added.')
+      }
+    }
+    let limited = false
+    setImages((current) => {
+      const next = appendPostImages(current, encoded)
+      limited = next.limited
+      return next.images
+    })
+    setImageNote(limited ? 'You can add 5 photos.' : '')
   }
 
   const membership = getMembership(community.id, state.memberships)
@@ -43,9 +69,16 @@ export default function CommunityPage() {
       return
     }
     try {
-      createPost({ title: title.trim(), body: body.trim(), kind })
+      createPost({
+        title: title.trim(),
+        body: body.trim(),
+        kind,
+        ...(images.length > 0 ? { images } : {}),
+      })
       setTitle('')
       setBody('')
+      setImages([])
+      setImageNote('')
       setIsComposing(false)
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : 'Post could not be published.')
@@ -102,6 +135,48 @@ export default function CommunityPage() {
               What would you like neighbours to know?
               <Textarea value={body} onChange={(event) => setBody(event.target.value)} maxLength={1000} rows={4} />
             </label>
+            <div>
+              <input
+                ref={photoInput}
+                type="file"
+                accept="image/*"
+                multiple
+                className="sr-only"
+                aria-label="Add photos"
+                onChange={(event) => void addPhotos(event)}
+              />
+              <button
+                type="button"
+                className="ng-press inline-flex min-h-11 items-center gap-2 rounded-full px-1 text-sm font-semibold text-foreground"
+                onClick={() => photoInput.current?.click()}
+              >
+                <ImagePlus className="size-4" aria-hidden />
+                Photos
+              </button>
+              {images.length > 0 && (
+                <div className="mt-2 flex gap-2 overflow-x-auto px-3 pt-3">
+                  {images.map((src, index) => (
+                    <div key={`${index}-${src.slice(0, 24)}`} className="relative size-16 shrink-0">
+                      <img src={src} alt="" className="size-16 rounded-xl object-cover" />
+                      <button
+                        type="button"
+                        aria-label={`Remove photo ${index + 1}`}
+                        className="absolute -top-3 -right-3 grid size-11 place-items-center"
+                        onClick={() => {
+                          setImages((current) => current.filter((_, imageIndex) => imageIndex !== index))
+                          setImageNote('')
+                        }}
+                      >
+                        <span className="grid size-6 place-items-center rounded-full bg-foreground text-background">
+                          <X className="size-3" aria-hidden />
+                        </span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {imageNote && <p className="mt-2 text-sm text-muted-foreground">{imageNote}</p>}
+            </div>
             {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
             <Button onClick={submitPost}>Publish post</Button>
           </div>

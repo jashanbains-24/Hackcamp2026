@@ -44,6 +44,7 @@ export interface Post {
   kind: PostKind
   title: string
   body: string
+  images?: string[]
   createdAt: string
   updatedAt: string
 }

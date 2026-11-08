@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ArrowLeft, MoreHorizontal, Send, Trash2 } from 'lucide-react'
+import { ArrowLeft, ArrowUp, MoreHorizontal, Trash2 } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { PostGallery } from '@/components/communities/PostGallery'
 import { BackLink, EmptyPanel, Footnote, Pane, StatusLabel } from '@/components/neighbourgrid'
 import { Button, Input, Textarea } from '@/components/ui'
 import { communityCatalog, currentUserId, getAuthorName, getMembership, postKindLabel, useCommunityFeed, useCommunityState, usePost } from '@/services/communities'
@@ -79,6 +80,11 @@ export function CommunityPostPage() {
                 {postKindLabel(post.kind)} · {getAuthorName(post.authorId)} · {new Date(post.createdAt).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' })}
               </p>
               <p className="mt-4 whitespace-pre-wrap text-base leading-7 text-foreground/85">{post.body}</p>
+              {post.images && post.images.length > 0 && (
+                <div className="mt-4">
+                  <PostGallery images={post.images} />
+                </div>
+              )}
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <StatusLabel tone="demo">Community-reported · unverified</StatusLabel>
                 {post.authorId === currentUserId && (
@@ -108,14 +114,32 @@ export function CommunityPostPage() {
           </Pane>
         )}
         {canWrite ? (
-          <div className="mt-3">
+          <form
+            className="relative mt-3"
+            onSubmit={(event) => {
+              event.preventDefault()
+              submitComment()
+            }}
+          >
             <label htmlFor="comment" className="sr-only">Add a comment</label>
-            <div className="flex items-end gap-2">
-              <Textarea id="comment" rows={2} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Add a comment" />
-              <Button size="icon" aria-label="Post comment" onClick={submitComment} disabled={!comment.trim()}><Send className="size-4" aria-hidden /></Button>
-            </div>
+            <input
+              id="comment"
+              value={comment}
+              maxLength={1_000}
+              placeholder="Add a comment"
+              className="h-12 w-full rounded-full border border-foreground/10 bg-foreground/8 pr-12 pl-4 text-base text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+              onChange={(event) => setComment(event.target.value)}
+            />
+            <button
+              type="submit"
+              aria-label="Post comment"
+              disabled={!comment.trim()}
+              className="absolute top-0 right-0 grid size-12 place-items-center text-primary transition-opacity disabled:text-muted-foreground disabled:opacity-40"
+            >
+              <ArrowUp className="size-5" aria-hidden />
+            </button>
             {error && !editing && <p className="mt-2 text-sm text-destructive" role="alert">{error}</p>}
-          </div>
+          </form>
         ) : (
           <Footnote className="mt-3 text-left">Approved members can comment.</Footnote>
         )}

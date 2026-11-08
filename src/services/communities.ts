@@ -22,7 +22,7 @@ const initialComments: Comment[] = [
     id: 'comment-library-hours-1',
     postId: 'post-library-hours',
     authorId: 'demo-user-maya',
-    body: 'The Newton library branch has quiet tables during weekday afternoons.',
+    body: 'Same flicker here. Power is still on, so we set a lantern by the door just in case.',
     createdAt: '2026-11-07T22:30:00.000Z',
   },
 ]
@@ -42,10 +42,22 @@ function readState(): CommunityState {
   if (!saved) return seedState
   try {
     const parsed = JSON.parse(saved) as Partial<CommunityState>
+    const posts = parsed.posts ?? demoPosts
+    const comments = parsed.comments ?? initialComments
+    const seedPost = demoPosts.find((post) => post.id === 'post-library-hours')
+    const seedComment = initialComments.find((comment) => comment.id === 'comment-library-hours-1')
     return {
       memberships: parsed.memberships ?? initialMemberships,
-      posts: parsed.posts ?? demoPosts,
-      comments: parsed.comments ?? initialComments,
+      posts: seedPost
+        ? posts.map((post) =>
+            post.id === seedPost.id ? { ...post, title: seedPost.title, body: seedPost.body } : post,
+          )
+        : posts,
+      comments: seedComment
+        ? comments.map((comment) =>
+            comment.id === seedComment.id ? { ...comment, body: seedComment.body } : comment,
+          )
+        : comments,
     }
   } catch {
     return seedState
@@ -92,11 +104,15 @@ export function postsForCommunity(posts: Post[], communityId: string) {
 
 export function createPostRecord(
   communityId: string,
-  input: Pick<Post, 'kind' | 'title' | 'body'>,
+  input: Pick<Post, 'kind' | 'title' | 'body'> & { images?: string[] },
   now = new Date().toISOString(),
 ): Post {
+  const images = input.images?.slice(0, 5)
   return {
-    ...input,
+    kind: input.kind,
+    title: input.title,
+    body: input.body,
+    ...(images && images.length > 0 ? { images } : {}),
     id: nextId('post'),
     communityId,
     authorId: currentUserId,
@@ -175,7 +191,7 @@ export function useCommunityFeed(communityId: string | undefined) {
   )
 
   const createPost = useCallback(
-    (input: Pick<Post, 'kind' | 'title' | 'body'>) => {
+    (input: Pick<Post, 'kind' | 'title' | 'body'> & { images?: string[] }) => {
       if (!communityId || !canPublish(communityId, state.memberships)) {
         throw new Error('Approved membership is required to publish in this community.')
       }

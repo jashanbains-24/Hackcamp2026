@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Check, HandHeart, MapPin, Radio, RotateCcw, X } from 'lucide-react'
+import { Check, HandHeart, MapPin, Package, Radio, RotateCcw, Tag, UserRound, X } from 'lucide-react'
 import { Button, Textarea, useToast } from '@/components/ui'
 import { StatusLabel } from '@/components/neighbourgrid'
 import type { HelpItem, HelpResponse } from '@/shared/types'
@@ -15,13 +15,26 @@ const statusLabels = {
   cancelled: 'Cancelled',
 } as const
 
+const kindStyle = {
+  request: { label: 'Need', icon: HandHeart, pill: 'bg-primary/15 text-primary-ink' },
+  offer: { label: 'Offer', icon: Package, pill: 'bg-success/15 text-success' },
+  beacon: { label: 'Beacon', icon: Radio, pill: 'bg-beacon/15 text-beacon' },
+} as const
+
+const statusStyle = {
+  open: 'bg-info/15 text-info',
+  offered: 'bg-advisory text-advisory-foreground',
+  matched: 'bg-success/15 text-success',
+  resolved: 'bg-foreground/10 text-muted-foreground',
+  cancelled: 'bg-foreground/10 text-muted-foreground',
+} as const
+
 function formatCreatedAt(value: string) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return 'Recently'
-  return new Intl.DateTimeFormat('en-CA', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(date)
+  const day = new Intl.DateTimeFormat('en-CA', { month: 'short', day: 'numeric' }).format(date)
+  const time = new Intl.DateTimeFormat('en-CA', { hour: 'numeric', minute: '2-digit' }).format(date)
+  return `${day}, ${time}`
 }
 
 export function HelpItemCard({
@@ -96,6 +109,13 @@ export function HelpItemCard({
     }
   }
 
+  const kind = kindStyle[item.kind]
+  const KindIcon = kind.icon
+  const place =
+    item.kind === 'beacon'
+      ? `${item.targetCommunityIds.length} ${item.targetCommunityIds.length === 1 ? 'community' : 'communities'}`
+      : communityName
+
   return (
     <article
       className={
@@ -104,43 +124,40 @@ export function HelpItemCard({
           : 'ng-glass p-4 sm:p-5'
       }
     >
-      <h2 className="ng-type-title-sm text-foreground">{item.title}</h2>
-      <p className="mt-1.5 text-sm leading-6 text-muted-foreground">{item.description}</p>
-
-      {/* Status chips lead the meta line: the title keeps the full width and nothing sits above it. */}
-      <p className="mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1.5 text-xs font-medium text-muted-foreground">
-        <StatusLabel
-          tone={
-            item.status === 'resolved'
-              ? 'success'
-              : item.status === 'cancelled'
-                ? 'neutral'
-                : item.kind === 'beacon'
-                  ? 'warning'
-                  : 'official'
-          }
-        >
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${kind.pill}`}>
+          <KindIcon className="size-3.5" aria-hidden />
+          {kind.label}
+        </span>
+        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyle[item.status]}`}>
           {statusLabels[item.status]}
-        </StatusLabel>
+        </span>
         {item.demo && <StatusLabel tone="demo">DEMO</StatusLabel>}
-        <span className={item.kind === 'beacon' ? 'ml-1 inline-flex items-center gap-1 text-beacon' : 'ml-1'}>
-          {item.kind === 'beacon' && <Radio className="size-3" aria-hidden />}
-          {item.kind === 'offer' ? 'Offer' : item.kind === 'beacon' ? 'Beacon' : 'Need'}
-        </span>
-        <span aria-hidden>·</span>
-        <span>{helpCategoryLabels[item.category]}</span>
-        <span aria-hidden>·</span>
-        <span className="inline-flex items-center gap-1">
-          <MapPin className="size-3" aria-hidden />
-          {item.kind === 'beacon'
-            ? `${item.targetCommunityIds.length} ${item.targetCommunityIds.length === 1 ? 'community' : 'communities'}`
-            : communityName}
-        </span>
-        <span aria-hidden>·</span>
-        <span>
-          {actorName(item.authorId)}, {formatCreatedAt(item.createdAt)}
-        </span>
-      </p>
+      </div>
+
+      <h2 className="mt-3 text-2xl font-bold leading-[1.15] tracking-tight text-foreground">{item.title}</h2>
+      <p className="mt-2 text-base leading-6 text-muted-foreground">{item.description}</p>
+
+      <div className="mt-4 space-y-2">
+        <p className="flex min-w-0 items-center gap-2.5 text-sm">
+          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-foreground/10 text-muted-foreground">
+            <UserRound className="size-4" aria-hidden />
+          </span>
+          <span className="truncate font-semibold text-foreground">{actorName(item.authorId)}</span>
+          <span className="h-4 w-px shrink-0 bg-foreground/15" aria-hidden />
+          <span className="shrink-0 text-muted-foreground">{formatCreatedAt(item.createdAt)}</span>
+        </p>
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="size-4" aria-hidden />
+            {place}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Tag className="size-4" aria-hidden />
+            {helpCategoryLabels[item.category]}
+          </span>
+        </p>
+      </div>
 
       {activeUserResponse && (
         <div className="mt-4 rounded-[14px] bg-primary/10 px-3 py-2.5 text-sm leading-6 text-foreground">
