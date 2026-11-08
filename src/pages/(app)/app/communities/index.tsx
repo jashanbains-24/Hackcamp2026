@@ -2,10 +2,11 @@ import { MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { PageIntro, StatusLabel } from '@/components/neighbourgrid'
 import { CommunityMembership } from '@/components/communities/CommunityMembership'
-import { communityCatalog, useHomeCommunity } from '@/services/communities'
+import { communityCatalog } from '@/services/communities'
+import { useNeighbourGridSession } from '@/neighbourgrid/exports'
 
 export default function CommunitiesPage() {
-  const { homeCommunityId } = useHomeCommunity()
+  const session = useNeighbourGridSession()
 
   return (
     <div className="mx-auto max-w-[720px] px-4 py-5 sm:px-6 sm:py-7">
@@ -29,7 +30,7 @@ export default function CommunitiesPage() {
                   >
                     {community.name}
                   </Link>
-                  {homeCommunityId === community.id && <StatusLabel tone="success">Home</StatusLabel>}
+                  {session.homeCommunityId === community.id && <StatusLabel tone="success">Home</StatusLabel>}
                 </div>
                 <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
                   <MapPin className="size-3.5" aria-hidden />
@@ -40,7 +41,7 @@ export default function CommunitiesPage() {
                   {community.visibility === 'public' ? 'Open to join' : 'Request to join'}
                 </p>
               </div>
-              <CommunityMembership communityId={community.id} isHome={homeCommunityId === community.id} />
+              <CommunityMembership communityId={community.id} isHome={session.homeCommunityId === community.id} />
             </div>
           </li>
         ))}
