@@ -54,6 +54,21 @@ the UI gate.
   must be server-side, anonymized, minimal, and safe to replay.
 - Other sponsor products are not added solely for prize eligibility.
 
+## 2026-11-07 — Source-grounded Neighbourhood Guide
+
+**Decision:** Expand Gemini beyond request clarity with a bounded, read-only Neighbourhood Guide
+on Home. This supersedes the earlier rejection only for this product-specific assistant; an
+unrestricted generic chatbot remains out of scope.
+
+The Guide receives only a size-limited snapshot of community posts/help already visible to the
+signed-in user, the server-fetched BC Hydro Surrey feed, and optional Gemini Google Search
+grounding. It must return source links, distinguish official/community/DEMO content, treat record
+content as untrusted, and state when current information is missing.
+
+The Guide cannot mutate records, auto-publish, infer emergency or medical severity, expose exact
+locations or personal details, or promise volunteer response. It has no direct X integration;
+public search results are labelled as web sources rather than complete X coverage.
+
 ## 2026-11-07 — Secrets
 
 DeepSpace’s encrypted per-app secrets store is the only source of truth for Gemini and n8n

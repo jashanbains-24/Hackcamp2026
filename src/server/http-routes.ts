@@ -41,6 +41,38 @@ export async function resolveAuth(req: Request, env: Env): Promise<VerifyResult 
   return (await verifyJwt(jwtConfig(env), token)).result
 }
 
+/**
+ * Identify a signed-in browser caller on POST APIs.
+ *
+ * `resolveSessionReadAuth` is GET/HEAD-only (file tags cannot send a bearer).
+ * Neighbourhood Guide and Request Clarity are POST, so they need the same
+ * cookie-to-JWT exchange without that method restriction.
+ */
+export async function resolveBrowserAuth(req: Request, env: Env): Promise<VerifyResult | null> {
+  const bearer = await resolveAuth(req, env)
+  if (bearer) return bearer
+
+  const session = (req.headers.get('Cookie') ?? '')
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${SESSION_COOKIE}=`))
+    ?.slice(SESSION_COOKIE.length + 1)
+  if (!session) return null
+
+  try {
+    const response = await authWorkerFetch(env, '/api/auth/token', {
+      method: 'POST',
+      headers: { Cookie: `${SESSION_COOKIE}=${session}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+    const payload = response.ok ? ((await response.json()) as { token?: string }) : {}
+    if (typeof payload.token !== 'string') return null
+    return (await verifyJwt(jwtConfig(env), payload.token)).result
+  } catch {
+    return null
+  }
+}
+
 /** Agent credentials are valid only at the exact origin receiving the request. */
 export async function resolveAgentAuth(req: Request, env: Env): Promise<VerifyResult | null> {
   const header = req.headers.get('Authorization')

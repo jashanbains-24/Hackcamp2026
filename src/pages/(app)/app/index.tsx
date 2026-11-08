@@ -14,6 +14,7 @@ import { useHomeAggregates } from '@/neighbourgrid/home-data'
 import { useOfficialUpdates } from '@/neighbourgrid/official-updates'
 import { formatTimestamp, timeOfDayGreeting } from '@/neighbourgrid/format'
 import { useNeighbourGridSession } from '@/neighbourgrid/session'
+import { NeighbourhoodGuide } from '@/features/assistant/NeighbourhoodGuide'
 
 function shortTime(value: string | null) {
   if (!value) return formatTimestamp(value)
@@ -83,6 +84,8 @@ export default function AppHomePage() {
           </Link>
         </div>
       </Pane>
+
+      <NeighbourhoodGuide session={session} aggregates={aggregates} />
 
       <section className="mt-6" aria-labelledby="official-heading">
         <div className="mb-2.5 flex items-baseline justify-between gap-3 px-2">
