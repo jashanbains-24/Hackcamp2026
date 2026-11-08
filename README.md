@@ -122,7 +122,8 @@ Gemini powers two server-only features: editable request clarity and the authent
 user can already see, the existing BC Hydro server feed, and—when the user enables it—Gemini
 Google Search grounding with source links. It is read-only and never publishes or mutates records.
 
-The default model is `gemini-2.5-flash`. A no-billing Google AI project can use only whatever free
+The default model is `gemini-3.5-flash-lite`. `gemini-2.5-flash` returns 404 for new API keys.
+A no-billing Google AI project can use only whatever free
 quota Google currently grants that project/model; exact limits vary and are shown in AI Studio.
 When quota is exhausted, requests fail rather than silently becoming paid, provided no billing
 account is linked.

@@ -1,6 +1,6 @@
 # NeighbourGrid project status
 
-**Last updated:** 2026-11-07, 11:16 p.m. Vancouver time
+**Last updated:** 2026-11-07, 11:20 p.m. Vancouver time
 **Current stage:** Gemini Neighbourhood Guide integration and owner key verification
 **Shared branch:** `main` at `48b7fd1` (UI animation polish merged via PR #9)
 **Active lane in this checkout:** Developer C / owner AI integration on `feat/neighbourhood-guide`
@@ -130,6 +130,15 @@ and verifies one authenticated, source-linked answer. Then open/merge the PR and
 ```
 
 ## Session history
+
+### 2026-11-07 23:20 — Developer C (`feat/neighbourhood-guide`)
+
+- Signed-in Guide requests now reach Gemini. The local log showed HTTP 404, and Google limits
+  `gemini-2.5-flash` to projects that already used it. New keys need `gemini-3.5-flash-lite`.
+- Switched the Guide and Request Clarity default model, removed the deprecated `temperature`
+  setting, and made a 404 say the model is unavailable instead of blaming the API key.
+- Next: retry the same question at `http://127.0.0.1:5173/app`. Restart `npm run dev:deepspace`
+  only if the old error remains.
 
 ### 2026-11-07 23:16 — Developer C (`feat/neighbourhood-guide`)
 

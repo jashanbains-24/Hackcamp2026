@@ -61,7 +61,7 @@ type GeminiGroundingChunk = {
 interface GeminiAssistantResponse {
   candidates?: Array<{
     content?: {
-      parts?: Array<{ text?: string }>
+      parts?: Array<{ text?: string; thought?: boolean }>
     }
     groundingMetadata?: {
       groundingChunks?: GeminiGroundingChunk[]
@@ -201,7 +201,7 @@ export function registerAssistantRoutes(
       appContext: parsed.data.appContext,
       officialContext,
     })
-    const model = env.GEMINI_MODEL || 'gemini-2.5-flash'
+    const model = env.GEMINI_MODEL || 'gemini-3.5-flash-lite'
 
     let response: Response
     try {
@@ -226,8 +226,7 @@ export function registerAssistantRoutes(
             ],
             ...(parsed.data.searchWeb ? { tools: [{ google_search: {} }] } : {}),
             generationConfig: {
-              temperature: 0.2,
-              maxOutputTokens: 900,
+              maxOutputTokens: 2_048,
             },
           }),
           signal: AbortSignal.timeout(20_000),
@@ -248,9 +247,11 @@ export function registerAssistantRoutes(
         {
           error: quotaLimited
             ? 'Gemini free quota is currently exhausted. Try again later.'
-            : configurationRejected
-              ? 'Gemini rejected the key or model configuration.'
-              : 'Gemini could not answer that question. Try again shortly.',
+            : response.status === 404
+              ? 'This Gemini model is not available for the current API key.'
+              : configurationRejected
+                ? 'Gemini rejected the key or request configuration.'
+                : 'Gemini could not answer that question. Try again shortly.',
           code: quotaLimited
             ? 'quota_exhausted'
             : configurationRejected
@@ -264,7 +265,8 @@ export function registerAssistantRoutes(
     const payload = (await response.json()) as GeminiAssistantResponse
     const candidate = payload.candidates?.[0]
     const answer = candidate?.content?.parts
-      ?.map((part) => part.text ?? '')
+      ?.filter((part) => !part.thought)
+      .map((part) => part.text ?? '')
       .join('')
       .trim()
 
